@@ -42,6 +42,10 @@ export const meta = {
 				type: 'string',
 				optional: false, nullable: false,
 			},
+			loginToken: {
+				type: 'string',
+				optional: false, nullable: false,
+			},
 		},
 	},
 } as const;
@@ -90,7 +94,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new ApiError(meta.errors.accessDenied);
 			}
 
-			const { account, secret } = await this.signupService.signup({
+			const { account, secret, loginToken } = await this.signupService.signup({
 				username: ps.username,
 				password: ps.password,
 				ignorePreservedUsernames: true,
@@ -99,9 +103,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const res = await this.userEntityService.pack(account, account, {
 				schema: 'MeDetailed',
 				includeSecrets: true,
-			}) as Packed<'MeDetailed'> & { token: string };
+			}) as Packed<'MeDetailed'> & { token: string; loginToken: string };
 
 			res.token = secret;
+			res.loginToken = loginToken.token;
 
 			return res;
 		});
