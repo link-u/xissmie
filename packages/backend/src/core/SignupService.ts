@@ -8,7 +8,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { DataSource, IsNull } from 'typeorm';
 import { DI } from '@/di-symbols.js';
-import type { MiMeta, UsedUsernamesRepository, UsersRepository } from '@/models/_.js';
+import { MiXissmeLoginToken, type MiMeta, type UsedUsernamesRepository, type UsersRepository } from '@/models/_.js';
 import { MiUser } from '@/models/User.js';
 import { MiUserProfile } from '@/models/UserProfile.js';
 import { IdService } from '@/core/IdService.js';
@@ -113,6 +113,7 @@ export class SignupService {
 			));
 
 		let account!: MiUser;
+		let loginToken!: MiXissmeLoginToken;
 
 		// Start transaction
 		await this.db.transaction(async transactionalEntityManager => {
@@ -148,12 +149,17 @@ export class SignupService {
 				createdAt: new Date(),
 				username: username.toLowerCase(),
 			}));
+
+			loginToken = await transactionalEntityManager.save(new MiXissmeLoginToken({
+				userId: account.id,
+				token: generateUserToken(),
+			}));
 		});
 
 		this.usersChart.update(account, true);
 		this.userService.notifySystemWebhook(account, 'userCreated');
 
-		return { account, secret };
+		return { account, secret, loginToken };
 	}
 }
 
