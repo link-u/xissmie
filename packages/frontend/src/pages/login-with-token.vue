@@ -27,6 +27,7 @@ const message = ref('ログイン中...');
 
 if ($i != null) {
 	message.value = '既にログイン済みです';
+	window.location.reload();
 } else if (token == null) {
 	message.value = 'ログイン情報が不正です';
 } else {
@@ -35,6 +36,7 @@ if ($i != null) {
 	}).then((user) => {
 		login(user.token, undefined, false).then(() => {
 			message.value = 'Xfolioへのログインが完了しました！';
+			window.location.reload();
 		}).catch(() => {
 			message.value = 'アカウント情報の取得に失敗しました';
 		});
