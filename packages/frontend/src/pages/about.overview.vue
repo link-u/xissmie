@@ -96,22 +96,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</div>
 	</FormSection>
 
-	<FormSuspense v-slot="{ result: stats }" :p="initStats">
-		<FormSection>
-			<template #label>{{ i18n.ts.statistics }}</template>
-			<FormSplit>
-				<MkKeyValue>
-					<template #key>{{ i18n.ts.users }}</template>
-					<template #value>{{ number(stats.originalUsersCount) }}</template>
-				</MkKeyValue>
-				<MkKeyValue>
-					<template #key>{{ i18n.ts.notes }}</template>
-					<template #value>{{ number(stats.originalNotesCount) }}</template>
-				</MkKeyValue>
-			</FormSplit>
-		</FormSection>
-	</FormSuspense>
-
 	<FormSection>
 		<template #label>Well-known resources</template>
 		<div class="_gaps_s">

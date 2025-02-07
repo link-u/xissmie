@@ -633,6 +633,7 @@ function getMenu() {
 		type: 'switch',
 		text: i18n.ts.keepOriginalUploading,
 		ref: keepOriginal,
+		disabled: true
 	}, { type: 'divider' }, {
 		text: i18n.ts.addFile,
 		type: 'label',

@@ -10,7 +10,6 @@ export const basicTimelineTypes = [
 	'home',
 	'local',
 	'social',
-	'global',
 ] as const;
 
 export type BasicTimelineType = typeof basicTimelineTypes[number];

@@ -314,11 +314,6 @@ const headerTabs = computed(() => [...(defaultStore.reactiveState.pinnedUserList
 	iconOnly: true,
 	onClick: chooseList,
 }, {
-	icon: 'ti ti-antenna',
-	title: i18n.ts.antennas,
-	iconOnly: true,
-	onClick: chooseAntenna,
-}, {
 	icon: 'ti ti-device-tv',
 	title: i18n.ts.channel,
 	iconOnly: true,

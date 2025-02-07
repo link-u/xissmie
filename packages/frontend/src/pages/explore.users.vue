@@ -7,7 +7,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 <MkSpacer :contentMax="1200">
 	<MkTab v-if="instance.federation !== 'none'" v-model="origin" style="margin-bottom: var(--MI-margin);">
 		<option value="local">{{ i18n.ts.local }}</option>
-		<option value="remote">{{ i18n.ts.remote }}</option>
 	</MkTab>
 	<div v-if="origin === 'local'">
 		<template v-if="tag == null">

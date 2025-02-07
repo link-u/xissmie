@@ -105,6 +105,7 @@ function select(src: HTMLElement | EventTarget | null, label: string | null, mul
 			type: 'switch',
 			text: i18n.ts.keepOriginalUploading,
 			ref: keepOriginal,
+			disabled: true
 		}, {
 			text: i18n.ts.upload,
 			icon: 'ti ti-upload',

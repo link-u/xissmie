@@ -5,10 +5,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <template>
 <div class="_gaps_m">
-	<FormSection first>
-		<template #label>{{ i18n.ts.password }}</template>
-		<MkButton primary @click="change()">{{ i18n.ts.changePassword }}</MkButton>
-	</FormSection>
 
 	<X2fa/>
 
@@ -28,13 +24,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 			</template>
 		</MkPagination>
-	</FormSection>
-
-	<FormSection>
-		<FormSlot>
-			<MkButton danger @click="regenerateToken"><i class="ti ti-refresh"></i> {{ i18n.ts.regenerateLoginToken }}</MkButton>
-			<template #caption>{{ i18n.ts.regenerateLoginTokenDescription }}</template>
-		</FormSlot>
 	</FormSection>
 </div>
 </template>

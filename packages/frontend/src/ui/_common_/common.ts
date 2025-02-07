@@ -88,18 +88,6 @@ export function openInstanceMenu(ev: MouseEvent) {
 		});
 	}
 
-	menuItems.push({
-		type: 'parent',
-		text: i18n.ts.tools,
-		icon: 'ti ti-tool',
-		children: toolsMenuItems(),
-	}, { type: 'divider' }, {
-		type: 'link',
-		text: i18n.ts.inquiry,
-		icon: 'ti ti-help-circle',
-		to: '/contact',
-	});
-
 	if (instance.impressumUrl) {
 		menuItems.push({
 			type: 'a',

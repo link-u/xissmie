@@ -59,16 +59,10 @@ export const widgets = [
 	'unixClock',
 	'postForm',
 	'slideshow',
-	'serverMetric',
-	'onlineUsers',
-	'jobQueue',
 	'button',
 	'aiscript',
 	'aiscriptApp',
 	'aichan',
 	'userList',
 	'clicker',
-	'birthdayFollowings',
-
-	...federationWidgets,
 ];
