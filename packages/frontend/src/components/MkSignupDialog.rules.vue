@@ -16,47 +16,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</div>
 
 			<div style="text-align: center;">
-				<div>{{ i18n.ts.pleaseConfirmBelowBeforeSignup }}</div>
-				<div style="font-weight: bold; margin-top: 0.5em;">{{ i18n.ts.beSureToReadThisAsItIsImportant }}</div>
+				<div>{{ "「Xissmie（キスミー）は「Xfolio（クロスフォリオ）の会員専用SNSです。" }}</div>
+				<div style="font-weight: bold; margin-top: 0.5em;">{{ "クロスフォリオでアカウントを作成し、マイページからXissmieのユーザー名を登録することでご利用いただけます。" }}</div>
 			</div>
 
-			<MkFolder v-if="availableServerRules" :defaultOpen="true">
-				<template #label>{{ i18n.ts.serverRules }}</template>
-				<template #suffix><i v-if="agreeServerRules" class="ti ti-check" style="color: var(--MI_THEME-success)"></i></template>
-
-				<ol class="_gaps_s" :class="$style.rules">
-					<li v-for="item in instance.serverRules" :class="$style.rule"><div :class="$style.ruleText" v-html="item"></div></li>
-				</ol>
-
-				<MkSwitch :modelValue="agreeServerRules" style="margin-top: 16px;" @update:modelValue="updateAgreeServerRules">{{ i18n.ts.agree }}</MkSwitch>
-			</MkFolder>
-
-			<MkFolder v-if="availableTos || availablePrivacyPolicy" :defaultOpen="true">
-				<template #label>{{ tosPrivacyPolicyLabel }}</template>
-				<template #suffix><i v-if="agreeTosAndPrivacyPolicy" class="ti ti-check" style="color: var(--MI_THEME-success)"></i></template>
-				<div class="_gaps_s">
-					<div v-if="availableTos"><a :href="instance.tosUrl ?? undefined" class="_link" target="_blank">{{ i18n.ts.termsOfService }} <i class="ti ti-external-link"></i></a></div>
-					<div v-if="availablePrivacyPolicy"><a :href="instance.privacyPolicyUrl ?? undefined" class="_link" target="_blank">{{ i18n.ts.privacyPolicy }} <i class="ti ti-external-link"></i></a></div>
-				</div>
-
-				<MkSwitch :modelValue="agreeTosAndPrivacyPolicy" style="margin-top: 16px;" @update:modelValue="updateAgreeTosAndPrivacyPolicy">{{ i18n.ts.agree }}</MkSwitch>
-			</MkFolder>
-
-			<MkFolder :defaultOpen="true">
-				<template #label>{{ i18n.ts.basicNotesBeforeCreateAccount }}</template>
-				<template #suffix><i v-if="agreeNote" class="ti ti-check" style="color: var(--MI_THEME-success)"></i></template>
-
-				<a href="https://misskey-hub.net/docs/for-users/onboarding/warning/" class="_link" target="_blank">{{ i18n.ts.basicNotesBeforeCreateAccount }} <i class="ti ti-external-link"></i></a>
-
-				<MkSwitch :modelValue="agreeNote" style="margin-top: 16px;" data-cy-signup-rules-notes-agree @update:modelValue="updateAgreeNote">{{ i18n.ts.agree }}</MkSwitch>
-			</MkFolder>
-
-			<div v-if="!agreed" style="text-align: center;">{{ i18n.ts.pleaseAgreeAllToContinue }}</div>
-
-			<div class="_buttonsCenter">
-				<MkButton inline rounded @click="emit('cancel')">{{ i18n.ts.cancel }}</MkButton>
-				<MkButton inline primary rounded gradate :disabled="!agreed" data-cy-signup-rules-continue @click="emit('done')">{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
-			</div>
+			<MkButton full rounded gradate data-cy-signup link to="https://xfolio.jp/sign_up" style="padding: 10px">{{ "クロスフォリオに登録する" }}</MkButton>
 		</div>
 	</MkSpacer>
 </div>

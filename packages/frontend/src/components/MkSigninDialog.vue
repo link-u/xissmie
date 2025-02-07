@@ -67,7 +67,7 @@ function onLogin(res: Misskey.entities.SigninFlowResponse & { finished: true }) 
 	width: 100%;
 	max-width: 400px;
 	height: 100%;
-	max-height: 450px;
+	max-height: 400px;
 	box-sizing: border-box;
 	background: var(--MI_THEME-panel);
 	border-radius: var(--MI-radius);
@@ -101,7 +101,7 @@ function onLogin(res: Misskey.entities.SigninFlowResponse & { finished: true }) 
 }
 
 .content {
-	padding: 32px;
+	padding: 20px;
 	box-sizing: border-box;
 }
 </style>
