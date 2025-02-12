@@ -84,6 +84,12 @@ type AdminAccountsFindByEmailRequest = operations['admin___accounts___find-by-em
 type AdminAccountsFindByEmailResponse = operations['admin___accounts___find-by-email']['responses']['200']['content']['application/json'];
 
 // @public (undocumented)
+type AdminAccountsGetLoginTokenRequest = operations['admin___accounts___get-login-token']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type AdminAccountsGetLoginTokenResponse = operations['admin___accounts___get-login-token']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
 type AdminAdCreateRequest = operations['admin___ad___create']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
@@ -1252,6 +1258,8 @@ declare namespace entities {
         AdminAccountsDeleteRequest,
         AdminAccountsFindByEmailRequest,
         AdminAccountsFindByEmailResponse,
+        AdminAccountsGetLoginTokenRequest,
+        AdminAccountsGetLoginTokenResponse,
         AdminAdCreateRequest,
         AdminAdCreateResponse,
         AdminAdDeleteRequest,
@@ -1649,6 +1657,7 @@ declare namespace entities {
         InviteLimitResponse,
         InviteListRequest,
         InviteListResponse,
+        LoginWithTokenRequest,
         MetaRequest,
         MetaResponse,
         MiauthGenTokenRequest,
@@ -2440,6 +2449,9 @@ type IWebhooksTestRequest = operations['i___webhooks___test']['requestBody']['co
 
 // @public (undocumented)
 type IWebhooksUpdateRequest = operations['i___webhooks___update']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type LoginWithTokenRequest = operations['login-with-token']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
 type MeDetailed = components['schemas']['MeDetailed'];

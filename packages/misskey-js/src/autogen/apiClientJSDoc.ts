@@ -110,6 +110,17 @@ declare module '../api.js' {
     /**
      * No description provided.
      * 
+     * **Credential required**: *Yes* / **Permission**: *read:admin:account*
+     */
+    request<E extends 'admin/accounts/get-login-token', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
      * **Credential required**: *Yes* / **Permission**: *write:admin:ad*
      */
     request<E extends 'admin/ad/create', P extends Endpoints[E]['req']>(
@@ -3103,6 +3114,17 @@ declare module '../api.js' {
      * **Credential required**: *Yes* / **Permission**: *read:invite-codes*
      */
     request<E extends 'invite/list', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
+     * **Credential required**: *No*
+     */
+    request<E extends 'login-with-token', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
       credential?: string | null,

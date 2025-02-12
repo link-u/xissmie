@@ -98,6 +98,15 @@ export type paths = {
      */
     post: operations['admin___accounts___find-by-email'];
   };
+  '/admin/accounts/get-login-token': {
+    /**
+     * admin/accounts/get-login-token
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *read:admin:account*
+     */
+    post: operations['admin___accounts___get-login-token'];
+  };
   '/admin/ad/create': {
     /**
      * admin/ad/create
@@ -2700,6 +2709,15 @@ export type paths = {
      * **Credential required**: *Yes* / **Permission**: *read:invite-codes*
      */
     post: operations['invite___list'];
+  };
+  '/login-with-token': {
+    /**
+     * login-with-token
+     * @description No description provided.
+     *
+     * **Credential required**: *No*
+     */
+    post: operations['login-with-token'];
   };
   '/meta': {
     /**
@@ -5649,6 +5667,62 @@ export type operations = {
       200: {
         content: {
           'application/json': components['schemas']['UserDetailedNotMe'];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * admin/accounts/get-login-token
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *read:admin:account*
+   */
+  'admin___accounts___get-login-token': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          userId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            loginToken: string;
+          };
         };
       };
       /** @description Client error */
@@ -21804,6 +21878,57 @@ export type operations = {
         content: {
           'application/json': components['schemas']['InviteCode'][];
         };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * login-with-token
+   * @description No description provided.
+   *
+   * **Credential required**: *No*
+   */
+  'login-with-token': {
+    requestBody: {
+      content: {
+        'application/json': {
+          token: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
