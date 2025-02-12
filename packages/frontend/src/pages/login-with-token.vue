@@ -27,7 +27,6 @@ const message = ref('ログイン中...');
 
 if ($i != null) {
 	message.value = '既にログイン済みです';
-	window.location.reload();
 } else if (token == null) {
 	message.value = 'ログイン情報が不正です';
 } else {
