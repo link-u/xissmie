@@ -17,6 +17,8 @@ import type {
 	AdminAccountsDeleteRequest,
 	AdminAccountsFindByEmailRequest,
 	AdminAccountsFindByEmailResponse,
+	AdminAccountsGetLoginTokenRequest,
+	AdminAccountsGetLoginTokenResponse,
 	AdminAdCreateRequest,
 	AdminAdCreateResponse,
 	AdminAdDeleteRequest,
@@ -414,6 +416,7 @@ import type {
 	InviteLimitResponse,
 	InviteListRequest,
 	InviteListResponse,
+	LoginWithTokenRequest,
 	MetaRequest,
 	MetaResponse,
 	MiauthGenTokenRequest,
@@ -595,6 +598,7 @@ export type Endpoints = {
 	'admin/accounts/create': { req: AdminAccountsCreateRequest; res: AdminAccountsCreateResponse };
 	'admin/accounts/delete': { req: AdminAccountsDeleteRequest; res: EmptyResponse };
 	'admin/accounts/find-by-email': { req: AdminAccountsFindByEmailRequest; res: AdminAccountsFindByEmailResponse };
+	'admin/accounts/get-login-token': { req: AdminAccountsGetLoginTokenRequest; res: AdminAccountsGetLoginTokenResponse };
 	'admin/ad/create': { req: AdminAdCreateRequest; res: AdminAdCreateResponse };
 	'admin/ad/delete': { req: AdminAdDeleteRequest; res: EmptyResponse };
 	'admin/ad/list': { req: AdminAdListRequest; res: AdminAdListResponse };
@@ -864,6 +868,7 @@ export type Endpoints = {
 	'invite/delete': { req: InviteDeleteRequest; res: EmptyResponse };
 	'invite/limit': { req: EmptyRequest; res: InviteLimitResponse };
 	'invite/list': { req: InviteListRequest; res: InviteListResponse };
+	'login-with-token': { req: LoginWithTokenRequest; res: EmptyResponse };
 	'meta': { req: MetaRequest; res: MetaResponse };
 	'miauth/gen-token': { req: MiauthGenTokenRequest; res: MiauthGenTokenResponse };
 	'mute/create': { req: MuteCreateRequest; res: EmptyResponse };
