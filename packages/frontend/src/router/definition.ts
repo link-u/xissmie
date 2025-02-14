@@ -164,10 +164,6 @@ const routes: RouteDef[] = [{
 		name: 'preferences-backups',
 		component: page(() => import('@/pages/settings/preferences-backups.vue')),
 	}, {
-		path: '/migration',
-		name: 'migration',
-		component: page(() => import('@/pages/settings/migration.vue')),
-	}, {
 		path: '/custom-css',
 		name: 'general',
 		component: page(() => import('@/pages/settings/custom-css.vue')),
@@ -183,9 +179,6 @@ const routes: RouteDef[] = [{
 		path: '/',
 		component: page(() => import('@/pages/_empty_.vue')),
 	}],
-}, {
-	path: '/reset-password/:token?',
-	component: page(() => import('@/pages/reset-password.vue')),
 }, {
 	path: '/signup-complete/:code',
 	component: page(() => import('@/pages/signup-complete.vue')),
@@ -533,18 +526,6 @@ const routes: RouteDef[] = [{
 }, {
 	path: '/my/clips',
 	component: page(() => import('@/pages/my-clips/index.vue')),
-	loginRequired: true,
-}, {
-	path: '/my/antennas/create',
-	component: page(() => import('@/pages/my-antennas/create.vue')),
-	loginRequired: true,
-}, {
-	path: '/my/antennas/:antennaId',
-	component: page(() => import('@/pages/my-antennas/edit.vue')),
-	loginRequired: true,
-}, {
-	path: '/my/antennas',
-	component: page(() => import('@/pages/my-antennas/index.vue')),
 	loginRequired: true,
 }, {
 	path: '/timeline/list/:listId',

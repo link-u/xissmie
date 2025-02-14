@@ -27,8 +27,6 @@ import MkHorizontalSwipe from '@/components/MkHorizontalSwipe.vue';
 
 const XOverview = defineAsyncComponent(() => import('@/pages/about.overview.vue'));
 const XEmojis = defineAsyncComponent(() => import('@/pages/about.emojis.vue'));
-const XFederation = defineAsyncComponent(() => import('@/pages/about.federation.vue'));
-const MkInstanceStats = defineAsyncComponent(() => import('@/components/MkInstanceStats.vue'));
 
 const props = withDefaults(defineProps<{
 	initialTab?: string;
@@ -56,20 +54,6 @@ const headerTabs = computed(() => {
 		key: 'emojis',
 		title: i18n.ts.customEmojis,
 		icon: 'ti ti-icons',
-	});
-
-	if (instance.federation !== 'none') {
-		items.push({
-			key: 'federation',
-			title: i18n.ts.federation,
-			icon: 'ti ti-whirl',
-		});
-	}
-
-	items.push({
-		key: 'charts',
-		title: i18n.ts.charts,
-		icon: 'ti ti-chart-line',
 	});
 
 	return items;
