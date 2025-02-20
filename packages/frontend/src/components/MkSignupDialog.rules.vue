@@ -10,10 +10,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 	</div>
 	<MkSpacer :marginMin="20" :marginMax="28">
 		<div class="_gaps_m">
-			<div v-if="instance.disableRegistration || instance.federation !== 'all'" class="_gaps_s">
-				<MkInfo v-if="instance.federation === 'specified'" warn>{{ i18n.ts.federationSpecified }}</MkInfo>
-				<MkInfo v-else-if="instance.federation === 'none'" warn>{{ i18n.ts.federationDisabled }}</MkInfo>
-			</div>
 
 			<div style="text-align: center;">
 				<div>{{ "「Xissmie（キスミー）は「Xfolio（クロスフォリオ）の会員専用SNSです。" }}</div>
