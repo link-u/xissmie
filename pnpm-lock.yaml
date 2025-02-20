@@ -102,8 +102,8 @@ importers:
         specifier: 15.1.0
         version: 15.1.0
       '@fastify/accepts':
-        specifier: 5.0.1
-        version: 5.0.1
+        specifier: 5.0.2
+        version: 5.0.2
       '@fastify/cookie':
         specifier: 11.0.1
         version: 11.0.1
@@ -723,7 +723,7 @@ importers:
         version: 3.5.12
       aiscript-vscode:
         specifier: github:aiscript-dev/aiscript-vscode#v0.1.15
-        version: https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7
+        version: git+https://git@github.com:aiscript-dev/aiscript-vscode.git#c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7
       astring:
         specifier: 1.9.0
         version: 1.9.0
@@ -1021,7 +1021,7 @@ importers:
         version: 8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)
       storybook-addon-misskey-theme:
         specifier: github:misskey-dev/storybook-addon-misskey-theme
-        version: https://codeload.github.com/misskey-dev/storybook-addon-misskey-theme/tar.gz/cf583db098365b2ccc81a82f63ca9c93bc32b640(@storybook/blocks@8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/components@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/core-events@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/manager-api@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/preview-api@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/theming@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/types@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: git+https://git@github.com:misskey-dev/storybook-addon-misskey-theme.git#cf583db098365b2ccc81a82f63ca9c93bc32b640(@storybook/blocks@8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/components@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/core-events@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/manager-api@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/preview-api@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/theming@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/types@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       vite-plugin-turbosnap:
         specifier: 1.0.3
         version: 1.0.3
@@ -2428,8 +2428,8 @@ packages:
   '@fastify/accept-negotiator@2.0.0':
     resolution: {integrity: sha512-/Sce/kBzuTxIq5tJh85nVNOq9wKD8s+viIgX0fFMDBdw95gnpf53qmF1oBgJym3cPFliWUuSloVg/1w/rH0FcQ==}
 
-  '@fastify/accepts@5.0.1':
-    resolution: {integrity: sha512-8ji2MGTbceSnAXKYx/U9iWt6Fmf0zJovh0meO5rpwYS/vy0Z3QIR2J/hKmbcTpYfMu5NUliNpsAtMavmzBQhmA==}
+  '@fastify/accepts@5.0.2':
+    resolution: {integrity: sha512-pX0OrioMz3C2cuYFOGRCNMdP3sR6daTFjeSNFrWlZVutawpPIGI5opK5h4Qa6x6C9oavdDkAjA16orneE2jAFQ==}
 
   '@fastify/ajv-compiler@4.0.0':
     resolution: {integrity: sha512-dt0jyLAlay14LpIn4Fg1SY7V5NJ9KH0YFDpYVQY5cgIVBvdI8908AMx5zQ0bBYPGT6Wh+bM3f2caMmOXLP3QsQ==}
@@ -3303,6 +3303,7 @@ packages:
 
   '@readme/json-schema-ref-parser@1.2.0':
     resolution: {integrity: sha512-Bt3QVovFSua4QmHa65EHUmh2xS0XJ3rgTEUPH998f4OW4VVJke3BuS16f+kM0ZLOGdvIrzrPRqwihuv5BAjtrA==}
+    deprecated: This package is no longer maintained. Please use `@apidevtools/json-schema-ref-parser` instead.
 
   '@readme/openapi-parser@2.6.0':
     resolution: {integrity: sha512-pyFJXezWj9WI1O+gdp95CoxfY+i+Uq3kKk4zXIFuRAZi9YnHpHOpjumWWr67wkmRTw19Hskh9spyY0Iyikf3fA==}
@@ -4474,8 +4475,8 @@ packages:
   '@types/pg@8.6.1':
     resolution: {integrity: sha512-1Kc4oAGzAl7uqUStZCDvaLFqZrW9qWSjXOmBfdgyBP5La7Us6Mg4GBvRlSoaZMhQF/zSj1C8CtKMBkoiT8eL8w==}
 
-  '@types/prop-types@15.7.5':
-    resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
+  '@types/prop-types@15.7.14':
+    resolution: {integrity: sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==}
 
   '@types/pug@2.0.10':
     resolution: {integrity: sha512-Sk/uYFOBAB7mb74XcpizmH0KOR2Pv3D2Hmrh1Dmy5BmK3MpdSa5kqZcg6EKBdklU0bFXX9gCfzvpnyUehrPIuA==}
@@ -4516,8 +4517,8 @@ packages:
   '@types/sanitize-html@2.13.0':
     resolution: {integrity: sha512-X31WxbvW9TjIhZZNyNBZ/p5ax4ti7qsNDBDEnH4zAgmEh35YnFD1UiS6z9Cd34kKm0LslFW0KPmTQzu/oGtsqQ==}
 
-  '@types/scheduler@0.16.2':
-    resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+  '@types/scheduler@0.23.0':
+    resolution: {integrity: sha512-YIoDCTH3Af6XM5VuwGG/QL/CJqga1Zm3NkU3HZ4ZHK2fRMPYP1VczsTUqtsf43PH/iJNVlPHAo2oWX7BSdB2Hw==}
 
   '@types/seedrandom@2.4.34':
     resolution: {integrity: sha512-ytDiArvrn/3Xk6/vtylys5tlY6eo7Ane0hvcx++TKo6RxQXuVfW0AF/oeWqAj9dN29SyhtawuXstgmPlwNcv/A==}
@@ -4926,8 +4927,8 @@ packages:
     resolution: {integrity: sha512-gOsf2YwSlleG6IjRYG2A7k0HmBMEo6qVNk9Bp/EaLgAJT5ngH6PXbqa4ItvnEwCm/velL5jAnQgsHsWnjhGmvw==}
     engines: {node: '>=18'}
 
-  aiscript-vscode@https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7:
-    resolution: {tarball: https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7}
+  aiscript-vscode@git+https://git@github.com:aiscript-dev/aiscript-vscode.git#c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7:
+    resolution: {commit: c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7, repo: git@github.com:aiscript-dev/aiscript-vscode.git, type: git}
     version: 0.1.15
     engines: {vscode: ^1.83.0}
 
@@ -6564,6 +6565,9 @@ packages:
   fastify-plugin@5.0.0:
     resolution: {integrity: sha512-0725fmH/yYi8ugsjszLci+lLnGBK6cG+WSxM7edY2OXJEU7gr2JiGBoieL2h9mhTych1vFsEfXsAsGGDJ/Rd5w==}
 
+  fastify-plugin@5.0.1:
+    resolution: {integrity: sha512-HCxs+YnRaWzCl+cWRYFnHmeRFyR5GVnJTAaCJQiYzQSDwK9MgJdyAsuL3nh0EWRCYMgQ5MeziymvmAhUHYHDUQ==}
+
   fastify-raw-body@5.0.0:
     resolution: {integrity: sha512-2qfoaQ3BQDhZ1gtbkKZd6n0kKxJISJGM6u/skD9ljdWItAscjXrtZ1lnjr7PavmXX9j4EyCPmBDiIsLn07d5vA==}
     engines: {node: '>= 10'}
@@ -7853,6 +7857,7 @@ packages:
 
   lodash.get@4.4.2:
     resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
+    deprecated: This package is deprecated. Use the optional chaining (?.) operator instead.
 
   lodash.isarguments@3.1.0:
     resolution: {integrity: sha512-chi4NHZlZqZD18a0imDHnZPrDeBbTtVN7GXMwuGdRH9qotxAjYs3aVLKc7zNOG9eddR5Ksd8rvFEBc9SsggPpg==}
@@ -8451,6 +8456,10 @@ packages:
 
   node-gyp-build@4.6.0:
     resolution: {integrity: sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==}
+    hasBin: true
+
+  node-gyp-build@4.8.4:
+    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
     hasBin: true
 
   node-gyp@10.2.0:
@@ -9992,8 +10001,8 @@ packages:
     resolution: {integrity: sha512-iCGQj+0l0HOdZ2AEeBADlsRC+vsnDsZsbdSiH1yNSjcfKM7fdpCMfqAL/dwF5BLiw/XhRft/Wax6zQbhq2BcjQ==}
     engines: {node: '>= 0.4'}
 
-  storybook-addon-misskey-theme@https://codeload.github.com/misskey-dev/storybook-addon-misskey-theme/tar.gz/cf583db098365b2ccc81a82f63ca9c93bc32b640:
-    resolution: {tarball: https://codeload.github.com/misskey-dev/storybook-addon-misskey-theme/tar.gz/cf583db098365b2ccc81a82f63ca9c93bc32b640}
+  storybook-addon-misskey-theme@git+https://git@github.com:misskey-dev/storybook-addon-misskey-theme.git#cf583db098365b2ccc81a82f63ca9c93bc32b640:
+    resolution: {commit: cf583db098365b2ccc81a82f63ca9c93bc32b640, repo: git@github.com:misskey-dev/storybook-addon-misskey-theme.git, type: git}
     version: 0.0.0
     peerDependencies:
       '@storybook/blocks': ^7.0.0-rc.4
@@ -10803,8 +10812,8 @@ packages:
   vscode-languageserver-protocol@3.17.5:
     resolution: {integrity: sha512-mb1bvRJN8SVznADSGWM9u/b07H7Ecg0I3OgXDuLdn307rl/J3A9YD6/eYOssqhecL27hK1IPZAsaqh00i/Jljg==}
 
-  vscode-languageserver-textdocument@1.0.11:
-    resolution: {integrity: sha512-X+8T3GoiwTVlJbicx/sIAF+yuJAqz8VvwJyoMVhwEMoEKE/fkDmrqUgDMyBECcM2A2frVZIUj5HI/ErRXCfOeA==}
+  vscode-languageserver-textdocument@1.0.12:
+    resolution: {integrity: sha512-cxWNPesCnQCcMPeenjKKsOCKQZ/L6Tv19DTRIGuLWe32lyzWhihGVJ/rcckZXJxfdKCFvRLS3fpBIsV/ZGX4zA==}
 
   vscode-languageserver-types@3.17.5:
     resolution: {integrity: sha512-Ld1VelNuX9pdF39h2Hgaeb5hEZM2Z3jUrrMgWQAu82jMtZp7p3vJT3BzToKtZI7NgQssZje5o0zryOrhQvzQAg==}
@@ -10833,8 +10842,8 @@ packages:
   vue-component-type-helpers@2.1.10:
     resolution: {integrity: sha512-lfgdSLQKrUmADiSV6PbBvYgQ33KF3Ztv6gP85MfGaGaSGMTXORVaHT1EHfsqCgzRNBstPKYDmvAV9Do5CmJ07A==}
 
-  vue-component-type-helpers@2.2.0:
-    resolution: {integrity: sha512-cYrAnv2me7bPDcg9kIcGwjJiSB6Qyi08+jLDo9yuvoFQjzHiPTzML7RnkJB1+3P6KMsX/KbCD4QE3Tv/knEllw==}
+  vue-component-type-helpers@2.2.2:
+    resolution: {integrity: sha512-6lLY+n2xz2kCYshl59mL6gy8OUUTmkscmDFMO8i7Lj+QKwgnIFUZmM1i/iTYObtrczZVdw7UakPqDTGwVSGaRg==}
 
   vue-demi@0.14.7:
     resolution: {integrity: sha512-EOG8KXDQNwkJILkx/gPcoL/7vH+hORoBaKgGe+6W7VFMvCYJfmF2dGbvgDroVnI8LU7/kTu8mbjRZGBU1z9NTA==}
@@ -11131,7 +11140,7 @@ snapshots:
       stringz: 2.1.0
       uuid: 9.0.1
       vscode-languageserver: 9.0.1
-      vscode-languageserver-textdocument: 1.0.11
+      vscode-languageserver-textdocument: 1.0.12
 
   '@ampproject/remapping@2.2.1':
     dependencies:
@@ -12390,10 +12399,10 @@ snapshots:
 
   '@fastify/accept-negotiator@2.0.0': {}
 
-  '@fastify/accepts@5.0.1':
+  '@fastify/accepts@5.0.2':
     dependencies:
       accepts: 1.3.8
-      fastify-plugin: 5.0.0
+      fastify-plugin: 5.0.1
 
   '@fastify/ajv-compiler@4.0.0':
     dependencies:
@@ -14434,7 +14443,7 @@ snapshots:
       ts-dedent: 2.2.0
       type-fest: 2.19.0
       vue: 3.5.12(typescript@5.6.3)
-      vue-component-type-helpers: 2.2.0
+      vue-component-type-helpers: 2.2.2
 
   '@swc/cli@0.3.12(@swc/core@1.9.2)(chokidar@3.5.3)':
     dependencies:
@@ -14946,7 +14955,7 @@ snapshots:
       pg-protocol: 1.7.0
       pg-types: 2.2.0
 
-  '@types/prop-types@15.7.5': {}
+  '@types/prop-types@15.7.14': {}
 
   '@types/pug@2.0.10': {}
 
@@ -14966,8 +14975,8 @@ snapshots:
 
   '@types/react@18.0.28':
     dependencies:
-      '@types/prop-types': 15.7.5
-      '@types/scheduler': 0.16.2
+      '@types/prop-types': 15.7.14
+      '@types/scheduler': 0.23.0
       csstype: 3.1.3
 
   '@types/readdir-glob@1.1.1':
@@ -14986,7 +14995,7 @@ snapshots:
     dependencies:
       htmlparser2: 8.0.1
 
-  '@types/scheduler@0.16.2': {}
+  '@types/scheduler@0.23.0': {}
 
   '@types/seedrandom@2.4.34': {}
 
@@ -15538,7 +15547,7 @@ snapshots:
       clean-stack: 5.2.0
       indent-string: 5.0.0
 
-  aiscript-vscode@https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7:
+  aiscript-vscode@git+https://git@github.com:aiscript-dev/aiscript-vscode.git#c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7:
     dependencies:
       '@aiscript-dev/aiscript-languageserver': https://github.com/aiscript-dev/aiscript-languageserver/releases/download/0.1.6/aiscript-dev-aiscript-languageserver-0.1.6.tgz
       vscode-languageclient: 9.0.1
@@ -16016,7 +16025,7 @@ snapshots:
 
   bufferutil@4.0.8:
     dependencies:
-      node-gyp-build: 4.6.0
+      node-gyp-build: 4.8.4
     optional: true
 
   bullmq@5.26.1:
@@ -17663,6 +17672,8 @@ snapshots:
   fastify-plugin@4.5.1: {}
 
   fastify-plugin@5.0.0: {}
+
+  fastify-plugin@5.0.1: {}
 
   fastify-raw-body@5.0.0:
     dependencies:
@@ -20075,6 +20086,9 @@ snapshots:
   node-gyp-build@4.6.0:
     optional: true
 
+  node-gyp-build@4.8.4:
+    optional: true
+
   node-gyp@10.2.0:
     dependencies:
       env-paths: 2.2.1
@@ -21714,7 +21728,7 @@ snapshots:
     dependencies:
       internal-slot: 1.0.5
 
-  storybook-addon-misskey-theme@https://codeload.github.com/misskey-dev/storybook-addon-misskey-theme/tar.gz/cf583db098365b2ccc81a82f63ca9c93bc32b640(@storybook/blocks@8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/components@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/core-events@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/manager-api@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/preview-api@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/theming@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/types@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  storybook-addon-misskey-theme@git+https://git@github.com:misskey-dev/storybook-addon-misskey-theme.git#cf583db098365b2ccc81a82f63ca9c93bc32b640(@storybook/blocks@8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/components@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/core-events@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/manager-api@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/preview-api@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/theming@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(@storybook/types@8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@storybook/blocks': 8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4))
       '@storybook/components': 8.4.4(storybook@8.4.4(bufferutil@4.0.8)(prettier@3.3.3)(utf-8-validate@6.0.4))
@@ -22368,7 +22382,7 @@ snapshots:
 
   utf-8-validate@6.0.4:
     dependencies:
-      node-gyp-build: 4.6.0
+      node-gyp-build: 4.8.4
     optional: true
 
   util-deprecate@1.0.2: {}
@@ -22583,7 +22597,7 @@ snapshots:
       vscode-jsonrpc: 8.2.0
       vscode-languageserver-types: 3.17.5
 
-  vscode-languageserver-textdocument@1.0.11: {}
+  vscode-languageserver-textdocument@1.0.12: {}
 
   vscode-languageserver-types@3.17.5: {}
 
@@ -22608,7 +22622,7 @@ snapshots:
 
   vue-component-type-helpers@2.1.10: {}
 
-  vue-component-type-helpers@2.2.0: {}
+  vue-component-type-helpers@2.2.2: {}
 
   vue-demi@0.14.7(vue@3.5.12(typescript@5.6.3)):
     dependencies:
