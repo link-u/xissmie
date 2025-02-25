@@ -58,21 +58,7 @@ export function openInstanceMenu(ev: MouseEvent) {
 		to: '/about#emojis',
 	});
 
-	if (instance.federation !== 'none') {
-		menuItems.push({
-			type: 'link',
-			text: i18n.ts.federation,
-			icon: 'ti ti-whirl',
-			to: '/about#federation',
-		});
-	}
-
-	menuItems.push({
-		type: 'link',
-		text: i18n.ts.charts,
-		icon: 'ti ti-chart-line',
-		to: '/about#charts',
-	}, { type: 'divider' }, {
+	menuItems.push({ type: 'divider' }, {
 		type: 'link',
 		text: i18n.ts.ads,
 		icon: 'ti ti-ad',

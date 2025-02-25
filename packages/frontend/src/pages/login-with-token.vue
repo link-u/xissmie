@@ -26,7 +26,7 @@ const token = new URLSearchParams(location.search).get('token');
 const message = ref('ログイン中...');
 
 if ($i != null) {
-	message.value = '既にログイン済みです';
+	message.value = 'Xissmieにログインしました';
 } else if (token == null) {
 	message.value = 'ログイン情報が不正です';
 } else {

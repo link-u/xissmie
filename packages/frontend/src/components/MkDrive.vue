@@ -630,11 +630,6 @@ function getMenu() {
 	const menu: MenuItem[] = [];
 
 	menu.push({
-		type: 'switch',
-		text: i18n.ts.keepOriginalUploading,
-		ref: keepOriginal,
-		disabled: true
-	}, { type: 'divider' }, {
 		text: i18n.ts.addFile,
 		type: 'label',
 	}, {

@@ -13,7 +13,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div style="font-weight: bold; margin-top: 0.5em;">{{ "※Xissmieのユーザー名を登録していない場合は、クロスフォリオにログイン後、マイページからXissmieユーザー名を登録してください。" }}</div>
 			</div>
 
-			<MkButton full rounded gradate data-cy-signup link to="https://xfolio.jp/login" style="padding: 10px">{{ "クロスフォリオにログインする" }}</MkButton>
+			<MkButton full rounded gradate data-cy-signup link to="https://xfolio.jp/login" style="padding: 10px">{{ "クロスフォリオでログインする" }}</MkButton>
+
+			<MkLink url="">{{"ID/PASSでログインする"}}</MkLink>
+			<MkLink url="https://xfolio.jp/mypage/xissmie_setting">{{"クロスフォリオでID/PASSを調べる"}}</MkLink>
 		</div>
 	</div>
 </div>
@@ -32,6 +35,7 @@ import * as os from '@/os.js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkInfo from '@/components/MkInfo.vue';
+import MkLink from "@/components/MkLink.vue";
 
 const props = withDefaults(defineProps<{
 	message?: string,

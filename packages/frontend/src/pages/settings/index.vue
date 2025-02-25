@@ -78,6 +78,11 @@ const menuDef = computed(() => [{
 		to: '/settings/emoji-picker',
 		active: currentPage.value?.route.name === 'emojiPicker',
 	}, {
+		icon: 'ti ti-cloud',
+		text: i18n.ts.drive,
+		to: '/settings/drive',
+		active: currentPage.value?.route.name === 'drive',
+	}, {
 		icon: 'ti ti-bell',
 		text: i18n.ts.notifications,
 		to: '/settings/notifications',

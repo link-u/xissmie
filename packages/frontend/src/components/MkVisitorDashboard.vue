@@ -19,7 +19,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div v-html="instance.description || i18n.ts.headlineMisskey"></div>
 			</div>
 			<div class="_gaps_s" :class="$style.mainActions">
-				<MkButton :class="$style.mainAction" full rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.joinThisServer }}</MkButton>
+				<MkButton :class="$style.mainAction" full rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ "クロスフォリオに登録する" }}</MkButton>
 				<MkButton :class="$style.mainAction" full rounded data-cy-signin @click="signin()">{{ i18n.ts.login }}</MkButton>
 			</div>
 		</div>

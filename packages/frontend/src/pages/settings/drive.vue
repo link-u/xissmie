@@ -26,11 +26,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 	</FormSection>
 
 	<FormSection>
-		<template #label>{{ i18n.ts.statistics }}</template>
-		<MkChart src="per-user-drive" :args="{ user: $i }" span="day" :limit="7 * 5" :bar="true" :stacked="true" :detailed="false" :aspectRatio="6"/>
-	</FormSection>
-
-	<FormSection>
 		<div class="_gaps_m">
 			<FormLink @click="chooseUploadFolder()">
 				{{ i18n.ts.uploadFolder }}
@@ -40,10 +35,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<FormLink to="/settings/drive/cleaner">
 				{{ i18n.ts.drivecleaner }}
 			</FormLink>
-			<MkSwitch v-model="keepOriginalUploading">
-				<template #label>{{ i18n.ts.keepOriginalUploading }}</template>
-				<template #caption>{{ i18n.ts.keepOriginalUploadingDescription }}</template>
-			</MkSwitch>
 			<MkSwitch v-model="keepOriginalFilename">
 				<template #label>{{ i18n.ts.keepOriginalFilename }}</template>
 				<template #caption>{{ i18n.ts.keepOriginalFilenameDescription }}</template>
