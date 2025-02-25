@@ -43,6 +43,11 @@ export const navbarItemDef = reactive({
 		indicated: computed(() => $i != null && $i.hasPendingReceivedFollowRequest),
 		to: '/my/follow-requests',
 	},
+	xfolio: {
+		title: "クロスフォリオ",
+		icon: 'ti ti-heart-share',
+		to: 'https://xfolio.jp',
+	},
 	explore: {
 		title: i18n.ts.explore,
 		icon: 'ti ti-hash',
