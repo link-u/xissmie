@@ -4,22 +4,52 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.wrapper" data-cy-signin-page-input>
-	<div :class="$style.root">
-		<div class="_gaps_m">
-			<div style="text-align: center;">
-				<div>{{ "「Xissmie（キスミー）は「Xfolio（クロスフォリオ）の会員専用SNSです。" }}</div>
-				<div style="font-weight: bold; margin-top: 0.5em;">{{ "クロスフォリオからログインができます。" }}</div>
-				<div style="font-weight: bold; margin-top: 0.5em;">{{ "※Xissmieのユーザー名を登録していない場合は、クロスフォリオにログイン後、マイページからXissmieユーザー名を登録してください。" }}</div>
+	<div :class="$style.wrapper" data-cy-signin-page-input>
+		<div :class="$style.root">
+			<div :class="$style.avatar">
+				<i class="ti ti-user"></i>
 			</div>
 
-			<MkButton full rounded gradate data-cy-signup link to="https://xfolio.jp/login" style="padding: 10px">{{ "クロスフォリオでログインする" }}</MkButton>
+			<!-- ログイン画面メッセージ -->
+			<MkInfo v-if="message">
+				{{ message }}
+			</MkInfo>
 
-			<MkLink url="">{{"ID/PASSでログインする"}}</MkLink>
-			<MkLink url="https://xfolio.jp/mypage/xissmie_setting">{{"クロスフォリオでID/PASSを調べる"}}</MkLink>
+			<!-- 外部サーバーへの転送 -->
+			<div v-if="openOnRemote" class="_gaps_m">
+				<div class="_gaps_s">
+					<MkButton type="button" rounded primary style="margin: 0 auto;" @click="openRemote(openOnRemote)">
+						{{ i18n.ts.continueOnRemote }} <i class="ti ti-external-link"></i>
+					</MkButton>
+					<button type="button" class="_button" :class="$style.instanceManualSelectButton" @click="specifyHostAndOpenRemote(openOnRemote)">
+						{{ i18n.ts.specifyServerHost }}
+					</button>
+				</div>
+				<div :class="$style.orHr">
+					<p :class="$style.orMsg">{{ i18n.ts.or }}</p>
+				</div>
+			</div>
+
+			<!-- username入力 -->
+			<form class="_gaps_s" @submit.prevent="emit('usernameSubmitted', username)">
+				<MkInput v-model="username" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autocomplete="username webauthn" autofocus required data-cy-signin-username>
+					<template #prefix>@</template>
+					<template #suffix>@{{ host }}</template>
+				</MkInput>
+				<MkButton type="submit" large primary rounded style="margin: 0 auto;" data-cy-signin-page-input-continue>{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
+			</form>
+
+			<!-- パスワードレスログイン -->
+			<div :class="$style.orHr">
+				<p :class="$style.orMsg">{{ i18n.ts.or }}</p>
+			</div>
+			<div>
+				<MkButton type="submit" style="margin: auto auto;" large rounded primary gradate @click="emit('passkeyClick', $event)">
+					<i class="ti ti-device-usb" style="font-size: medium;"></i>{{ i18n.ts.signinWithPasskey }}
+				</MkButton>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script setup lang="ts">
@@ -35,7 +65,6 @@ import * as os from '@/os.js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkInfo from '@/components/MkInfo.vue';
-import MkLink from "@/components/MkLink.vue";
 
 const props = withDefaults(defineProps<{
 	message?: string,
