@@ -38,16 +38,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</MkInput>
 				<MkButton type="submit" large primary rounded style="margin: 0 auto;" data-cy-signin-page-input-continue>{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
 			</form>
-
-			<!-- パスワードレスログイン -->
-			<div :class="$style.orHr">
-				<p :class="$style.orMsg">{{ i18n.ts.or }}</p>
-			</div>
-			<div>
-				<MkButton type="submit" style="margin: auto auto;" large rounded primary gradate @click="emit('passkeyClick', $event)">
-					<i class="ti ti-device-usb" style="font-size: medium;"></i>{{ i18n.ts.signinWithPasskey }}
-				</MkButton>
-			</div>
 		</div>
 	</div>
 </template>
