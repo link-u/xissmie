@@ -565,6 +565,10 @@ export class ClientServerService {
 		// XissmeLogin
 		fastify.post<{ Body: { token: string; } }>('/login-with-token', async (request, reply) => {
 			reply.header('Cache-Control', 'no-store');
+			if (request.body.token != null && request.body.token.length > 128) {
+				reply.code(400);
+				return;
+			}
 			return await reply.view('login-with-token', {
 				clientCtx: htmlSafeJsonStringify({
 					token: request.body.token,
