@@ -18,6 +18,7 @@ import fastifyStatic from '@fastify/static';
 import fastifyView from '@fastify/view';
 import fastifyCookie from '@fastify/cookie';
 import fastifyProxy from '@fastify/http-proxy';
+import fastifyFormbody from '@fastify/formbody';
 import vary from 'vary';
 import htmlSafeJsonStringify from 'htmlescape';
 import type { Config } from '@/config.js';
@@ -222,6 +223,7 @@ export class ClientServerService {
 	@bindThis
 	public createServer(fastify: FastifyInstance, options: FastifyPluginOptions, done: (err?: Error) => void) {
 		fastify.register(fastifyCookie, {});
+		fastify.register(fastifyFormbody);
 
 		//#region Bull Dashboard
 		const bullBoardPath = '/queue';
@@ -560,6 +562,16 @@ export class ClientServerService {
 		});
 
 		//#region SSR
+		// XissmeLogin
+		fastify.post<{ Body: { token: string; } }>('/login-with-token', async (request, reply) => {
+			reply.header('Cache-Control', 'no-store');
+			return await reply.view('login-with-token', {
+				clientCtx: htmlSafeJsonStringify({
+					token: request.body.token,
+				}),
+			});
+		});
+
 		// User
 		fastify.get<{ Params: { user: string; sub?: string; } }>('/@:user/:sub?', async (request, reply) => {
 			const { username, host } = Acct.parse(request.params.user);

@@ -11,6 +11,7 @@ export type ServerContext = {
 	clip?: Misskey.entities.Clip;
 	note?: Misskey.entities.Note;
 	user?: Misskey.entities.UserDetailed;
+	token?: string;
 } | null;
 
 export const serverContext: ServerContext = (providedContextEl && providedContextEl.textContent) ? JSON.parse(providedContextEl.textContent) : null;
