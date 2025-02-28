@@ -4,4 +4,4 @@
  */
 
 // eslint-disable-next-line import/no-default-export
-export default (token: string) => token.length === 16;
+export default (token: string) => token.length === 16 || token.startsWith('Xissme');
