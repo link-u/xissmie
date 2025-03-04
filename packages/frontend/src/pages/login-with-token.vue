@@ -36,7 +36,7 @@ if ($i != null) {
 	}).then((user) => {
 		login(user.token, undefined, false).then(() => {
 			message.value = 'Xfolioへのログインが完了しました！';
-			window.location.reload();
+			window.location.href = '/timeline';
 		}).catch(() => {
 			message.value = 'アカウント情報の取得に失敗しました';
 		});
