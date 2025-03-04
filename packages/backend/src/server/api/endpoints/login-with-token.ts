@@ -8,7 +8,7 @@ import type { UserProfilesRepository, XissmeLoginTokensRepository } from '@/mode
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { DI } from '@/di-symbols.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import generateUserToken from '@/misc/generate-native-user-token.js';
+import { secureRndstr } from '@/misc/secure-rndstr.js';
 
 export const meta = {
 	requireCredential: false,
@@ -46,7 +46,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			await this.xissmeLoginTokensRepository.insert({
 				userId: t.userId,
-				token: generateUserToken(),
+				token: secureRndstr(32),
 			});
 
 			const userProfile = await this.userProfilesRepository.findOneOrFail({

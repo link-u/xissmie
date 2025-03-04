@@ -271,7 +271,7 @@ export class MiUser {
 
 	@Index({ unique: true })
 	@Column('char', {
-		length: 16, nullable: true, unique: true,
+		length: 128, nullable: true, unique: true,
 		comment: 'The native access token of the User. It will be null if the origin of the user is local.',
 	})
 	public token: string | null;
