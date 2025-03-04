@@ -16,8 +16,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<MkSpacer :marginMin="20" :marginMax="28">
 		<div>
 			<p>
-			"Xissmieのログインパスワードを確認したい場合は、<a href="https://xfolio.jp/login" style="color: #0b65a5">こちら</a>からクロスフォリオにログインし、『マイページ』⇒『設定』⇒『Xissmie設定』から『Xissmieのログイン用ID/PASSを表示』を押してIDをご確認ください。<br>
-			（パスワードをメモしなくても、クロスフォリオにログイン後は、ヘッダーにあるXissmieのロゴを押下するだけで自動ログインできます）"
+			 Xissmieのログインパスワードを確認したい場合は、<a href="https://xfolio.jp/login" style="color: #0b65a5">こちら</a>からクロスフォリオにログインし、『マイページ』⇒『設定』⇒『Xissmie設定』から『Xissmieのログイン用ID/PASSを表示』を押してIDをご確認ください。<br>
+			（パスワードをメモしなくても、クロスフォリオにログイン後は、ヘッダーにあるXissmieのロゴを押下するだけで自動ログインできます）
 			</p>
 		</div>
 	</MkSpacer>
