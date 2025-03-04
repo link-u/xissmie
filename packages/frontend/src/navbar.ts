@@ -46,7 +46,9 @@ export const navbarItemDef = reactive({
 	xfolio: {
 		title: "クロスフォリオ",
 		icon: 'ti ti-heart-share',
-		to: 'https://xfolio.jp',
+		action: () => {
+			window.open('https://xfolio.jp', '_blank', 'noopener');
+		},
 	},
 	explore: {
 		title: i18n.ts.explore,
