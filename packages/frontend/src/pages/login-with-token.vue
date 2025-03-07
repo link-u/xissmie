@@ -28,6 +28,7 @@ const message = ref('ログイン中...');
 
 if ($i != null) {
 	message.value = 'Xissmieにログインしました';
+	window.location.href = '/timeline';
 } else if (token == null) {
 	message.value = 'ログイン情報が不正です';
 } else {
