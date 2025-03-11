@@ -84,7 +84,7 @@
 		"@fastify/view": "10.0.2",
 		"@misskey-dev/sharp-read-bmp": "1.2.0",
 		"@misskey-dev/summaly": "5.2.0",
-		"@napi-rs/canvas": "0.1.67",
+		"@napi-rs/canvas": "0.1.68",
 		"@nestjs/common": "11.0.9",
 		"@nestjs/core": "11.0.9",
 		"@nestjs/testing": "11.0.9",
