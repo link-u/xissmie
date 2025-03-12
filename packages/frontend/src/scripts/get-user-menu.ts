@@ -263,33 +263,6 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: IRouter
 					};
 				});
 			},
-		}, {
-			type: 'parent',
-			icon: 'ti ti-antenna',
-			text: i18n.ts.addToAntenna,
-			children: async () => {
-				const antennas = await antennasCache.fetch();
-				const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${toUnicode(user.host)}`;
-				return antennas.filter((a) => a.src === 'users').map(antenna => ({
-					text: antenna.name,
-					action: async () => {
-						await os.apiWithDialog('antennas/update', {
-							antennaId: antenna.id,
-							name: antenna.name,
-							keywords: antenna.keywords,
-							excludeKeywords: antenna.excludeKeywords,
-							src: antenna.src,
-							userListId: antenna.userListId,
-							users: [...antenna.users, canonical],
-							caseSensitive: antenna.caseSensitive,
-							withReplies: antenna.withReplies,
-							withFile: antenna.withFile,
-							notify: antenna.notify,
-						});
-						antennasCache.delete();
-					},
-				}));
-			},
 		});
 	}
 
