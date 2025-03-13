@@ -560,6 +560,9 @@ const routes: RouteDef[] = [{
 	path: '/login-with-token',
 	component: page(() => import('@/pages/login-with-token.vue')),
 }, {
+	path: '/teaser',
+	component: page(() => import('@/pages/teaser.vue')),
+}, {
 	name: 'index',
 	path: '/',
 	component: $i ? page(() => import('@/pages/timeline.vue')) : page(() => import('@/pages/welcome.vue')),
