@@ -9,12 +9,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<MkSpacer :contentMax="900" :marginMin="20" :marginMax="32">
 		<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
 			<div class="body">
-				<div v-if="!narrow || currentPage?.route.name == null" class="nav">
-					<div class="baaadecd">
-						<MkInfo v-if="emailNotConfigured" warn class="info">{{ i18n.ts.emailNotConfiguredWarning }} <MkA to="/settings/email" class="_link">{{ i18n.ts.configure }}</MkA></MkInfo>
-						<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
-					</div>
-				</div>
 				<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
 					<div class="bkzroven" style="container-type: inline-size;">
 						<RouterView nested/>
@@ -89,11 +83,6 @@ const menuDef = computed<SuperMenuDef[]>(() => [{
 		text: i18n.ts.notifications,
 		to: '/settings/notifications',
 		active: currentPage.value?.route.name === 'notifications',
-	}, {
-		icon: 'ti ti-mail',
-		text: i18n.ts.email,
-		to: '/settings/email',
-		active: currentPage.value?.route.name === 'email',
 	}, {
 		icon: 'ti ti-lock',
 		text: i18n.ts.security,
