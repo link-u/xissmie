@@ -56,13 +56,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new Error('incorrect password');
 			}
 
+			// パスワード変更の処理をコメントアウトまたは削除して無効化する
 			// Generate hash of password
-			const salt = await bcrypt.genSalt(8);
-			const hash = await bcrypt.hash(ps.newPassword, salt);
+			//const salt = await bcrypt.genSalt(8);
+			//const hash = await bcrypt.hash(ps.newPassword, salt);
 
-			await this.userProfilesRepository.update(me.id, {
-				password: hash,
-			});
+			//await this.userProfilesRepository.update(me.id, {
+			//	password: hash,
+			//});
 		});
 	}
 }
