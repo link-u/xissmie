@@ -19,28 +19,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			{{ i18n.ts.receiveAnnouncementFromInstance }}
 		</MkSwitch>
 	</FormSection>
-
-	<FormSection>
-		<template #label>{{ i18n.ts.emailNotification }}</template>
-
-		<div class="_gaps_s">
-			<MkSwitch v-model="emailNotification_mention">
-				{{ i18n.ts._notification._types.mention }}
-			</MkSwitch>
-			<MkSwitch v-model="emailNotification_reply">
-				{{ i18n.ts._notification._types.reply }}
-			</MkSwitch>
-			<MkSwitch v-model="emailNotification_quote">
-				{{ i18n.ts._notification._types.quote }}
-			</MkSwitch>
-			<MkSwitch v-model="emailNotification_follow">
-				{{ i18n.ts._notification._types.follow }}
-			</MkSwitch>
-			<MkSwitch v-model="emailNotification_receiveFollowRequest">
-				{{ i18n.ts._notification._types.receiveFollowRequest }}
-			</MkSwitch>
-		</div>
-	</FormSection>
 </div>
 <div v-if="!instance.enableEmail" class="_gaps_m">
 	<MkInfo>{{ i18n.ts.emailNotSupported }}</MkInfo>
