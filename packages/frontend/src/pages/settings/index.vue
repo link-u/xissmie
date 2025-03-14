@@ -9,6 +9,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<MkSpacer :contentMax="900" :marginMin="20" :marginMax="32">
 		<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
 			<div class="body">
+				<div v-if="!narrow || currentPage?.route.name == null" class="nav">
+					<div class="baaadecd">
+						<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
+					</div>
+				</div>
 				<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
 					<div class="bkzroven" style="container-type: inline-size;">
 						<RouterView nested/>
