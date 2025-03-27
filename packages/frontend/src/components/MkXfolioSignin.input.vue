@@ -13,7 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<div style="font-weight: bold; margin-top: 0.5em;">{{ "※Xissmieのユーザー名を登録していない場合は、クロスフォリオにログイン後、マイページからXissmieユーザー名を登録してください。" }}</div>
 				</div>
 
-				<MkButton full rounded gradate data-cy-signup link to="https://xfolio.jp/login" style="padding: 10px">{{ "クロスフォリオでログインする" }}</MkButton>
+				<MkButton full rounded gradate data-cy-signup link to="https://xfolio.jp/mypage/xissmie_setting?from_xissmie=yes" style="padding: 10px">{{ "クロスフォリオでログインする" }}</MkButton>
 
 				<MkButton :class="$style.mainAction" full rounded data-cy-signin @click="signin()">{{ "ID/PASSでログインする" }}</MkButton>
 				<MkLink url="https://xfolio.jp/mypage/xissmie_setting">{{"クロスフォリオでID/PASSを調べる"}}</MkLink>
