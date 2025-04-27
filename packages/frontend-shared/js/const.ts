@@ -90,6 +90,7 @@ export const ROLE_POLICIES = [
 	'canUseTranslator',
 	'canHideAds',
 	'driveCapacityMb',
+	'maxFileSizeMb',
 	'alwaysMarkNsfw',
 	'canUpdateBioMedia',
 	'pinLimit',
