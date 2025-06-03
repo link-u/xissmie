@@ -100,7 +100,6 @@ function select(src: HTMLElement | EventTarget | null, label: string | null, mul
 			text: label,
 			type: 'label',
 		} : undefined, {
-
 			text: i18n.ts.upload + ' (' + i18n.ts.compress + ')',
 			icon: 'ti ti-upload',
 			action: () => chooseFileFromPc(multiple, { keepOriginal: false }).then(files => res(files)),

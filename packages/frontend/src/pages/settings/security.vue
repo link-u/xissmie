@@ -4,15 +4,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<<<<<<< HEAD
-<div class="_gaps_m">
-=======
 <SearchMarker path="/settings/security" :label="i18n.ts.security" :keywords="['security']" icon="ti ti-lock" :inlining="['2fa']">
 	<div class="_gaps_m">
 		<MkFeatureBanner icon="/client-assets/locked_with_key_3d.png" color="#ffbf00">
 			<SearchKeyword>{{ i18n.ts._settings.securityBanner }}</SearchKeyword>
 		</MkFeatureBanner>
->>>>>>> feature/v2025.5.0
 
 		<SearchMarker :keywords="['password']">
 			<FormSection first>
@@ -42,13 +38,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 							</header>
 						</div>
 					</div>
-<<<<<<< HEAD
-				</div>
-			</template>
-		</MkPagination>
-	</FormSection>
-</div>
-=======
 				</template>
 			</MkPagination>
 		</FormSection>
@@ -61,7 +50,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</FormSection>
 	</div>
 </SearchMarker>
->>>>>>> feature/v2025.5.0
 </template>
 
 <script lang="ts" setup>

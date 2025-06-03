@@ -177,13 +177,6 @@ export const ROUTE_DEF = [{
 		name: 'deck',
 		component: page(() => import('@/pages/settings/deck.vue')),
 	}, {
-<<<<<<< HEAD:packages/frontend/src/router/definition.ts
-		path: '/preferences-backups',
-		name: 'preferences-backups',
-		component: page(() => import('@/pages/settings/preferences-backups.vue')),
-	}, {
-=======
->>>>>>> feature/v2025.5.0:packages/frontend/src/router.definition.ts
 		path: '/custom-css',
 		name: 'preferences',
 		component: page(() => import('@/pages/settings/custom-css.vue')),

@@ -140,16 +140,9 @@ const menuDef = computed<SuperMenuDef[]>(() => [{
 		to: '/settings/connect',
 		active: currentPage.value?.route.name === 'connect',
 	}, {
-		icon: 'ti ti-package',
-<<<<<<< HEAD
-		text: i18n.ts.importAndExport,
-		to: '/settings/import-export',
-		active: currentPage.value?.route.name === 'import-export',
-=======
 		text: i18n.ts._settings.accountData,
 		to: '/settings/account-data',
 		active: currentPage.value?.route.name === 'account-data',
->>>>>>> feature/v2025.5.0
 	}, {
 		icon: 'ti ti-dots',
 		text: i18n.ts.other,

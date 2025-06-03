@@ -17,9 +17,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { ref } from 'vue';
 import MkAnimBg from '@/components/MkAnimBg.vue';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import { definePage } from '@/page.js';
 import { $i, login } from '@/account.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import { misskeyApi } from '@/utility/misskey-api.js';
 import { serverContext, assertServerContext } from '@/server-context.js';
 
 const token = assertServerContext(serverContext, 'token') ? serverContext.token : null;
@@ -46,7 +46,7 @@ if ($i != null) {
 	});
 }
 
-definePageMetadata(() => ({
+definePage(() => ({
 	title: 'MiAuth',
 	icon: 'ti ti-apps',
 }));
