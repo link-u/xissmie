@@ -112,12 +112,7 @@ import { globalEvents } from '@/events.js';
 import { store } from '@/store.js';
 import XNavbar from '@/ui/_common_/navbar.vue';
 
-<<<<<<< HEAD
-/*const XStreamIndicator = defineAsyncComponent(() => import('./stream-indicator.vue'));*/
-const XUpload = defineAsyncComponent(() => import('./upload.vue'));
-=======
 const XStreamIndicator = defineAsyncComponent(() => import('./stream-indicator.vue'));
->>>>>>> feature/v2025.6.0
 const XWidgets = defineAsyncComponent(() => import('./widgets.vue'));
 
 const drawerMenuShowing = defineModel<boolean>('drawerMenuShowing');
