@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<div :class="$style.body">
 		<div :class="$style.top">
 			<button v-tooltip.noDelay.right="instance.name ?? i18n.ts.instance" class="_button" :class="$style.instance" @click="openInstanceMenu">
-				<img :src="instance.iconUrl || instance.faviconUrl || '/favicon.ico'" alt="" :class="$style.instanceIcon" style="viewTransitionName: navbar-serverIcon;"/>
+				<img :src="instance.iconUrl || '/favicon.ico'" alt="" :class="$style.instanceIcon" style="viewTransitionName: navbar-serverIcon;"/>
 			</button>
 			<button v-if="!iconOnly" v-tooltip.noDelay.right="i18n.ts.realtimeMode" class="_button" :class="[$style.realtimeMode, store.r.realtimeMode.value ? $style.on : null]" @click="toggleRealtimeMode">
 				<i class="ti ti-bolt ti-fw"></i>
@@ -30,7 +30,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 					:to="navbarItemDef[item].to"
 					v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}"
 				>
-					<i class="ti-fw" :class="[$style.itemIcon, navbarItemDef[item].icon]" :style="{ viewTransitionName: 'navbar-item-' + item }"></i><span :class="$style.itemText">{{ navbarItemDef[item].title }}</span>
+					<template v-if="navbarItemDef[item].icon.startsWith('material-symbols:')">
+						<MkIcon :icon="navbarItemDef[item].icon" :class="$style.itemIcon" :style="{ viewTransitionName: 'navbar-item-' + item }"/>
+					</template>
+					<template v-else>
+						<i class="ti-fw" :class="[$style.itemIcon, navbarItemDef[item].icon]" :style="{ viewTransitionName: 'navbar-item-' + item }"></i>
+					</template>
+					<span :class="$style.itemText">{{ navbarItemDef[item].title }}</span>
 					<span v-if="navbarItemDef[item].indicated" :class="$style.itemIndicator" class="_blink">
 						<span v-if="navbarItemDef[item].indicateValue" class="_indicateCounter" :class="$style.itemIndicateValueIcon">{{ navbarItemDef[item].indicateValue }}</span>
 						<i v-else class="_indicatorCircle"></i>
@@ -111,6 +117,7 @@ import { useRouter } from '@/router.js';
 import { prefer } from '@/preferences.js';
 import { openAccountMenu as openAccountMenu_ } from '@/accounts.js';
 import { $i } from '@/i.js';
+import MkIcon from '@/components/MkIcon.vue';
 
 const router = useRouter();
 
@@ -583,6 +590,8 @@ function menuEdit() {
 		position: relative;
 		width: 32px;
 		margin-right: 8px;
+
+		display: inline-flex;
 	}
 
 	.itemIndicator {
@@ -798,6 +807,40 @@ function menuEdit() {
 		display: block;
 		margin: 0 auto;
 		opacity: 0.7;
+
+		/* MkIconコンポーネント用のスタイル */
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 20px;
+		color: inherit;
+
+		/* MkIconコンポーネント内のSVGの色を強制的に設定 */
+		:deep(svg) {
+			fill: currentColor !important;
+		}
+
+		:deep(path) {
+			fill: currentColor !important;
+		}
+
+		/* MkIconコンポーネント全体に色を適用 */
+		:deep(.root) {
+			color: inherit !important;
+		}
+
+		/* より具体的なセレクタで色を強制 */
+		:deep(div) {
+			color: inherit !important;
+
+			svg {
+				fill: currentColor !important;
+
+				path {
+					fill: currentColor !important;
+				}
+			}
+		}
 	}
 
 	.itemText {

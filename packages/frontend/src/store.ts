@@ -196,6 +196,7 @@ export const store = markRaw(new Pizzax('base', {
 			'followRequests',
 			'-',
 			'xfolio',
+			'xfolioSupport',
 			'explore',
 			'announcements',
 			'search',

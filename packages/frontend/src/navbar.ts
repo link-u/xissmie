@@ -50,6 +50,13 @@ export const navbarItemDef = reactive({
 			window.open('https://xfolio.jp', '_blank', 'noopener');
 		},
 	},
+	xfolioSupport: {
+		title: 'クロスフォリオを支援する',
+		icon: 'material-symbols:volunteer_activism',
+		action: () => {
+			window.open('https://xfolio.jp/portfolio/xissmie/fan_community', '_blank', 'noopener');
+		},
+	},
 	explore: {
 		title: i18n.ts.explore,
 		icon: 'ti ti-hash',

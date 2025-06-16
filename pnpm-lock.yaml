@@ -710,6 +710,9 @@ importers:
       '@github/webauthn-json':
         specifier: 2.1.1
         version: 2.1.1
+      '@material-symbols/svg-400':
+        specifier: 0.31.7
+        version: 0.31.7
       '@mcaptcha/vanilla-glue':
         specifier: 0.1.0-alpha-3
         version: 0.1.0-alpha-3
@@ -2830,6 +2833,9 @@ packages:
   '@mapbox/node-pre-gyp@1.0.9':
     resolution: {integrity: sha512-aDF3S3rK9Q2gey/WAttUlISduDItz5BU3306M9Eyv6/oS40aMprnopshtlKTykxRNIBEZuRMaZAnbrQ4QtKGyw==}
     hasBin: true
+
+  '@material-symbols/svg-400@0.31.7':
+    resolution: {integrity: sha512-1+GpHYkGftXQjFvRS8UgAO5PkvjBz7zfWBOInh7PwIFLpFILBxd7FbaAhoqUl6PddcgDHHpUpDPluhQQwpyqIw==}
 
   '@mcaptcha/core-glue@0.1.0-alpha-5':
     resolution: {integrity: sha512-16qWm5O5X0Y9LXULULaAks8Vf9FNlUUBcR5KDt49aWhFhG5++JzxNmCwQM9EJSHNU7y0U+FdyAWcGmjfKlkRLA==}
@@ -12768,6 +12774,8 @@ snapshots:
       - supports-color
     optional: true
 
+  '@material-symbols/svg-400@0.31.7': {}
+
   '@mcaptcha/core-glue@0.1.0-alpha-5': {}
 
   '@mcaptcha/vanilla-glue@0.1.0-alpha-3':
@@ -14432,7 +14440,7 @@ snapshots:
 
   '@stylistic/eslint-plugin@2.13.0(eslint@9.27.0)(typescript@5.8.3)':
     dependencies:
-      '@typescript-eslint/utils': 8.32.1(eslint@9.27.0)(typescript@5.8.3)
+      '@typescript-eslint/utils': 8.33.0(eslint@9.27.0)(typescript@5.8.3)
       eslint: 9.27.0
       eslint-visitor-keys: 4.2.0
       espree: 10.3.0

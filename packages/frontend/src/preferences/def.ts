@@ -171,6 +171,7 @@ export const PREF_DEF = definePreferences({
 			'chat',
 			'-',
 			'xfolio',
+			'xfolioSupport',
 			'explore',
 			'announcements',
 			'channels',

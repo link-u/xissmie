@@ -23,7 +23,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 							:class="$style.item"
 						>
 							<button class="_button" :class="$style.itemHandle"><i class="ti ti-menu"></i></button>
-							<i class="ti-fw" :class="[$style.itemIcon, navbarItemDef[element.type]?.icon]"></i><span :class="$style.itemText">{{ navbarItemDef[element.type]?.title ?? i18n.ts.divider }}</span>
+							<template v-if="navbarItemDef[element.type]?.icon?.startsWith('material-symbols:')">
+								<MkIcon :icon="navbarItemDef[element.type].icon" :class="$style.itemIcon"/>
+							</template>
+							<template v-else>
+								<i class="ti-fw" :class="[$style.itemIcon, navbarItemDef[element.type]?.icon]"></i>
+							</template>
+							<span :class="$style.itemText">{{ navbarItemDef[element.type]?.title ?? i18n.ts.divider }}</span>
 							<button class="_button" :class="$style.itemRemove" @click="removeItem(index)"><i class="ti ti-x"></i></button>
 						</div>
 					</template>
@@ -70,6 +76,7 @@ import { definePage } from '@/page.js';
 import { prefer } from '@/preferences.js';
 import { PREF_DEF } from '@/preferences/def.js';
 import { getInitialPrefValue } from '@/preferences/manager.js';
+import MkIcon from '@/components/MkIcon.vue';
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
@@ -138,6 +145,22 @@ definePage(() => ({
 	position: relative;
 	width: 32px;
 	margin-right: 8px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	/* MkIconコンポーネント内のSVGの色を設定 */
+	:deep(svg) {
+		fill: currentColor !important;
+	}
+
+	:deep(path) {
+		fill: currentColor !important;
+	}
+
+	:deep(.root) {
+		color: inherit !important;
+	}
 }
 
 .itemText {
