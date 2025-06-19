@@ -77,11 +77,12 @@ import { prefer } from '@/preferences.js';
 import { PREF_DEF } from '@/preferences/def.js';
 import { getInitialPrefValue } from '@/preferences/manager.js';
 import MkIcon from '@/components/MkIcon.vue';
+import { genId } from '@/utility/id.js';
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
 const items = ref(prefer.s.menu.map(x => ({
-	id: Math.random().toString(),
+	id: genId(),
 	type: x,
 })));
 
@@ -100,7 +101,7 @@ async function addItem() {
 	});
 	if (canceled) return;
 	items.value = [...items.value, {
-		id: Math.random().toString(),
+		id: genId(),
 		type: item,
 	}];
 }
@@ -115,7 +116,7 @@ async function save() {
 
 function reset() {
 	items.value = getInitialPrefValue('menu').map(x => ({
-		id: Math.random().toString(),
+		id: genId(),
 		type: x,
 	}));
 }
