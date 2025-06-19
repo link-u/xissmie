@@ -35,14 +35,23 @@ if ($i != null) {
 	misskeyApi('login-with-token', {
 		token: token,
 	}).then((user) => {
-		login(user.token, undefined, false).then(() => {
-			message.value = 'Xfolioへのログインが完了しました！';
-			window.location.href = '/timeline';
-		}).catch(() => {
-			message.value = 'アカウント情報の取得に失敗しました';
-		});
-	}).catch(() => {
-		message.value = 'ログインに失敗しました';
+		if (user && user.token && typeof user.token === 'string') {
+			login(user.token, undefined, false).then(() => {
+				message.value = 'Xfolioへのログインが完了しました！';
+				window.location.href = '/timeline';
+			}).catch(() => {
+				message.value = 'アカウント情報の取得に失敗しました';
+			});
+		} else {
+			message.value = 'ログイン情報の取得に失敗しました';
+		}
+	}).catch((err) => {
+		console.error('Login failed:', err);
+		if (err?.code === 'INVALID_LOGIN_TOKEN') {
+			message.value = 'ログイン用トークンが無効です。再度ログインしてください。';
+		} else {
+			message.value = 'ログインに失敗しました';
+		}
 	});
 }
 

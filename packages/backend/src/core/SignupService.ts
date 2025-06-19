@@ -151,7 +151,7 @@ export class SignupService {
 
 			loginToken = await transactionalEntityManager.save(new MiXissmeLoginToken({
 				userId: account.id,
-				token: generateUserToken(),
+				token: generateNativeUserToken(),
 			}));
 		});
 
