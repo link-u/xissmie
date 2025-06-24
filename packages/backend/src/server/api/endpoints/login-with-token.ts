@@ -5,11 +5,12 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { EntityNotFoundError } from 'typeorm';
-import type { UserProfilesRepository, XissmeLoginTokensRepository } from '@/models/_.js';
+import type { UserProfilesRepository, UsersRepository, XissmeLoginTokensRepository } from '@/models/_.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { DI } from '@/di-symbols.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import { secureRndstr } from '@/misc/secure-rndstr.js';
+import { generateNativeUserToken } from '@/misc/token.js';
 import { ApiError } from '@/server/api/error.js';
 
 export const meta = {
@@ -41,6 +42,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
 
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
+
 		private userEntityService: UserEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -63,7 +67,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					relations: ['user'],
 				});
 
-				const user = await this.userEntityService.pack(userProfile.user!, userProfile.user!, {
+				if (!userProfile.user) {
+					throw new ApiError(meta.errors.invalidToken);
+				}
+
+				// Ensure user has a token - generate one if they don't
+				if (!userProfile.user.token) {
+					const newToken = generateNativeUserToken();
+					await this.usersRepository.update(userProfile.user.id, {
+						token: newToken,
+					});
+					userProfile.user.token = newToken;
+				}
+
+				const user = await this.userEntityService.pack(userProfile.user, userProfile.user, {
 					schema: 'MeDetailed',
 					includeSecrets: true,
 					userProfile,
@@ -71,7 +88,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 				return {
 					...user,
-					token: userProfile.user!.token,
+					token: userProfile.user.token,
 				};
 			} catch (err) {
 				if (err instanceof EntityNotFoundError) {

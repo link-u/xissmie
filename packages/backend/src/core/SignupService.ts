@@ -162,7 +162,7 @@ export class SignupService {
 			await this.metaService.update({ rootUserId: account.id });
 		}
 
-		return { account, secret };
+		return { account, secret, loginToken };
 	}
 }
 
