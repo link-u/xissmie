@@ -5,7 +5,6 @@
 
 import { randomUUID } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
-import type { OnApplicationShutdown } from '@nestjs/common';
 import { DataSource, IsNull } from 'typeorm';
 import * as Redis from 'ioredis';
 import bcrypt from 'bcryptjs';
@@ -16,9 +15,10 @@ import type { GlobalEvents } from '@/core/GlobalEventService.js';
 import { MemoryKVCache } from '@/misc/cache.js';
 import { DI } from '@/di-symbols.js';
 import { bindThis } from '@/decorators.js';
-import { generateNativeUserToken } from '@/misc/token.js';
+import generateToken from '@/misc/token.js';
 import { IdService } from '@/core/IdService.js';
 import { genRsaKeyPair } from '@/misc/gen-key-pair.js';
+import type { OnApplicationShutdown } from '@nestjs/common';
 
 export const SYSTEM_ACCOUNT_TYPES = ['actor', 'relay', 'proxy'] as const;
 
@@ -117,7 +117,7 @@ export class SystemAccountService implements OnApplicationShutdown {
 		const hash = await bcrypt.hash(password, salt);
 
 		// Generate secret
-		const secret = generateNativeUserToken();
+		const secret = generateToken();
 
 		const keyPair = await genRsaKeyPair();
 

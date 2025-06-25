@@ -10,7 +10,7 @@ import { Endpoint } from '@/server/api/endpoint-base.js';
 import { DI } from '@/di-symbols.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import { secureRndstr } from '@/misc/secure-rndstr.js';
-import { generateNativeUserToken } from '@/misc/token.js';
+import generateToken from '@/misc/token.js';
 import { ApiError } from '@/server/api/error.js';
 
 export const meta = {
@@ -73,7 +73,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 				// Ensure user has a token - generate one if they don't
 				if (!userProfile.user.token) {
-					const newToken = generateNativeUserToken();
+					const newToken = generateToken();
 					await this.usersRepository.update(userProfile.user.id, {
 						token: newToken,
 					});

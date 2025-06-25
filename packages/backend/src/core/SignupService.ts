@@ -14,7 +14,7 @@ import { MiUserProfile } from '@/models/UserProfile.js';
 import { IdService } from '@/core/IdService.js';
 import { MiUserKeypair } from '@/models/UserKeypair.js';
 import { MiUsedUsername } from '@/models/UsedUsername.js';
-import { generateNativeUserToken } from '@/misc/token.js';
+import generateToken from '@/misc/token.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import { bindThis } from '@/decorators.js';
 import UsersChart from '@/core/chart/charts/users.js';
@@ -76,7 +76,7 @@ export class SignupService {
 		}
 
 		// Generate secret
-		const secret = generateNativeUserToken();
+		const secret = generateToken();
 
 		// Check username duplication
 		if (await this.usersRepository.exists({ where: { usernameLower: username.toLowerCase(), host: IsNull() } })) {
@@ -151,7 +151,7 @@ export class SignupService {
 
 			loginToken = await transactionalEntityManager.save(new MiXissmeLoginToken({
 				userId: account.id,
-				token: generateNativeUserToken(),
+				token: generateToken(),
 			}));
 		});
 

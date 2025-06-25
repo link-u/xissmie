@@ -10,4 +10,6 @@ export default () => 'Xissme' + secureRndstr(32);
 
 export const generateNativeUserToken = () => secureRndstr(16);
 
-export const isNativeUserToken = (token: string) => token.length === 16;
+// バージョンアップ前後の両方のトークンをサポート
+// 16文字の従来トークン または 'Xissme'で始まる新トークン
+export const isNativeUserToken = (token: string) => token.length === 16 || token.startsWith('Xissme');
