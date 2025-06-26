@@ -10,18 +10,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<SearchKeyword>{{ i18n.ts._settings.securityBanner }}</SearchKeyword>
 		</MkFeatureBanner>
 
-		<SearchMarker :keywords="['password']">
-			<FormSection first>
-				<template #label><SearchLabel>{{ i18n.ts.password }}</SearchLabel></template>
-
-				<SearchMarker>
-					<MkButton primary @click="change()">
-						<SearchLabel>{{ i18n.ts.changePassword }}</SearchLabel>
-					</MkButton>
-				</SearchMarker>
-			</FormSection>
-		</SearchMarker>
-
 		<X2fa/>
 
 		<FormSection>
@@ -41,13 +29,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</template>
 			</MkPagination>
 		</FormSection>
-
-		<FormSection>
-			<FormSlot>
-				<MkButton danger @click="regenerateToken"><i class="ti ti-refresh"></i> {{ i18n.ts.regenerateLoginToken }}</MkButton>
-				<template #caption>{{ i18n.ts.regenerateLoginTokenDescription }}</template>
-			</FormSlot>
-		</FormSection>
 	</div>
 </SearchMarker>
 </template>
@@ -56,7 +37,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { computed } from 'vue';
 import X2fa from './2fa.vue';
 import FormSection from '@/components/form/section.vue';
-import FormSlot from '@/components/form/slot.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import * as os from '@/os.js';
@@ -69,49 +49,6 @@ const pagination = {
 	endpoint: 'i/signin-history' as const,
 	limit: 5,
 };
-
-async function change() {
-	const { canceled: canceled2, result: newPassword } = await os.inputText({
-		title: i18n.ts.newPassword,
-		type: 'password',
-		autocomplete: 'new-password',
-	});
-	if (canceled2) return;
-
-	const { canceled: canceled3, result: newPassword2 } = await os.inputText({
-		title: i18n.ts.newPasswordRetype,
-		type: 'password',
-		autocomplete: 'new-password',
-	});
-	if (canceled3) return;
-
-	if (newPassword !== newPassword2) {
-		os.alert({
-			type: 'error',
-			text: i18n.ts.retypedNotMatch,
-		});
-		return;
-	}
-
-	const auth = await os.authenticateDialog();
-	if (auth.canceled) return;
-
-	os.apiWithDialog('i/change-password', {
-		currentPassword: auth.result.password,
-		token: auth.result.token,
-		newPassword,
-	});
-}
-
-async function regenerateToken() {
-	const auth = await os.authenticateDialog();
-	if (auth.canceled) return;
-
-	misskeyApi('i/regenerate-token', {
-		password: auth.result.password,
-		token: auth.result.token,
-	});
-}
 
 const headerActions = computed(() => []);
 

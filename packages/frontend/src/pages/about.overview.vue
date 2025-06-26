@@ -95,17 +95,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</div>
 		</div>
 	</FormSection>
-
-	<FormSection>
-		<template #label>Well-known resources</template>
-		<div class="_gaps_s">
-			<FormLink to="/.well-known/host-meta" external>host-meta</FormLink>
-			<FormLink to="/.well-known/host-meta.json" external>host-meta.json</FormLink>
-			<FormLink to="/.well-known/nodeinfo" external>nodeinfo</FormLink>
-			<FormLink to="/robots.txt" external>robots.txt</FormLink>
-			<FormLink to="/manifest.json" external>manifest.json</FormLink>
-		</div>
-	</FormSection>
 </div>
 </template>
 
