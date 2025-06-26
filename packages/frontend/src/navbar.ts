@@ -51,7 +51,7 @@ export const navbarItemDef = reactive({
 		},
 	},
 	xfolioSupport: {
-		title: 'クロスフォリオを支援する',
+		title: 'Xissmieを支援する',
 		icon: 'material-symbols:volunteer_activism',
 		action: () => {
 			window.open('https://xfolio.jp/portfolio/xissmie/fan_community', '_blank', 'noopener');
