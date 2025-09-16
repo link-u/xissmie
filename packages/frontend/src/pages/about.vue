@@ -40,6 +40,7 @@ watch(tab, () => {
 
 const headerActions = computed(() => []);
 
+<<<<<<< HEAD
 const headerTabs = computed(() => {
 	const items = [];
 
