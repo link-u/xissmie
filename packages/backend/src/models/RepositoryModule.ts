@@ -84,6 +84,8 @@ import {
 	MiChatRoomMembership,
 	MiChatRoomInvitation,
 	MiChatApproval,
+	MiUserOwnedAvatarDecoration,
+	MiUserOwnedEmoji,
 } from './_.js';
 import type { Provider } from '@nestjs/common';
 import type { DataSource } from 'typeorm';
@@ -544,6 +546,18 @@ const $xissmeLoginTokensRepository: Provider = {
 	inject: [DI.db],
 };
 
+const $userOwnedAvatarDecorationsRepository: Provider = {
+	provide: DI.userOwnedAvatarDecorationsRepository,
+	useFactory: (db: DataSource) => db.getRepository(MiUserOwnedAvatarDecoration).extend(miRepository as MiRepository<MiUserOwnedAvatarDecoration>),
+	inject: [DI.db],
+};
+
+const $userOwnedEmojisRepository: Provider = {
+	provide: DI.userOwnedEmojisRepository,
+	useFactory: (db: DataSource) => db.getRepository(MiUserOwnedEmoji).extend(miRepository as MiRepository<MiUserOwnedEmoji>),
+	inject: [DI.db],
+};
+
 @Module({
 	imports: [],
 	providers: [
@@ -623,6 +637,8 @@ const $xissmeLoginTokensRepository: Provider = {
 		$bubbleGameRecordsRepository,
 		$reversiGamesRepository,
 		$xissmeLoginTokensRepository,
+		$userOwnedAvatarDecorationsRepository,
+		$userOwnedEmojisRepository,
 	],
 	exports: [
 		$usersRepository,
@@ -701,6 +717,8 @@ const $xissmeLoginTokensRepository: Provider = {
 		$bubbleGameRecordsRepository,
 		$reversiGamesRepository,
 		$xissmeLoginTokensRepository,
+		$userOwnedAvatarDecorationsRepository,
+		$userOwnedEmojisRepository,
 	],
 })
 export class RepositoryModule {
