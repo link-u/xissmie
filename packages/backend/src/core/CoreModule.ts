@@ -146,6 +146,7 @@ import { JsonLdService } from './activitypub/JsonLdService.js';
 import { RemoteLoggerService } from './RemoteLoggerService.js';
 import { RemoteUserResolveService } from './RemoteUserResolveService.js';
 import { WebfingerService } from './WebfingerService.js';
+import { XissmieStoreService } from './XissmieStoreService.js';
 import { ApImageService } from './activitypub/models/ApImageService.js';
 import { ApMentionService } from './activitypub/models/ApMentionService.js';
 import { ApNoteService } from './activitypub/models/ApNoteService.js';
@@ -303,6 +304,7 @@ const $ApMentionService: Provider = { provide: 'ApMentionService', useExisting: 
 const $ApNoteService: Provider = { provide: 'ApNoteService', useExisting: ApNoteService };
 const $ApPersonService: Provider = { provide: 'ApPersonService', useExisting: ApPersonService };
 const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting: ApQuestionService };
+const $XissmieStoreService: Provider = { provide: 'XissmieStoreService', useExisting: XissmieStoreService };
 //#endregion
 
 @Module({
@@ -457,6 +459,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		ApPersonService,
 		ApQuestionService,
 		QueueService,
+		XissmieStoreService,
 
 		//#region 文字列ベースでのinjection用(循環参照対応のため)
 		$LoggerService,
@@ -605,6 +608,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$ApNoteService,
 		$ApPersonService,
 		$ApQuestionService,
+		$XissmieStoreService,
 		//#endregion
 	],
 	exports: [
@@ -755,6 +759,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		ApPersonService,
 		ApQuestionService,
 		QueueService,
+		XissmieStoreService,
 
 		//#region 文字列ベースでのinjection用(循環参照対応のため)
 		$LoggerService,
@@ -901,6 +906,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$ApNoteService,
 		$ApPersonService,
 		$ApQuestionService,
+		$XissmieStoreService,
 		//#endregion
 	],
 })
