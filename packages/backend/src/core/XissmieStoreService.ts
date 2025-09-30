@@ -5,7 +5,7 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
-import type { UserOwnedAvatarDecorationsRepository, UserOwnedEmojisRepository } from '@/models/_.js';
+import type { MiUser, UserOwnedAvatarDecorationsRepository, UserOwnedEmojisRepository } from '@/models/_.js';
 import { IdService } from '@/core/IdService.js';
 import { DI } from '@/di-symbols.js';
 import { bindThis } from '@/decorators.js';
@@ -23,5 +23,35 @@ export class XissmieStoreService {
 		private idService: IdService,
 		private cacheService: CacheService,
 	) {
+	}
+
+	@bindThis
+	public async fetchStoreDecorations(): Promise<void> {
+		// TODO: make http request to xfolio
+	}
+
+	@bindThis
+	public async fetchStoreEmojis(): Promise<void> {
+		// TODO: make http request to xfolio
+	}
+
+	@bindThis
+	public async avatarDecorationPurchased(userId: MiUser['id'], avatarDecorationIds: string[], purchasedAt: Date | null = null): Promise<void> {
+		await this.userOwnedAvatarDecorationsRepository.insert(avatarDecorationIds.map((avatarDecorationId) => ({
+			id: this.idService.gen(),
+			userId,
+			avatarDecorationId,
+			purchasedAt: purchasedAt ?? new Date(),
+		})));
+	}
+
+	@bindThis
+	public async emojiPurchased(userId: MiUser['id'], emojiIds: string[], purchasedAt: Date | null = null): Promise<void> {
+		await this.userOwnedEmojisRepository.insert(emojiIds.map((emojiId) => ({
+			id: this.idService.gen(),
+			userId,
+			emojiId,
+			purchasedAt: purchasedAt ?? new Date(),
+		})));
 	}
 }

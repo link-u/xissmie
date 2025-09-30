@@ -53,7 +53,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const emojis = await this.emojisRepository.find({
 				where: {
 					host: IsNull(),
-					isInStore: false,
+					isInStore: true,
 				},
 				order: {
 					category: 'ASC',
