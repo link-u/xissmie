@@ -114,7 +114,17 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		if (noCache) {
 			this.cache.delete();
 		}
-		return this.cache.fetch(() => this.avatarDecorationsRepository.find());
+		return this.cache.fetch(() => this.avatarDecorationsRepository.findBy({
+			isInStore: false,
+		}));
+	}
+
+	// TODO: pagination
+	@bindThis
+	public async getFromStore(): Promise<MiAvatarDecoration[]> {
+		return this.avatarDecorationsRepository.findBy({
+			isInStore: true,
+		});
 	}
 
 	@bindThis
