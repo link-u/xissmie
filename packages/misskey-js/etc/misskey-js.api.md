@@ -2147,6 +2147,8 @@ declare namespace entities {
         V2AdminEmojiListRequest,
         V2AdminEmojiListResponse,
         VerifyEmailRequest,
+        XissmieStoreAvatarDecorationsResponse,
+        XissmieStoreEmojisResponse,
         Error_2 as Error,
         UserLite,
         UserDetailedNotMeOnly,
@@ -3845,6 +3847,12 @@ type V2AdminEmojiListResponse = operations['v2___admin___emoji___list']['respons
 
 // @public (undocumented)
 type VerifyEmailRequest = operations['verify-email']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type XissmieStoreAvatarDecorationsResponse = operations['xissmie___store-avatar-decorations']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type XissmieStoreEmojisResponse = operations['xissmie___store-emojis']['responses']['200']['content']['application/json'];
 
 // Warnings were encountered during analysis:
 //
