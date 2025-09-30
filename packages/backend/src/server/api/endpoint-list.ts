@@ -443,3 +443,5 @@ export * as 'v2/admin/emoji/list' from './endpoints/v2/admin/emoji/list.js';
 export * as 'login-with-token' from './endpoints/login-with-token.js';
 export * as 'xissmie/store-emojis' from './endpoints/xissmie/store-emojis.js';
 export * as 'xissmie/store-avatar-decorations' from './endpoints/xissmie/store-avatar-decorations.js';
+export * as 'xissmie/purchased-emojis' from './endpoints/xissmie/purchased-emojis.js';
+export * as 'xissmie/purchased-avatar-decorations' from './endpoints/xissmie/purchased-avatar-decorations.js';

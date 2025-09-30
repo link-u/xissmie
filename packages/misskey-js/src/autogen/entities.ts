@@ -660,5 +660,7 @@ export type UsersUpdateMemoRequest = operations['users___update-memo']['requestB
 export type V2AdminEmojiListRequest = operations['v2___admin___emoji___list']['requestBody']['content']['application/json'];
 export type V2AdminEmojiListResponse = operations['v2___admin___emoji___list']['responses']['200']['content']['application/json'];
 export type VerifyEmailRequest = operations['verify-email']['requestBody']['content']['application/json'];
+export type XissmiePurchasedAvatarDecorationsResponse = operations['xissmie___purchased-avatar-decorations']['responses']['200']['content']['application/json'];
+export type XissmiePurchasedEmojisResponse = operations['xissmie___purchased-emojis']['responses']['200']['content']['application/json'];
 export type XissmieStoreAvatarDecorationsResponse = operations['xissmie___store-avatar-decorations']['responses']['200']['content']['application/json'];
 export type XissmieStoreEmojisResponse = operations['xissmie___store-emojis']['responses']['200']['content']['application/json'];
