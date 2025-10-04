@@ -2149,7 +2149,9 @@ declare namespace entities {
         VerifyEmailRequest,
         XissmiePurchasedAvatarDecorationsResponse,
         XissmiePurchasedEmojisResponse,
+        XissmieStoreAvatarDecorationsRequest,
         XissmieStoreAvatarDecorationsResponse,
+        XissmieStoreEmojisRequest,
         XissmieStoreEmojisResponse,
         Error_2 as Error,
         UserLite,
@@ -3857,7 +3859,13 @@ type XissmiePurchasedAvatarDecorationsResponse = operations['xissmie___purchased
 type XissmiePurchasedEmojisResponse = operations['xissmie___purchased-emojis']['responses']['200']['content']['application/json'];
 
 // @public (undocumented)
+type XissmieStoreAvatarDecorationsRequest = operations['xissmie___store-avatar-decorations']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
 type XissmieStoreAvatarDecorationsResponse = operations['xissmie___store-avatar-decorations']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type XissmieStoreEmojisRequest = operations['xissmie___store-emojis']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
 type XissmieStoreEmojisResponse = operations['xissmie___store-emojis']['responses']['200']['content']['application/json'];

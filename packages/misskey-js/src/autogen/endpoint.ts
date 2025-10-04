@@ -659,7 +659,9 @@ import type {
 	VerifyEmailRequest,
 	XissmiePurchasedAvatarDecorationsResponse,
 	XissmiePurchasedEmojisResponse,
+	XissmieStoreAvatarDecorationsRequest,
 	XissmieStoreAvatarDecorationsResponse,
+	XissmieStoreEmojisRequest,
 	XissmieStoreEmojisResponse,
 } from './entities.js';
 
@@ -1097,8 +1099,8 @@ export type Endpoints = {
 	'verify-email': { req: VerifyEmailRequest; res: EmptyResponse };
 	'xissmie/purchased-avatar-decorations': { req: EmptyRequest; res: XissmiePurchasedAvatarDecorationsResponse };
 	'xissmie/purchased-emojis': { req: EmptyRequest; res: XissmiePurchasedEmojisResponse };
-	'xissmie/store-avatar-decorations': { req: EmptyRequest; res: XissmieStoreAvatarDecorationsResponse };
-	'xissmie/store-emojis': { req: EmptyRequest; res: XissmieStoreEmojisResponse };
+	'xissmie/store-avatar-decorations': { req: XissmieStoreAvatarDecorationsRequest; res: XissmieStoreAvatarDecorationsResponse };
+	'xissmie/store-emojis': { req: XissmieStoreEmojisRequest; res: XissmieStoreEmojisResponse };
 };
 
 /**

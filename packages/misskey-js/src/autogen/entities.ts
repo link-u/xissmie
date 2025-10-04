@@ -662,5 +662,7 @@ export type V2AdminEmojiListResponse = operations['v2___admin___emoji___list']['
 export type VerifyEmailRequest = operations['verify-email']['requestBody']['content']['application/json'];
 export type XissmiePurchasedAvatarDecorationsResponse = operations['xissmie___purchased-avatar-decorations']['responses']['200']['content']['application/json'];
 export type XissmiePurchasedEmojisResponse = operations['xissmie___purchased-emojis']['responses']['200']['content']['application/json'];
+export type XissmieStoreAvatarDecorationsRequest = operations['xissmie___store-avatar-decorations']['requestBody']['content']['application/json'];
 export type XissmieStoreAvatarDecorationsResponse = operations['xissmie___store-avatar-decorations']['responses']['200']['content']['application/json'];
+export type XissmieStoreEmojisRequest = operations['xissmie___store-emojis']['requestBody']['content']['application/json'];
 export type XissmieStoreEmojisResponse = operations['xissmie___store-emojis']['responses']['200']['content']['application/json'];
