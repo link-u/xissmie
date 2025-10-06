@@ -5,7 +5,7 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
-import type { EmojisRepository, NoteReactionsRepository, UsersRepository, NotesRepository, MiMeta } from '@/models/_.js';
+import type { EmojisRepository, NoteReactionsRepository, UsersRepository, NotesRepository, MiMeta, UserOwnedEmojisRepository } from '@/models/_.js';
 import { IdentifiableError } from '@/misc/identifiable-error.js';
 import type { MiRemoteUser, MiUser } from '@/models/User.js';
 import type { MiNote } from '@/models/Note.js';
@@ -85,6 +85,9 @@ export class ReactionService {
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
 
+		@Inject(DI.userOwnedEmojisRepository)
+		private userOwnedEmojisRepository: UserOwnedEmojisRepository,
+
 		private utilityService: UtilityService,
 		private customEmojiService: CustomEmojiService,
 		private roleService: RoleService,
@@ -140,7 +143,16 @@ export class ReactionService {
 					});
 
 				if (emoji) {
-					if (emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length === 0 || (await this.roleService.getUserRoles(user.id)).some(r => emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.includes(r.id))) {
+					let isOwned = true;
+					if (emoji.isInStore) {
+						const owned = await this.userOwnedEmojisRepository.findOneBy({
+							userId: user.id,
+							emojiId: emoji.id,
+						});
+						if (owned == null) isOwned = false;
+					}
+
+					if (isOwned && (emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length === 0 || (await this.roleService.getUserRoles(user.id)).some(r => emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.includes(r.id)))) {
 						reaction = reacterHost ? `:${name}@${reacterHost}:` : `:${name}:`;
 
 						// センシティブ
