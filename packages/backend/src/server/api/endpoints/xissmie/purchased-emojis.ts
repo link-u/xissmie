@@ -9,6 +9,7 @@ import type { UserOwnedEmojisRepository } from '@/models/_.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
 import { DI } from '@/di-symbols.js';
+import { XissmieStoreService } from '@/core/XissmieStoreService.js';
 
 export const meta = {
 	tags: ['meta'],
@@ -46,8 +47,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private userOwnedEmojisRepository: UserOwnedEmojisRepository,
 
 		private emojiEntityService: EmojiEntityService,
+		private xissmieStoreService: XissmieStoreService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
+			await this.xissmieStoreService.fetchPurchasedEmojisFromStore(me.id);
+
 			const ownedEmojis = await this.userOwnedEmojisRepository.find({
 				where: {
 					userId: me.id,
