@@ -84,6 +84,7 @@ export class XissmieStoreService {
 		const newDecorations = data.avatarDecorations.filter(x => !currentlyOwnedDecorationIds.has(x.id));
 
 		if (newDecorations.length > 0) {
+			// TODO: 当該コンテンツがまだfetchされていなかった場合のケア
 			await this.userOwnedAvatarDecorationsRepository.insert(newDecorations.map((x) => ({
 				id: this.idService.gen(),
 				userId,
@@ -120,6 +121,7 @@ export class XissmieStoreService {
 		const newEmojis = data.emojis.filter(x => !currentlyOwnedEmojiIds.has(x.id));
 
 		if (newEmojis.length > 0) {
+			// TODO: 当該コンテンツがまだfetchされていなかった場合のケア
 			await this.userOwnedEmojisRepository.insert(newEmojis.map((x) => ({
 				id: this.idService.gen(),
 				userId,
