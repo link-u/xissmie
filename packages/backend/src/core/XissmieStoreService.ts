@@ -68,6 +68,7 @@ export class XissmieStoreService {
 
 		const params = new URLSearchParams({
 			userId,
+			token: process.env.XFOLIO_API_TOKEN,
 		});
 
 		const res = await this.httpRequestService.send('???', {
@@ -103,6 +104,7 @@ export class XissmieStoreService {
 
 		const params = new URLSearchParams({
 			userId,
+			token: process.env.XFOLIO_API_TOKEN,
 		});
 
 		const res = await this.httpRequestService.send('???', {
