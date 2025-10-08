@@ -373,7 +373,7 @@ watch(q, () => {
 
 			for (const index of Object.values(store.s.additionalUnicodeEmojiIndexes)) {
 				for (const emoji of emojis) {
-					if (keywords.every(keyword => index[emoji.char].some(k => k.includes(keyword)))) {
+					if (keywords.every(keyword => index[emoji.char]?.some(k => k.includes(keyword)))) {
 						matches.add(emoji);
 						if (matches.size >= max) break;
 					}
@@ -390,7 +390,7 @@ watch(q, () => {
 
 			for (const index of Object.values(store.s.additionalUnicodeEmojiIndexes)) {
 				for (const emoji of emojis) {
-					if (index[emoji.char].some(k => k.startsWith(newQ))) {
+					if (index[emoji.char]?.some(k => k.startsWith(newQ))) {
 						matches.add(emoji);
 						if (matches.size >= max) break;
 					}
@@ -407,7 +407,7 @@ watch(q, () => {
 
 			for (const index of Object.values(store.s.additionalUnicodeEmojiIndexes)) {
 				for (const emoji of emojis) {
-					if (index[emoji.char].some(k => k.includes(newQ))) {
+					if (index[emoji.char]?.some(k => k.includes(newQ))) {
 						matches.add(emoji);
 						if (matches.size >= max) break;
 					}
