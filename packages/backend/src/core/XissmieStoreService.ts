@@ -5,7 +5,7 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
-import type { MiUser, UserOwnedAvatarDecorationsRepository, UserOwnedEmojisRepository } from '@/models/_.js';
+import type { MiUser, UserOwnedAvatarDecorationsRepository, UserOwnedEmojisRepository, EmojisRepository, AvatarDecorationsRepository } from '@/models/_.js';
 import { IdService } from '@/core/IdService.js';
 import { DI } from '@/di-symbols.js';
 import { bindThis } from '@/decorators.js';
@@ -21,6 +21,12 @@ export class XissmieStoreService {
 		@Inject(DI.userOwnedEmojisRepository)
 		private userOwnedEmojisRepository: UserOwnedEmojisRepository,
 
+		@Inject(DI.emojisRepository)
+		private emojisRepository: EmojisRepository,
+
+		@Inject(DI.avatarDecorationsRepository)
+		private avatarDecorationsRepository: AvatarDecorationsRepository,
+
 		private idService: IdService,
 		private cacheService: CacheService,
 		private httpRequestService: HttpRequestService,
@@ -29,12 +35,66 @@ export class XissmieStoreService {
 
 	@bindThis
 	public async fetchStoreDecorations(): Promise<void> {
-		// TODO: make http request to xfolio
+		const params = new URLSearchParams({
+			token: process.env.XFOLIO_API_TOKEN,
+		});
+
+		const res = await this.httpRequestService.send('???/api/v1/xissmie/decorations_list', {
+			method: 'POST',
+			body: params.toString(),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		});
+
+		const data = await res.json() as {
+			id: string;
+			name: string;
+			imageUrl: string;
+			authorId: string;
+			authorName: string;
+			updatedAt: number;
+		}[];
+
+		await this.avatarDecorationsRepository.upsert(data.map((x) => ({
+			id: x.id,
+			name: `${x.name}-store-${x.id}`,
+			originalUrl: x.imageUrl,
+			publicUrl: x.imageUrl,
+			updatedAt: new Date(x.updatedAt),
+		})), ['id']);
 	}
 
 	@bindThis
 	public async fetchStoreEmojis(): Promise<void> {
-		// TODO: make http request to xfolio
+		const params = new URLSearchParams({
+			token: process.env.XFOLIO_API_TOKEN,
+		});
+
+		const res = await this.httpRequestService.send('???/api/v1/xissmie/emojis_list', {
+			method: 'POST',
+			body: params.toString(),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		});
+
+		const data = await res.json() as {
+			id: string;
+			name: string;
+			imageUrl: string;
+			authorId: string;
+			authorName: string;
+			updatedAt: number;
+		}[];
+
+		await this.emojisRepository.upsert(data.map((x) => ({
+			id: x.id,
+			name: `${x.name}-store-${x.id}`,
+			originalUrl: x.imageUrl,
+			publicUrl: x.imageUrl,
+			updatedAt: new Date(x.updatedAt),
+		})), ['id']);
 	}
 
 	@bindThis
