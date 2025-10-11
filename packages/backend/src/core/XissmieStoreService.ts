@@ -11,6 +11,7 @@ import { DI } from '@/di-symbols.js';
 import { bindThis } from '@/decorators.js';
 import { CacheService } from '@/core/CacheService.js';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
+import { Config } from '@/config.js';
 
 @Injectable()
 export class XissmieStoreService {
@@ -27,6 +28,9 @@ export class XissmieStoreService {
 		@Inject(DI.avatarDecorationsRepository)
 		private avatarDecorationsRepository: AvatarDecorationsRepository,
 
+		@Inject(DI.config)
+		private config: Config,
+
 		private idService: IdService,
 		private cacheService: CacheService,
 		private httpRequestService: HttpRequestService,
@@ -36,7 +40,7 @@ export class XissmieStoreService {
 	@bindThis
 	public async fetchStoreDecorations(): Promise<void> {
 		const params = new URLSearchParams({
-			token: process.env.XFOLIO_API_TOKEN,
+			token: this.config.xfolioApiToken,
 		});
 
 		const res = await this.httpRequestService.send('???/api/v1/xissmie/decorations_list', {
@@ -68,7 +72,7 @@ export class XissmieStoreService {
 	@bindThis
 	public async fetchStoreEmojis(): Promise<void> {
 		const params = new URLSearchParams({
-			token: process.env.XFOLIO_API_TOKEN,
+			token: this.config.xfolioApiToken,
 		});
 
 		const res = await this.httpRequestService.send('???/api/v1/xissmie/emojis_list', {
@@ -128,7 +132,7 @@ export class XissmieStoreService {
 
 		const params = new URLSearchParams({
 			userId,
-			token: process.env.XFOLIO_API_TOKEN,
+			token: this.config.xfolioApiToken,
 		});
 
 		const res = await this.httpRequestService.send('???', {
@@ -165,7 +169,7 @@ export class XissmieStoreService {
 
 		const params = new URLSearchParams({
 			userId,
-			token: process.env.XFOLIO_API_TOKEN,
+			token: this.config.xfolioApiToken,
 		});
 
 		const res = await this.httpRequestService.send('???', {

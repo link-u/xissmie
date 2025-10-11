@@ -111,7 +111,9 @@ type Source = {
 			disableQueryTruncation?: boolean,
 			enableQueryParamLogging?: boolean,
 		}
-	}
+	};
+
+	xfolioApiToken: string;
 };
 
 export type Config = {
@@ -170,7 +172,8 @@ export type Config = {
 			disableQueryTruncation?: boolean,
 			enableQueryParamLogging?: boolean,
 		}
-	}
+	};
+	xfolioApiToken: string;
 
 	version: string;
 	publishTarballInsteadOfProvideRepositoryUrl: boolean;
@@ -320,6 +323,7 @@ export function loadConfig(): Config {
 		deactivateAntennaThreshold: config.deactivateAntennaThreshold ?? (1000 * 60 * 60 * 24 * 7),
 		pidFile: config.pidFile,
 		logging: config.logging,
+		xfolioApiToken: config.xfolioApiToken,
 	};
 }
 
