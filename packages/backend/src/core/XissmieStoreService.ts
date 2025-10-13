@@ -11,7 +11,7 @@ import { DI } from '@/di-symbols.js';
 import { bindThis } from '@/decorators.js';
 import { CacheService } from '@/core/CacheService.js';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
-import { Config } from '@/config.js';
+import type { Config } from '@/config.js';
 
 @Injectable()
 export class XissmieStoreService {
