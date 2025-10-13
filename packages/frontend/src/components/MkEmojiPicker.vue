@@ -86,15 +86,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 			</section>
 		</div>
-		<div v-once class="group">
+		<div class="group">
 			<header class="_acrylic">購入済み</header>
-			<XSection
-				:key="`xissmie-purchased`"
-				:initialShown="true"
-				:emojis="computed(() => purchasedEmojis.map(e => `:${e.name}:`))"
-				@chosen="chosen"
+			<button
+				v-for="emoji in purchasedEmojis"
+				:key="getKey(emoji)"
+				:data-emoji="getKey(emoji)"
+				class="_button item"
+				:disabled="!canReact(emoji)"
+				tabindex="0"
+				@pointerenter="computeButtonTitle"
+				@click="chosen(emoji, $event)"
 			>
-			</XSection>
+				<MkCustomEmoji class="emoji" :name="getKey(emoji)" :normal="true"/>
+			</button>
 		</div>
 		<div v-once class="group">
 			<header class="_acrylic">{{ i18n.ts.customEmojis }}</header>
