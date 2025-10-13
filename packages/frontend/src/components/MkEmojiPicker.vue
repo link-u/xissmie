@@ -116,7 +116,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { ref, useTemplateRef, computed, watch, onMounted } from 'vue';
+import { ref, useTemplateRef, computed, watch, onMounted, shallowRef } from 'vue';
 import * as Misskey from 'misskey-js';
 import {
 	emojilist,
@@ -142,6 +142,7 @@ import { checkReactionPermissions } from '@/utility/check-reaction-permissions.j
 import { prefer } from '@/preferences.js';
 import { useRouter } from '@/router.js';
 import { haptic } from '@/utility/haptic.js';
+import { misskeyApi } from '@/utility/misskey-api.js';
 
 const router = useRouter();
 
@@ -188,6 +189,7 @@ const q = ref<string>('');
 const searchResultCustom = ref<Misskey.entities.EmojiSimple[]>([]);
 const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
 const tab = ref<'index' | 'custom' | 'unicode' | 'tags'>('index');
+const purchasedEmojis = shallowRef<Misskey.entities.XissmiePurchasedEmojisResponse['emojis']>([]);
 
 const customEmojiFolderRoot: CustomEmojiFolderTree = { value: '', category: '', children: [] };
 
@@ -503,6 +505,11 @@ function settings() {
 
 onMounted(() => {
 	focus();
+
+	misskeyApi('xissmie/purchased-emojis', {
+	}).then(purchased => {
+		purchasedEmojis.value = purchased.emojis;
+	});
 });
 
 defineExpose({
