@@ -87,6 +87,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</section>
 		</div>
 		<div v-once class="group">
+			<header class="_acrylic">購入済み</header>
+			<XSection
+				:key="`xissmie-purchased`"
+				:initialShown="true"
+				:emojis="computed(() => purchasedEmojis.map(e => `:${e.name}:`))"
+				@chosen="chosen"
+			>
+			</XSection>
+		</div>
+		<div v-once class="group">
 			<header class="_acrylic">{{ i18n.ts.customEmojis }}</header>
 			<XSection
 				v-for="child in customEmojiFolderRoot.children"
