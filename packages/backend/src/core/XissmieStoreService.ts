@@ -216,4 +216,16 @@ export class XissmieStoreService {
 			})));
 		}
 	}
+
+	@bindThis
+	public async getPurchasedDecorations(userId: MiUser['id']) {
+		const ownedDecorations = await this.userOwnedAvatarDecorationsRepository.find({
+			where: {
+				userId,
+			},
+			relations: ['avatarDecoration'],
+		});
+
+		return ownedDecorations.map(x => x.avatarDecoration).filter((x): x is NonNullable<typeof x> => x != null);
+	}
 }

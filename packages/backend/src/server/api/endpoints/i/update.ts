@@ -34,6 +34,7 @@ import type { Config } from '@/config.js';
 import { safeForSql } from '@/misc/safe-for-sql.js';
 import { AvatarDecorationService } from '@/core/AvatarDecorationService.js';
 import { notificationRecieveConfig } from '@/models/json-schema/user.js';
+import { XissmieStoreService } from '@/core/XissmieStoreService.js';
 import { ApiLoggerService } from '../../ApiLoggerService.js';
 import { ApiError } from '../../error.js';
 
@@ -264,6 +265,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private httpRequestService: HttpRequestService,
 		private avatarDecorationService: AvatarDecorationService,
 		private utilityService: UtilityService,
+		private xissmeStoreService: XissmieStoreService,
 	) {
 		super(meta, paramDef, async (ps, _user, token) => {
 			const user = await this.usersRepository.findOneByOrFail({ id: _user.id }) as MiLocalUser;
@@ -395,8 +397,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				const decorations = await this.avatarDecorationService.getAll(true);
 				const myRoles = await this.roleService.getUserRoles(user.id);
 				const allRoles = await this.roleService.getRoles();
+				const purchasedDecorations = await this.xissmeStoreService.getPurchasedDecorations(user.id);
 				const decorationIds = decorations
 					.filter(d => d.roleIdsThatCanBeUsedThisDecoration.filter(roleId => allRoles.some(r => r.id === roleId)).length === 0 || myRoles.some(r => d.roleIdsThatCanBeUsedThisDecoration.includes(r.id)))
+					.filter(d => !d.isInStore || purchasedDecorations.some(p => p.id === d.id))
 					.map(d => d.id);
 
 				if (ps.avatarDecorations.length > policies.avatarDecorationLimit) throw new ApiError(meta.errors.restrictedByRole);
