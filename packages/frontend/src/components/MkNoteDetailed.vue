@@ -275,6 +275,7 @@ import { getPluginHandlers } from '@/plugin.js';
 import { DI } from '@/di.js';
 import { globalEvents, useGlobalEvent } from '@/events.js';
 import { Paginator } from '@/utility/paginator.js';
+import { xissmiePurchaseRequired } from '@/xissmie.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
@@ -370,6 +371,11 @@ provide(DI.mfmEmojiReactCallback, (reaction) => {
 			userId: $i!.id,
 			reaction: reaction,
 		});
+	}).catch((err) => {
+		if (err.code === 'PURCHASE_REQUIRED') {
+			xissmiePurchaseRequired(reaction);
+			return;
+		}
 	});
 });
 
@@ -506,6 +512,11 @@ function react(): void {
 					userId: $i!.id,
 					reaction: reaction,
 				});
+			}).catch((err) => {
+				if (err.code === 'PURCHASE_REQUIRED') {
+					xissmiePurchaseRequired(reaction);
+					return;
+				}
 			});
 			if (appearNote.text && appearNote.text.length > 100 && (Date.now() - new Date(appearNote.createdAt).getTime() < 1000 * 3)) {
 				claimAchievement('reactWithoutRead');
