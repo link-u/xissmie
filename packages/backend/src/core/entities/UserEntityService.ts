@@ -48,6 +48,7 @@ import type { AnnouncementService } from '@/core/AnnouncementService.js';
 import type { CustomEmojiService } from '@/core/CustomEmojiService.js';
 import { AvatarDecorationService } from '@/core/AvatarDecorationService.js';
 import { ChatService } from '@/core/ChatService.js';
+import { XissmieStoreService } from '@/core/XissmieStoreService.js';
 import type { OnModuleInit } from '@nestjs/common';
 import type { NoteEntityService } from './NoteEntityService.js';
 import type { PageEntityService } from './PageEntityService.js';
@@ -94,6 +95,7 @@ export class UserEntityService implements OnModuleInit {
 	private idService: IdService;
 	private avatarDecorationService: AvatarDecorationService;
 	private chatService: ChatService;
+	private xissmieStoreService: XissmieStoreService;
 
 	constructor(
 		private moduleRef: ModuleRef,
@@ -150,6 +152,7 @@ export class UserEntityService implements OnModuleInit {
 		this.idService = this.moduleRef.get('IdService');
 		this.avatarDecorationService = this.moduleRef.get('AvatarDecorationService');
 		this.chatService = this.moduleRef.get('ChatService');
+		this.xissmieStoreService = this.moduleRef.get('XissmieStoreService');
 	}
 
 	//#region Validators
@@ -489,14 +492,16 @@ export class UserEntityService implements OnModuleInit {
 			host: user.host,
 			avatarUrl: (user.avatarId == null ? null : user.avatarUrl) ?? this.getIdenticonUrl(user),
 			avatarBlurhash: (user.avatarId == null ? null : user.avatarBlurhash),
-			avatarDecorations: user.avatarDecorations.length > 0 ? this.avatarDecorationService.getAll().then(decorations => user.avatarDecorations.filter(ud => decorations.some(d => d.id === ud.id)).map(ud => ({
-				id: ud.id,
-				angle: ud.angle || undefined,
-				flipH: ud.flipH || undefined,
-				offsetX: ud.offsetX || undefined,
-				offsetY: ud.offsetY || undefined,
-				url: decorations.find(d => d.id === ud.id)!.url,
-			}))) : [],
+			avatarDecorations: user.avatarDecorations.length > 0 ? Promise.all([this.avatarDecorationService.getAll(), this.xissmieStoreService.getPurchasedDecorations(user.id)])
+				.then(([s, p]) => [...s, ...p])
+				.then((decorations) => user.avatarDecorations.filter(ud => decorations.some(d => d.id === ud.id)).map(ud => ({
+					id: ud.id,
+					angle: ud.angle || undefined,
+					flipH: ud.flipH || undefined,
+					offsetX: ud.offsetX || undefined,
+					offsetY: ud.offsetY || undefined,
+					url: decorations.find(d => d.id === ud.id)!.url,
+				}))) : [],
 			isBot: user.isBot,
 			isCat: user.isCat,
 			requireSigninToViewContents: user.requireSigninToViewContents === false ? undefined : true,
