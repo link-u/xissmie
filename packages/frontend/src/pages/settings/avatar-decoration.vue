@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div :class="$style.decorations">
 					<XDecoration
 						v-for="(avatarDecoration, i) in $i.avatarDecorations"
-						:decoration="serverAvatarDecorations.find(d => d.id === avatarDecoration.id) ?? { id: '', url: '', name: '?', roleIdsThatCanBeUsedThisDecoration: [] }"
+						:decoration="allDecorations.find(d => d.id === avatarDecoration.id) ?? { id: '', url: '', name: '?', roleIdsThatCanBeUsedThisDecoration: [] }"
 						:angle="avatarDecoration.angle"
 						:flipH="avatarDecoration.flipH"
 						:offsetX="avatarDecoration.offsetX"
@@ -33,6 +33,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<div :class="$style.decorations">
 				<XDecoration
 					v-for="avatarDecoration in serverAvatarDecorations"
+					:key="avatarDecoration.id"
+					:decoration="avatarDecoration"
+					@click="openDecoration(avatarDecoration)"
+				/>
+			</div>
+
+			<div :class="$style.decorations">
+				<XDecoration
+					v-for="avatarDecoration in purchasedAvatarDecorations"
 					:key="avatarDecoration.id"
 					:decoration="avatarDecoration"
 					@click="openDecoration(avatarDecoration)"
@@ -64,6 +73,7 @@ const $i = ensureSignin();
 const loading = ref(true);
 const serverAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
 const purchasedAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
+const allDecorations = computed(() => [...serverAvatarDecorations.value, ...purchasedAvatarDecorations.value]);
 
 Promise.all([misskeyApi('get-avatar-decorations'), misskeyApi('xissmie/purchased-avatar-decorations')]).then(([s, p]) => {
 	serverAvatarDecorations.value = s;
@@ -72,7 +82,8 @@ Promise.all([misskeyApi('get-avatar-decorations'), misskeyApi('xissmie/purchased
 });
 
 function openAttachedDecoration(index: number) {
-	openDecoration(serverAvatarDecorations.value.find(d => d.id === $i.avatarDecorations[index].id) ?? { id: '', url: '', name: '?', roleIdsThatCanBeUsedThisDecoration: [] }, index);
+	const d = allDecorations.value.find(d => d.id === $i.avatarDecorations[index].id);
+	openDecoration(d ?? { id: '', url: '', name: '?', roleIdsThatCanBeUsedThisDecoration: [] }, index);
 }
 
 async function openDecoration(avatarDecoration: {
