@@ -77,6 +77,9 @@ const rawUrl = computed(() => {
 		return props.url;
 	}
 	if (isLocal.value) {
+		if (customEmojiName.value.includes('-store-')) {
+			return `/emoji/${customEmojiName.value}.webp`;
+		}
 		return customEmojisMap.get(customEmojiName.value)?.url ?? null;
 	}
 	return props.host ? `/emoji/${customEmojiName.value}@${props.host}.webp` : `/emoji/${customEmojiName.value}.webp`;
