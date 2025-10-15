@@ -143,16 +143,17 @@ export class ReactionService {
 					});
 
 				if (emoji) {
-					let isOwned = true;
 					if (emoji.isInStore) {
 						const owned = await this.userOwnedEmojisRepository.findOneBy({
 							userId: user.id,
 							emojiId: emoji.id,
 						});
-						if (owned == null) isOwned = false;
+						if (owned == null) {
+							throw new IdentifiableError('95fa25e5-2259-4e45-8e8f-25f7479169b0', 'You do not own that emoji.');
+						}
 					}
 
-					if (isOwned && (emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length === 0 || (await this.roleService.getUserRoles(user.id)).some(r => emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.includes(r.id)))) {
+					if (emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length === 0 || (await this.roleService.getUserRoles(user.id)).some(r => emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.includes(r.id))) {
 						reaction = reacterHost ? `:${name}@${reacterHost}:` : `:${name}:`;
 
 						// センシティブ

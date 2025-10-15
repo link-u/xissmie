@@ -43,31 +43,31 @@ export class XissmieStoreService {
 			token: this.config.xfolioApiToken,
 		});
 
-		//const res = await this.httpRequestService.send('???/api/v1/xissmie/decorations_list', {
-		//	method: 'POST',
-		//	body: params.toString(),
-		//	headers: {
-		//		'Content-Type': 'application/x-www-form-urlencoded',
-		//	},
-		//});
+		const res = await this.httpRequestService.send('???/api/v1/xissmie/decorations_list', {
+			method: 'POST',
+			body: params.toString(),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		});
 
-		//const data = await res.json() as {
-		//	id: string;
-		//	name: string;
-		//	imageUrl: string;
-		//	authorId: string;
-		//	authorName: string;
-		//	updatedAt: number;
-		//}[];
+		const data = await res.json() as {
+			id: string;
+			name: string;
+			imageUrl: string;
+			authorId: string;
+			authorName: string;
+			updatedAt: number;
+		}[];
 
-		const data = [{
-			id: 'da',
-			name: 'test',
-			imageUrl: 'https://files-p1.a9z.dev/p1/ac48c0e4-5f1c-401f-8437-69e68a27c1d0.png',
-			authorId: 'aa',
-			authorName: 'syuilo',
-			updatedAt: 0,
-		}];
+		//const data = [{
+		//	id: 'da',
+		//	name: 'test',
+		//	imageUrl: 'https://files-p1.a9z.dev/p1/ac48c0e4-5f1c-401f-8437-69e68a27c1d0.png',
+		//	authorId: 'aa',
+		//	authorName: 'syuilo',
+		//	updatedAt: 0,
+		//}];
 
 		await this.avatarDecorationsRepository.upsert(data.map((x) => ({
 			id: x.id,
@@ -76,6 +76,8 @@ export class XissmieStoreService {
 			url: x.imageUrl,
 			updatedAt: new Date(x.updatedAt),
 			isInStore: true,
+			storeAuthorId: x.authorId,
+			storeAuthorName: x.authorName,
 		})), ['id']);
 	}
 
@@ -118,6 +120,8 @@ export class XissmieStoreService {
 			publicUrl: x.imageUrl,
 			updatedAt: new Date(x.updatedAt),
 			isInStore: true,
+			storeAuthorId: x.authorId,
+			storeAuthorName: x.authorName,
 		})), ['id']);
 	}
 
@@ -155,15 +159,17 @@ export class XissmieStoreService {
 			token: this.config.xfolioApiToken,
 		});
 
-		const res = await this.httpRequestService.send('???', {
-			method: 'POST',
-			body: params.toString(),
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-			},
-		});
+		//const res = await this.httpRequestService.send('???', {
+		//	method: 'POST',
+		//	body: params.toString(),
+		//	headers: {
+		//		'Content-Type': 'application/x-www-form-urlencoded',
+		//	},
+		//});
 
-		const data = await res.json() as { avatarDecorations: { id: string; purchasedAt: number; }[] };
+		//const data = await res.json() as { avatarDecorations: { id: string; purchasedAt: number; }[] };
+
+		const data = { avatarDecorations: [{ id: 'da', purchasedAt: 0 }] };
 
 		const newDecorations = data.avatarDecorations.filter(x => !currentlyOwnedDecorationIds.has(x.id));
 

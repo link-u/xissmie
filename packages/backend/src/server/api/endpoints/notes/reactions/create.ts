@@ -42,6 +42,12 @@ export const meta = {
 			code: 'CANNOT_REACT_TO_RENOTE',
 			id: 'eaccdc08-ddef-43fe-908f-d108faad57f5',
 		},
+
+		purchaseRequired: {
+			message: 'You need to purchase that emoji to use it.',
+			code: 'PURCHASE_REQUIRED',
+			id: '95fa25e5-2259-4e45-8e8f-25f7479169b0',
+		},
 	},
 } as const;
 
@@ -69,6 +75,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				if (err.id === '51c42bb4-931a-456b-bff7-e5a8a70dd298') throw new ApiError(meta.errors.alreadyReacted);
 				if (err.id === 'e70412a4-7197-4726-8e74-f3e0deb92aa7') throw new ApiError(meta.errors.youHaveBeenBlocked);
 				if (err.id === '12c35529-3c79-4327-b1cc-e2cf63a71925') throw new ApiError(meta.errors.cannotReactToRenote);
+				if (err.id === '95fa25e5-2259-4e45-8e8f-25f7479169b0') throw new ApiError(meta.errors.purchaseRequired);
 				throw err;
 			});
 			return;
