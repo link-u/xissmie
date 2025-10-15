@@ -527,7 +527,7 @@ onMounted(() => {
 
 	misskeyApi('xissmie/purchased-emojis', {
 	}).then(purchased => {
-		purchasedEmojis.value = purchased.emojis;
+		purchasedEmojis.value = purchased;
 	});
 });
 

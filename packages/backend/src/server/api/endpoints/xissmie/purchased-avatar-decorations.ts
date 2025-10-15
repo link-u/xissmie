@@ -17,16 +17,38 @@ export const meta = {
 	requireCredential: true,
 
 	res: {
-		type: 'object',
+		type: 'array',
 		optional: false, nullable: false,
-		properties: {
-			emojis: {
-				type: 'array',
-				optional: false, nullable: false,
-				items: {
-					type: 'object',
+		items: {
+			type: 'object',
+			optional: false, nullable: false,
+			properties: {
+				id: {
+					type: 'string',
 					optional: false, nullable: false,
-					ref: 'EmojiSimple',
+					format: 'id',
+					example: 'xxxxxxxxxx',
+				},
+				name: {
+					type: 'string',
+					optional: false, nullable: false,
+				},
+				description: {
+					type: 'string',
+					optional: false, nullable: false,
+				},
+				url: {
+					type: 'string',
+					optional: false, nullable: false,
+				},
+				roleIdsThatCanBeUsedThisDecoration: {
+					type: 'array',
+					optional: false, nullable: false,
+					items: {
+						type: 'string',
+						optional: false, nullable: false,
+						format: 'id',
+					},
 				},
 			},
 		},

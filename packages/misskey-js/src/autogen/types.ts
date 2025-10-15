@@ -36675,8 +36675,16 @@ export interface operations {
                 };
                 content: {
                     'application/json': {
-                        emojis: components['schemas']['EmojiSimple'][];
-                    };
+                        /**
+                         * Format: id
+                         * @example xxxxxxxxxx
+                         */
+                        id: string;
+                        name: string;
+                        description: string;
+                        url: string;
+                        roleIdsThatCanBeUsedThisDecoration: string[];
+                    }[];
                 };
             };
             /** @description Client error */
@@ -36734,9 +36742,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    'application/json': {
-                        emojis: components['schemas']['EmojiSimple'][];
-                    };
+                    'application/json': unknown[];
                 };
             };
             /** @description Client error */

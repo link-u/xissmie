@@ -17,18 +17,12 @@ export const meta = {
 	requireCredential: true,
 
 	res: {
-		type: 'object',
+		type: 'array',
 		optional: false, nullable: false,
-		properties: {
-			emojis: {
-				type: 'array',
-				optional: false, nullable: false,
-				items: {
-					type: 'object',
-					optional: false, nullable: false,
-					ref: 'EmojiSimple',
-				},
-			},
+		pritems: {
+			type: 'object',
+			optional: false, nullable: false,
+			ref: 'EmojiSimple',
 		},
 	},
 } as const;
@@ -50,7 +44,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private xissmieStoreService: XissmieStoreService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			await this.xissmieStoreService.fetchPurchasedEmojisFromStore(me.id);
+			//await this.xissmieStoreService.fetchPurchasedEmojisFromStore(me.id);
 
 			const ownedEmojis = await this.userOwnedEmojisRepository.find({
 				where: {
@@ -59,9 +53,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				relations: ['emoji'],
 			});
 
-			return {
-				emojis: await this.emojiEntityService.packSimpleMany(ownedEmojis.map(e => e.emoji)),
-			};
+			return this.emojiEntityService.packSimpleMany(ownedEmojis.map(e => e.emoji));
 		});
 	}
 }

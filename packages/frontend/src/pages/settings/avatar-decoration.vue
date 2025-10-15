@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div :class="$style.decorations">
 					<XDecoration
 						v-for="(avatarDecoration, i) in $i.avatarDecorations"
-						:decoration="avatarDecorations.find(d => d.id === avatarDecoration.id) ?? { id: '', url: '', name: '?', roleIdsThatCanBeUsedThisDecoration: [] }"
+						:decoration="serverAvatarDecorations.find(d => d.id === avatarDecoration.id) ?? { id: '', url: '', name: '?', roleIdsThatCanBeUsedThisDecoration: [] }"
 						:angle="avatarDecoration.angle"
 						:flipH="avatarDecoration.flipH"
 						:offsetX="avatarDecoration.offsetX"
@@ -32,7 +32,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 			<div :class="$style.decorations">
 				<XDecoration
-					v-for="avatarDecoration in avatarDecorations"
+					v-for="avatarDecoration in serverAvatarDecorations"
 					:key="avatarDecoration.id"
 					:decoration="avatarDecoration"
 					@click="openDecoration(avatarDecoration)"
@@ -62,15 +62,17 @@ import { definePage } from '@/page.js';
 const $i = ensureSignin();
 
 const loading = ref(true);
-const avatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
+const serverAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
+const purchasedAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
 
-misskeyApi('get-avatar-decorations').then(_avatarDecorations => {
-	avatarDecorations.value = _avatarDecorations;
+Promise.all([misskeyApi('get-avatar-decorations'), misskeyApi('xissmie/purchased-avatar-decorations')]).then(([s, p]) => {
+	serverAvatarDecorations.value = s;
+	purchasedAvatarDecorations.value = p;
 	loading.value = false;
 });
 
 function openAttachedDecoration(index: number) {
-	openDecoration(avatarDecorations.value.find(d => d.id === $i.avatarDecorations[index].id) ?? { id: '', url: '', name: '?', roleIdsThatCanBeUsedThisDecoration: [] }, index);
+	openDecoration(serverAvatarDecorations.value.find(d => d.id === $i.avatarDecorations[index].id) ?? { id: '', url: '', name: '?', roleIdsThatCanBeUsedThisDecoration: [] }, index);
 }
 
 async function openDecoration(avatarDecoration: {
