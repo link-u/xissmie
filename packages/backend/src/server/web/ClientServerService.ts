@@ -30,8 +30,10 @@ import { ClipEntityService } from '@/core/entities/ClipEntityService.js';
 import { ChannelEntityService } from '@/core/entities/ChannelEntityService.js';
 import type {
 	AnnouncementsRepository,
+	AvatarDecorationsRepository,
 	ChannelsRepository,
 	ClipsRepository,
+	EmojisRepository,
 	FlashsRepository,
 	GalleryPostsRepository,
 	MiMeta,
@@ -104,6 +106,12 @@ export class ClientServerService {
 
 		@Inject(DI.announcementsRepository)
 		private announcementsRepository: AnnouncementsRepository,
+
+		@Inject(DI.emojisRepository)
+		private emojisRepository: EmojisRepository,
+
+		@Inject(DI.avatarDecorationsRepository)
+		private avatarDecorationsRepository: AvatarDecorationsRepository,
 
 		private flashEntityService: FlashEntityService,
 		private userEntityService: UserEntityService,
@@ -900,6 +908,33 @@ export class ClientServerService {
 			return await reply.view('cli', {
 				version: this.config.version,
 			});
+		});
+
+		fastify.get<{ Params: { emoji: string; } }>('/xissmie/store/emojis/:emoji', async (request, reply) => {
+			const emoji = await this.emojisRepository.findOneBy({
+				host: IsNull(),
+				name: request.params.emoji,
+			});
+
+			if (emoji == null) {
+				reply.code(404);
+				return;
+			}
+
+			reply.redirect(`https://xfolio.jp/portfolio/${emoji.storeAuthorId}/shop/${emoji.id}`);
+		});
+
+		fastify.get<{ Params: { decoration: string; } }>('/xissmie/store/avatar-decorations/:decoration', async (request, reply) => {
+			const decoration = await this.avatarDecorationsRepository.findOneBy({
+				id: request.params.decoration,
+			});
+
+			if (decoration == null) {
+				reply.code(404);
+				return;
+			}
+
+			reply.redirect(`https://xfolio.jp/portfolio/${decoration.storeAuthorId}/shop/${decoration.id}`);
 		});
 
 		const override = (source: string, target: string, depth = 0) =>

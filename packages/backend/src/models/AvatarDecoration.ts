@@ -37,6 +37,16 @@ export class MiAvatarDecoration {
 	})
 	public isInStore: boolean;
 
+	@Column('varchar', {
+		length: 128, nullable: true,
+	})
+	public storeAuthorId: string | null;
+
+	@Column('varchar', {
+		length: 256, nullable: true,
+	})
+	public storeAuthorName: string | null;
+
 	// TODO: 定期ジョブで存在しなくなったロールIDを除去するようにする
 	@Column('varchar', {
 		array: true, length: 128, default: '{}',
