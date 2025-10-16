@@ -19,7 +19,7 @@ export const meta = {
 	res: {
 		type: 'array',
 		optional: false, nullable: false,
-		pritems: {
+		items: {
 			type: 'object',
 			optional: false, nullable: false,
 			ref: 'EmojiSimple',

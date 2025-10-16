@@ -36742,7 +36742,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    'application/json': unknown[];
+                    'application/json': components['schemas']['EmojiSimple'][];
                 };
             };
             /** @description Client error */
@@ -36896,9 +36896,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    'application/json': {
-                        emojis: components['schemas']['EmojiSimple'][];
-                    };
+                    'application/json': components['schemas']['EmojiSimple'][];
                 };
             };
             /** @description Client error */

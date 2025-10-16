@@ -19,18 +19,12 @@ export const meta = {
 	cacheSec: 3600,
 
 	res: {
-		type: 'object',
+		type: 'array',
 		optional: false, nullable: false,
-		properties: {
-			emojis: {
-				type: 'array',
-				optional: false, nullable: false,
-				items: {
-					type: 'object',
-					optional: false, nullable: false,
-					ref: 'EmojiSimple',
-				},
-			},
+		items: {
+			type: 'object',
+			optional: false, nullable: false,
+			ref: 'EmojiSimple',
 		},
 	},
 } as const;
@@ -63,9 +57,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const emojis = await q.limit(ps.limit).getMany();
 
-			return {
-				emojis: await this.emojiEntityService.packSimpleMany(emojis),
-			};
+			return this.emojiEntityService.packSimpleMany(emojis);
 		});
 	}
 }

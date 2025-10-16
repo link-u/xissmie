@@ -88,6 +88,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</div>
 		<div class="group">
 			<section>
+				<header class="_acrylic">★creator★</header>
+				<div class="body">
+					<button
+						v-for="emoji in storeEmojis"
+						:key="getKey(emoji)"
+						:data-emoji="getKey(emoji)"
+						class="_button item"
+						:disabled="!canReact(emoji)"
+						tabindex="0"
+						@pointerenter="computeButtonTitle"
+						@click="chosen(emoji, $event)"
+					>
+						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
+					</button>
+				</div>
+			</section>
+		</div>
+		<div class="group">
+			<section>
 				<header class="_acrylic">購入済み</header>
 				<div class="body">
 					<button
@@ -162,6 +181,7 @@ import { prefer } from '@/preferences.js';
 import { useRouter } from '@/router.js';
 import { haptic } from '@/utility/haptic.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
+import { xissmiePurchaseRequired } from '@/xissmie.js';
 
 const router = useRouter();
 
@@ -208,7 +228,8 @@ const q = ref<string>('');
 const searchResultCustom = ref<Misskey.entities.EmojiSimple[]>([]);
 const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
 const tab = ref<'index' | 'custom' | 'unicode' | 'tags'>('index');
-const purchasedEmojis = shallowRef<Misskey.entities.XissmiePurchasedEmojisResponse['emojis']>([]);
+const purchasedEmojis = shallowRef<Misskey.entities.XissmiePurchasedEmojisResponse>([]);
+const storeEmojis = shallowRef<Misskey.entities.XissmieStoreEmojisResponse>([]);
 
 const customEmojiFolderRoot: CustomEmojiFolderTree = { value: '', category: '', children: [] };
 
@@ -440,6 +461,14 @@ function computeButtonTitle(ev: MouseEvent): void {
 }
 
 function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, ev?: MouseEvent) {
+	if (typeof emoji === 'string' && emoji.includes('-store-') && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
+		xissmiePurchaseRequired(emoji);
+		return;
+	} else if (typeof emoji !== 'string' && emoji.name.includes('-store-') && !purchasedEmojis.value.some(x => x.name === emoji.name.replaceAll(':', ''))) {
+		xissmiePurchaseRequired(emoji.name);
+		return;
+	}
+
 	const el = ev && (ev.currentTarget ?? ev.target) as HTMLElement | null | undefined;
 	if (el && prefer.s.animation) {
 		const rect = el.getBoundingClientRect();
@@ -528,6 +557,11 @@ onMounted(() => {
 	misskeyApi('xissmie/purchased-emojis', {
 	}).then(purchased => {
 		purchasedEmojis.value = purchased;
+	});
+
+	misskeyApi('xissmie/store-emojis', {
+	}).then(x => {
+		storeEmojis.value = x;
 	});
 });
 
