@@ -39,11 +39,29 @@ SPDX-License-Identifier: AGPL-3.0-only
 				/>
 			</div>
 
+			<hr>
+
+			<div>購入済み</div>
+
 			<div :class="$style.decorations">
 				<XDecoration
 					v-for="avatarDecoration in purchasedAvatarDecorations"
 					:key="avatarDecoration.id"
 					:decoration="avatarDecoration"
+					@click="openDecoration(avatarDecoration)"
+				/>
+			</div>
+
+			<hr>
+
+			<div>★creator★</div>
+
+			<div :class="$style.decorations">
+				<XDecoration
+					v-for="avatarDecoration in storeAvatarDecorations"
+					:key="avatarDecoration.id"
+					:decoration="avatarDecoration"
+					:locked="!purchasedAvatarDecorations.some(d => d.id === avatarDecoration.id)"
 					@click="openDecoration(avatarDecoration)"
 				/>
 			</div>
@@ -67,18 +85,24 @@ import { i18n } from '@/i18n.js';
 import { ensureSignin } from '@/i.js';
 import MkInfo from '@/components/MkInfo.vue';
 import { definePage } from '@/page.js';
+import { xissmieAvatarDecorationPurchaseRequired } from '@/xissmie.js';
 
 const $i = ensureSignin();
 
 const loading = ref(true);
 const serverAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
 const purchasedAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
+const storeAvatarDecorations = ref<Misskey.entities.XissmieStoreAvatarDecorationsResponse>([]);
 const allDecorations = computed(() => [...serverAvatarDecorations.value, ...purchasedAvatarDecorations.value]);
 
 Promise.all([misskeyApi('get-avatar-decorations'), misskeyApi('xissmie/purchased-avatar-decorations')]).then(([s, p]) => {
 	serverAvatarDecorations.value = s;
 	purchasedAvatarDecorations.value = p;
 	loading.value = false;
+});
+
+misskeyApi('xissmie/store-avatar-decorations').then((storeDecorations) => {
+	storeAvatarDecorations.value = storeDecorations;
 });
 
 function openAttachedDecoration(index: number) {
@@ -92,6 +116,11 @@ async function openDecoration(avatarDecoration: {
 	name: string;
 	roleIdsThatCanBeUsedThisDecoration: string[];
 }, index?: number) {
+	if (storeAvatarDecorations.value.some(d => d.id === avatarDecoration.id) && !purchasedAvatarDecorations.value.some(d => d.id === avatarDecoration.id)) {
+		xissmieAvatarDecorationPurchaseRequired(avatarDecoration);
+		return;
+	}
+
 	const { dispose } = os.popup(XDialog, {
 		decoration: avatarDecoration,
 		usingIndex: index ?? null,

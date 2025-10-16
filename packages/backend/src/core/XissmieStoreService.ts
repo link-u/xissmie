@@ -78,7 +78,7 @@ export class XissmieStoreService {
 
 		await this.avatarDecorationsRepository.upsert(data.map((x) => ({
 			id: x.id,
-			name: `${x.name}-store-${x.id}`,
+			name: `${x.name}`,
 			description: '',
 			url: x.imageUrl,
 			updatedAt: new Date(x.updatedAt),

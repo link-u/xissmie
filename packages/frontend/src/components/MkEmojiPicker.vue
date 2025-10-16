@@ -181,7 +181,7 @@ import { prefer } from '@/preferences.js';
 import { useRouter } from '@/router.js';
 import { haptic } from '@/utility/haptic.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
-import { xissmiePurchaseRequired } from '@/xissmie.js';
+import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
 
 const router = useRouter();
 
@@ -462,10 +462,10 @@ function computeButtonTitle(ev: MouseEvent): void {
 
 function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, ev?: MouseEvent) {
 	if (typeof emoji === 'string' && emoji.includes('-store-') && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
-		xissmiePurchaseRequired(emoji);
+		xissmieEmojiPurchaseRequired(emoji);
 		return;
 	} else if (typeof emoji !== 'string' && emoji.name.includes('-store-') && !purchasedEmojis.value.some(x => x.name === emoji.name.replaceAll(':', ''))) {
-		xissmiePurchaseRequired(emoji.name);
+		xissmieEmojiPurchaseRequired(emoji.name);
 		return;
 	}
 

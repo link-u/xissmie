@@ -39,7 +39,7 @@ import { DI } from '@/di.js';
 import { noteEvents } from '@/composables/use-note-capture.js';
 import { mute as muteEmoji, unmute as unmuteEmoji, checkMuted as isEmojiMuted } from '@/utility/emoji-mute.js';
 import { haptic } from '@/utility/haptic.js';
-import { xissmiePurchaseRequired } from '@/xissmie.js';
+import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
 
 const props = defineProps<{
 	noteId: Misskey.entities.Note['id'];
@@ -115,7 +115,7 @@ async function toggleReaction() {
 					});
 				}).catch((err) => {
 					if (err.code === 'PURCHASE_REQUIRED') {
-						xissmiePurchaseRequired(props.reaction);
+						xissmieEmojiPurchaseRequired(props.reaction);
 						return;
 					}
 				});
@@ -153,7 +153,7 @@ async function toggleReaction() {
 			});
 		}).catch((err) => {
 			if (err.code === 'PURCHASE_REQUIRED') {
-				xissmiePurchaseRequired(props.reaction);
+				xissmieEmojiPurchaseRequired(props.reaction);
 				return;
 			}
 		});

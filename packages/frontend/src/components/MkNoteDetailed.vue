@@ -275,7 +275,7 @@ import { getPluginHandlers } from '@/plugin.js';
 import { DI } from '@/di.js';
 import { globalEvents, useGlobalEvent } from '@/events.js';
 import { Paginator } from '@/utility/paginator.js';
-import { xissmiePurchaseRequired } from '@/xissmie.js';
+import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
@@ -373,7 +373,7 @@ provide(DI.mfmEmojiReactCallback, (reaction) => {
 		});
 	}).catch((err) => {
 		if (err.code === 'PURCHASE_REQUIRED') {
-			xissmiePurchaseRequired(reaction);
+			xissmieEmojiPurchaseRequired(reaction);
 			return;
 		}
 	});
@@ -514,7 +514,7 @@ function react(): void {
 				});
 			}).catch((err) => {
 				if (err.code === 'PURCHASE_REQUIRED') {
-					xissmiePurchaseRequired(reaction);
+					xissmieEmojiPurchaseRequired(reaction);
 					return;
 				}
 			});

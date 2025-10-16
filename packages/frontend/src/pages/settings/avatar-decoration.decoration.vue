@@ -32,13 +32,14 @@ const props = defineProps<{
 	flipH?: boolean;
 	offsetX?: number;
 	offsetY?: number;
+	locked?: boolean;
 }>();
 
 const emit = defineEmits<{
 	(ev: 'click'): void;
 }>();
 
-const locked = computed(() => props.decoration.roleIdsThatCanBeUsedThisDecoration.length > 0 && !$i.roles.some(r => props.decoration.roleIdsThatCanBeUsedThisDecoration.includes(r.id)));
+const locked = computed(() => props.locked || (props.decoration.roleIdsThatCanBeUsedThisDecoration.length > 0 && !$i.roles.some(r => props.decoration.roleIdsThatCanBeUsedThisDecoration.includes(r.id))));
 </script>
 
 <style lang="scss" module>
