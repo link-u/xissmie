@@ -36796,7 +36796,7 @@ export interface operations {
         requestBody: {
             content: {
                 'application/json': {
-                    /** @default 10 */
+                    /** @default 30 */
                     limit?: number;
                     /** Format: misskey:id */
                     sinceId?: string;
@@ -36878,7 +36878,7 @@ export interface operations {
         requestBody: {
             content: {
                 'application/json': {
-                    /** @default 10 */
+                    /** @default 30 */
                     limit?: number;
                     /** Format: misskey:id */
                     sinceId?: string;
@@ -36896,7 +36896,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    'application/json': components['schemas']['EmojiSimple'][];
+                    'application/json': components['schemas']['EmojiDetailed'][];
                 };
             };
             /** @description Client error */

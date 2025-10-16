@@ -56,7 +56,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		limit: { type: 'integer', minimum: 1, maximum: 100, default: 30 },
 		sinceId: { type: 'string', format: 'misskey:id' },
 		untilId: { type: 'string', format: 'misskey:id' },
 		sinceDate: { type: 'integer' },

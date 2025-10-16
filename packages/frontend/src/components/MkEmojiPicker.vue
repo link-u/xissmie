@@ -103,6 +103,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
 					</button>
 				</div>
+				<MkButton primary small rounded style="margin: auto;" @click="loadMoreStoreEmojis">もっと見る</MkButton>
 			</section>
 		</div>
 		<div class="group">
@@ -182,6 +183,7 @@ import { useRouter } from '@/router.js';
 import { haptic } from '@/utility/haptic.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
+import MkButton from '@/components/MkButton.vue';
 
 const router = useRouter();
 
@@ -564,6 +566,14 @@ onMounted(() => {
 		storeEmojis.value = x;
 	});
 });
+
+function loadMoreStoreEmojis() {
+	misskeyApi('xissmie/store-emojis', {
+		untilId: storeEmojis.value[storeEmojis.value.length - 1]!.id,
+	}).then(x => {
+		storeEmojis.value = storeEmojis.value.concat(x);
+	});
+}
 
 defineExpose({
 	focus,

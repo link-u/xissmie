@@ -65,6 +65,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					@click="openDecoration(avatarDecoration)"
 				/>
 			</div>
+			<MkButton primary rounded @click="loadMoreStoreDecorations">もっと見る</MkButton>
 		</div>
 		<div v-else>
 			<MkLoading/>
@@ -104,6 +105,14 @@ Promise.all([misskeyApi('get-avatar-decorations'), misskeyApi('xissmie/purchased
 misskeyApi('xissmie/store-avatar-decorations').then((storeDecorations) => {
 	storeAvatarDecorations.value = storeDecorations;
 });
+
+function loadMoreStoreDecorations() {
+	misskeyApi('xissmie/store-avatar-decorations', {
+		untilId: storeAvatarDecorations.value[storeAvatarDecorations.value.length - 1]!.id,
+	}).then(x => {
+		storeAvatarDecorations.value = storeAvatarDecorations.value.concat(x);
+	});
+}
 
 function openAttachedDecoration(index: number) {
 	const d = allDecorations.value.find(d => d.id === $i.avatarDecorations[index].id);

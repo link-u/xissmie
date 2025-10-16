@@ -24,7 +24,7 @@ export const meta = {
 		items: {
 			type: 'object',
 			optional: false, nullable: false,
-			ref: 'EmojiSimple',
+			ref: 'EmojiDetailed',
 		},
 	},
 } as const;
@@ -32,7 +32,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		limit: { type: 'integer', minimum: 1, maximum: 100, default: 30 },
 		sinceId: { type: 'string', format: 'misskey:id' },
 		untilId: { type: 'string', format: 'misskey:id' },
 		sinceDate: { type: 'integer' },
@@ -57,7 +57,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const emojis = await q.limit(ps.limit).getMany();
 
-			return this.emojiEntityService.packSimpleMany(emojis);
+			return this.emojiEntityService.packDetailedMany(emojis);
 		});
 	}
 }
