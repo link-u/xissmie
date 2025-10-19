@@ -123,7 +123,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
 					</button>
 				</div>
-				<MkButton primary small rounded style="margin: auto;" @click="refreshPurchasedEmojis">更新</MkButton>
+				<MkButton primary small rounded style="margin: auto;" @click="refreshPurchasedEmojis"><i class="ti ti-refresh"></i> 更新</MkButton>
 			</section>
 		</div>
 		<div v-once class="group">

@@ -51,6 +51,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					@click="openDecoration(avatarDecoration)"
 				/>
 			</div>
+			<MkButton primary rounded @click="refreshPurchasedDecorations"><i class="ti ti-refresh"></i> 更新</MkButton>
 
 			<hr>
 
@@ -105,6 +106,12 @@ Promise.all([misskeyApi('get-avatar-decorations'), misskeyApi('xissmie/purchased
 misskeyApi('xissmie/store-avatar-decorations').then((storeDecorations) => {
 	storeAvatarDecorations.value = storeDecorations;
 });
+
+function refreshPurchasedDecorations() {
+	misskeyApi('xissmie/purchased-avatar-decorations').then(p => {
+		purchasedAvatarDecorations.value = p;
+	});
+}
 
 function loadMoreStoreDecorations() {
 	misskeyApi('xissmie/store-avatar-decorations', {
