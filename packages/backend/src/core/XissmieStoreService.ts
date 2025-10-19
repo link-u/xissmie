@@ -139,6 +139,7 @@ export class XissmieStoreService {
 		})), ['id']);
 	}
 
+	/* unused
 	@bindThis
 	public async avatarDecorationPurchased(userId: MiUser['id'], avatarDecorationIds: string[], purchasedAt: Date | null = null): Promise<void> {
 		await this.userOwnedAvatarDecorationsRepository.insert(avatarDecorationIds.map((avatarDecorationId) => ({
@@ -158,6 +159,7 @@ export class XissmieStoreService {
 			purchasedAt: purchasedAt ?? new Date(),
 		})));
 	}
+	*/
 
 	@bindThis
 	public async fetchPurchasedAvatarDecorationsFromStore(userId: MiUser['id']) {
@@ -212,27 +214,31 @@ export class XissmieStoreService {
 			token: this.config.xfolioApiToken,
 		});
 
-		const res = await this.httpRequestService.send('???', {
-			method: 'POST',
-			body: params.toString(),
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-			},
-		});
+		//const res = await this.httpRequestService.send('???', {
+		//	method: 'POST',
+		//	body: params.toString(),
+		//	headers: {
+		//		'Content-Type': 'application/x-www-form-urlencoded',
+		//	},
+		//});
 
-		const data = await res.json() as { emojis: { id: string; purchasedAt: number; }[] };
+		//const data = await res.json() as { emojis: { id: string; purchasedAt: number; }[] };
 
-		//const data = { emojis: [{ id: 'ea', purchasedAt: 0 }] };
+		const data = { emojis: [{ id: 'ea', purchasedAt: 0 }] };
 
 		const newEmojis = data.emojis.filter(x => !currentlyOwnedEmojiIds.has(x.id));
 
 		if (newEmojis.length > 0) {
-			// TODO: 当該コンテンツがまだfetchされていなかった場合のケア
-			await this.userOwnedEmojisRepository.insert(newEmojis.map((x) => ({
+			const foundEmojis = await this.emojisRepository.findBy({
+				id: In(newEmojis.map(x => x.id)),
+			});
+
+			await this.userOwnedEmojisRepository.insert(foundEmojis.map((x) => ({
 				id: this.idService.gen(),
 				userId,
 				emojiId: x.id,
-				purchasedAt: new Date(x.purchasedAt),
+				emojiName: x.name,
+				purchasedAt: new Date(newEmojis.find(e => e.id === x.id)!.purchasedAt),
 			})));
 		}
 	}

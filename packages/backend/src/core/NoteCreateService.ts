@@ -13,7 +13,7 @@ import { extractCustomEmojisFromMfm } from '@/misc/extract-custom-emojis-from-mf
 import { extractHashtags } from '@/misc/extract-hashtags.js';
 import type { IMentionedRemoteUsers } from '@/models/Note.js';
 import { MiNote } from '@/models/Note.js';
-import type { ChannelFollowingsRepository, ChannelsRepository, FollowingsRepository, InstancesRepository, MiFollowing, MiMeta, MutingsRepository, NotesRepository, NoteThreadMutingsRepository, UserListMembershipsRepository, UserProfilesRepository, UsersRepository } from '@/models/_.js';
+import type { ChannelFollowingsRepository, ChannelsRepository, FollowingsRepository, InstancesRepository, MiFollowing, MiMeta, MutingsRepository, NotesRepository, NoteThreadMutingsRepository, UserListMembershipsRepository, UserOwnedEmojisRepository, UserProfilesRepository, UsersRepository } from '@/models/_.js';
 import type { MiDriveFile } from '@/models/DriveFile.js';
 import type { MiApp } from '@/models/App.js';
 import { concat } from '@/misc/prelude/array.js';
@@ -192,6 +192,9 @@ export class NoteCreateService implements OnApplicationShutdown {
 		@Inject(DI.channelFollowingsRepository)
 		private channelFollowingsRepository: ChannelFollowingsRepository,
 
+		@Inject(DI.userOwnedEmojisRepository)
+		private userOwnedEmojisRepository: UserOwnedEmojisRepository,
+
 		private userEntityService: UserEntityService,
 		private noteEntityService: NoteEntityService,
 		private idService: IdService,
@@ -361,6 +364,17 @@ export class NoteCreateService implements OnApplicationShutdown {
 			emojis = data.apEmojis ?? extractCustomEmojisFromMfm(combinedTokens);
 
 			mentionedUsers = data.apMentions ?? await this.extractMentionedUsers(user, combinedTokens);
+		}
+
+		const storeEmojis = [...new Set(emojis.filter(e => e.includes('-store-')).map(e => e.replaceAll(':', '')))];
+		if (storeEmojis.length > 0) {
+			const owned = await this.userOwnedEmojisRepository.findBy({
+				userId: user.id,
+				emojiName: In(storeEmojis),
+			});
+			if (storeEmojis.some(e => !owned.find(o => o.emojiName === e))) {
+				throw new IdentifiableError('0fcbe7ef-8d42-41b2-8204-aafd9f16293d', 'You do not own that emoji.');
+			}
 		}
 
 		// if the host is media-silenced, custom emojis are not allowed

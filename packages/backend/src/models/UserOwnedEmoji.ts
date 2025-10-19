@@ -31,6 +31,12 @@ export class MiUserOwnedEmoji {
 	@Column(id())
 	public emojiId: MiEmoji['id'];
 
+	@Index()
+	@Column('varchar', {
+		length: 128,
+	})
+	public emojiName: string;
+
 	@ManyToOne(type => MiEmoji, {
 		onDelete: 'CASCADE',
 	})
