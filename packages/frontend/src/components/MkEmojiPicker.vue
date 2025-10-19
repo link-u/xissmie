@@ -123,6 +123,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
 					</button>
 				</div>
+				<MkButton primary small rounded style="margin: auto;" @click="refreshPurchasedEmojis">更新</MkButton>
 			</section>
 		</div>
 		<div v-once class="group">
@@ -230,7 +231,7 @@ const q = ref<string>('');
 const searchResultCustom = ref<Misskey.entities.EmojiSimple[]>([]);
 const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
 const tab = ref<'index' | 'custom' | 'unicode' | 'tags'>('index');
-const purchasedEmojis = shallowRef<Misskey.entities.XissmiePurchasedEmojisResponse>([]);
+const purchasedEmojis = shallowRef<Misskey.entities.XissmiePurchasedEmojisResponse>(store.s.xissmiePurchasedEmojisCache);
 const storeEmojis = shallowRef<Misskey.entities.XissmieStoreEmojisResponse>([]);
 
 const customEmojiFolderRoot: CustomEmojiFolderTree = { value: '', category: '', children: [] };
@@ -556,11 +557,6 @@ function settings() {
 onMounted(() => {
 	focus();
 
-	misskeyApi('xissmie/purchased-emojis', {
-	}).then(purchased => {
-		purchasedEmojis.value = purchased;
-	});
-
 	misskeyApi('xissmie/store-emojis', {
 	}).then(x => {
 		storeEmojis.value = x;
@@ -572,6 +568,14 @@ function loadMoreStoreEmojis() {
 		untilId: storeEmojis.value[storeEmojis.value.length - 1]!.id,
 	}).then(x => {
 		storeEmojis.value = storeEmojis.value.concat(x);
+	});
+}
+
+function refreshPurchasedEmojis() {
+	misskeyApi('xissmie/purchased-emojis', {
+	}).then(purchased => {
+		purchasedEmojis.value = purchased;
+		store.set('xissmiePurchasedEmojisCache', purchased);
 	});
 }
 

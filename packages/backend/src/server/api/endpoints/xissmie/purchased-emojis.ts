@@ -44,7 +44,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private xissmieStoreService: XissmieStoreService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			//await this.xissmieStoreService.fetchPurchasedEmojisFromStore(me.id);
+			await this.xissmieStoreService.fetchPurchasedEmojisFromStore(me.id);
 
 			const ownedEmojis = await this.userOwnedEmojisRepository.find({
 				where: {

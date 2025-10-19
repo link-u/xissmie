@@ -118,6 +118,11 @@ export const store = markRaw(new Pizzax('base', {
 		default: true,
 	},
 
+	xissmiePurchasedEmojisCache: {
+		where: 'deviceAccount',
+		default: [] as Misskey.entities.XissmiePurchasedEmojisResponse,
+	},
+
 	//#region TODO: そのうち消す (preferに移行済み)
 	defaultWithReplies: {
 		where: 'account',

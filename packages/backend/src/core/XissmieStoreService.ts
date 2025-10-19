@@ -192,7 +192,7 @@ export class XissmieStoreService {
 		if (newDecorations.length > 0) {
 			// TODO: 当該コンテンツがまだfetchされていなかった場合のケア
 			await this.userOwnedAvatarDecorationsRepository.insert(newDecorations.map((x) => ({
-				id: this.idService.gen(),
+				id: this.idService.gen(x.purchasedAt),
 				userId,
 				avatarDecorationId: x.id,
 				purchasedAt: new Date(x.purchasedAt),
@@ -214,17 +214,17 @@ export class XissmieStoreService {
 			token: this.config.xfolioApiToken,
 		});
 
-		//const res = await this.httpRequestService.send('???', {
-		//	method: 'POST',
-		//	body: params.toString(),
-		//	headers: {
-		//		'Content-Type': 'application/x-www-form-urlencoded',
-		//	},
-		//});
+		const res = await this.httpRequestService.send('???', {
+			method: 'POST',
+			body: params.toString(),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		});
 
-		//const data = await res.json() as { emojis: { id: string; purchasedAt: number; }[] };
+		const data = await res.json() as { emojis: { id: string; purchasedAt: number; }[] };
 
-		const data = { emojis: [{ id: 'ea', purchasedAt: 0 }] };
+		//const data = { emojis: [{ id: 'ea', purchasedAt: 0 }] };
 
 		const newEmojis = data.emojis.filter(x => !currentlyOwnedEmojiIds.has(x.id));
 
@@ -234,7 +234,7 @@ export class XissmieStoreService {
 			});
 
 			await this.userOwnedEmojisRepository.insert(foundEmojis.map((x) => ({
-				id: this.idService.gen(),
+				id: this.idService.gen(newEmojis.find(e => e.id === x.id)!.purchasedAt),
 				userId,
 				emojiId: x.id,
 				emojiName: x.name,
