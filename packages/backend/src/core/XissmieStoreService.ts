@@ -43,38 +43,38 @@ export class XissmieStoreService {
 			token: this.config.xfolioApiToken,
 		});
 
-		//const res = await this.httpRequestService.send('???/api/v1/xissmie/decorations_list', {
-		//	method: 'POST',
-		//	body: params.toString(),
-		//	headers: {
-		//		'Content-Type': 'application/x-www-form-urlencoded',
-		//	},
-		//});
+		const res = await this.httpRequestService.send(`https://${this.config.xfolioApiHost}/api/v1/xissmie/decorations_list`, {
+			method: 'POST',
+			body: params.toString(),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		});
 
-		//const data = await res.json() as {
-		//	id: string;
-		//	name: string;
-		//	imageUrl: string;
-		//	authorId: string;
-		//	authorName: string;
-		//	updatedAt: number;
-		//}[];
+		const data = await res.json() as {
+			id: string;
+			name: string;
+			imageUrl: string;
+			authorId: string;
+			authorName: string;
+			updatedAt: number;
+		}[];
 
-		const data = [{
-			id: 'da',
-			name: 'おうかん',
-			imageUrl: 'https://files-p1.a9z.dev/p1/ac48c0e4-5f1c-401f-8437-69e68a27c1d0.png',
-			authorId: 'aa',
-			authorName: 'syuilo',
-			updatedAt: 0,
-		}, {
-			id: 'db',
-			name: 'はーと',
-			imageUrl: 'https://files-p1.a9z.dev/p1/3ea6bbe8-5feb-4a8a-82fd-6771fe298414.png',
-			authorId: 'aa',
-			authorName: 'syuilo',
-			updatedAt: 0,
-		}];
+		//const data = [{
+		//	id: 'da',
+		//	name: 'おうかん',
+		//	imageUrl: 'https://files-p1.a9z.dev/p1/ac48c0e4-5f1c-401f-8437-69e68a27c1d0.png',
+		//	authorId: 'aa',
+		//	authorName: 'syuilo',
+		//	updatedAt: 0,
+		//}, {
+		//	id: 'db',
+		//	name: 'はーと',
+		//	imageUrl: 'https://files-p1.a9z.dev/p1/3ea6bbe8-5feb-4a8a-82fd-6771fe298414.png',
+		//	authorId: 'aa',
+		//	authorName: 'syuilo',
+		//	updatedAt: 0,
+		//}];
 
 		await this.avatarDecorationsRepository.upsert(data.map((x) => ({
 			id: x.id,
@@ -94,38 +94,38 @@ export class XissmieStoreService {
 			token: this.config.xfolioApiToken,
 		});
 
-		//const res = await this.httpRequestService.send('???/api/v1/xissmie/emojis_list', {
-		//	method: 'POST',
-		//	body: params.toString(),
-		//	headers: {
-		//		'Content-Type': 'application/x-www-form-urlencoded',
-		//	},
-		//});
+		const res = await this.httpRequestService.send(`https://${this.config.xfolioApiHost}/api/v1/xissmie/emojis_list`, {
+			method: 'POST',
+			body: params.toString(),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		});
 
-		//const data = await res.json() as {
-		//	id: string;
-		//	name: string;
-		//	imageUrl: string;
-		//	authorId: string;
-		//	authorName: string;
-		//	updatedAt: number;
-		//}[];
+		const data = await res.json() as {
+			id: string;
+			name: string;
+			imageUrl: string;
+			authorId: string;
+			authorName: string;
+			updatedAt: number;
+		}[];
 
-		const data = [{
-			id: 'ea',
-			name: 'test',
-			imageUrl: 'https://files-p1.a9z.dev/p1/webpublic-ec47e3e2-b77b-4e0b-92bb-028d4cd991aa.png',
-			authorId: 'aa',
-			authorName: 'syuilo',
-			updatedAt: 0,
-		}, {
-			id: 'eb',
-			name: 'test2',
-			imageUrl: 'https://files-p1.a9z.dev/p1/a6afb8c7-5db0-47fe-ae33-5e5efe7fa1f6.png',
-			authorId: 'aa',
-			authorName: 'syuilo',
-			updatedAt: 0,
-		}];
+		//const data = [{
+		//	id: 'ea',
+		//	name: 'test',
+		//	imageUrl: 'https://files-p1.a9z.dev/p1/webpublic-ec47e3e2-b77b-4e0b-92bb-028d4cd991aa.png',
+		//	authorId: 'aa',
+		//	authorName: 'syuilo',
+		//	updatedAt: 0,
+		//}, {
+		//	id: 'eb',
+		//	name: 'test2',
+		//	imageUrl: 'https://files-p1.a9z.dev/p1/a6afb8c7-5db0-47fe-ae33-5e5efe7fa1f6.png',
+		//	authorId: 'aa',
+		//	authorName: 'syuilo',
+		//	updatedAt: 0,
+		//}];
 
 		await this.emojisRepository.upsert(data.map((x) => ({
 			id: x.id,
@@ -175,17 +175,17 @@ export class XissmieStoreService {
 			token: this.config.xfolioApiToken,
 		});
 
-		//const res = await this.httpRequestService.send('???', {
-		//	method: 'POST',
-		//	body: params.toString(),
-		//	headers: {
-		//		'Content-Type': 'application/x-www-form-urlencoded',
-		//	},
-		//});
+		const res = await this.httpRequestService.send(`https://${this.config.xfolioApiHost}/api/v1/xissmie/users_purchased_decorations`, {
+			method: 'POST',
+			body: params.toString(),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		});
 
-		//const data = await res.json() as { avatarDecorations: { id: string; purchasedAt: number; }[] };
+		const data = await res.json() as { avatarDecorations: { id: string; purchasedAt: number; }[] };
 
-		const data = { avatarDecorations: [{ id: 'da', purchasedAt: 0 }] };
+		//const data = { avatarDecorations: [{ id: 'da', purchasedAt: 0 }] };
 
 		const newDecorations = data.avatarDecorations.filter(x => !currentlyOwnedDecorationIds.has(x.id));
 
@@ -214,7 +214,7 @@ export class XissmieStoreService {
 			token: this.config.xfolioApiToken,
 		});
 
-		const res = await this.httpRequestService.send('???', {
+		const res = await this.httpRequestService.send(`https://${this.config.xfolioApiHost}/api/v1/xissmie/users_purchased_emojis`, {
 			method: 'POST',
 			body: params.toString(),
 			headers: {

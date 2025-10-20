@@ -114,6 +114,7 @@ type Source = {
 	};
 
 	xfolioApiToken: string;
+	xfolioApiHost: string;
 };
 
 export type Config = {
@@ -174,6 +175,7 @@ export type Config = {
 		}
 	};
 	xfolioApiToken: string;
+	xfolioApiHost: string;
 
 	version: string;
 	publishTarballInsteadOfProvideRepositoryUrl: boolean;
@@ -324,6 +326,7 @@ export function loadConfig(): Config {
 		pidFile: config.pidFile,
 		logging: config.logging,
 		xfolioApiToken: config.xfolioApiToken,
+		xfolioApiHost: config.xfolioApiHost,
 	};
 }
 
