@@ -6,6 +6,7 @@
 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 const address = new URL(document.querySelector<HTMLMetaElement>('meta[property="instance_url"]')?.content || location.href);
 const siteName = document.querySelector<HTMLMetaElement>('meta[property="og:site_name"]')?.content;
+const xfolioApiHostMeta = document.querySelector<HTMLMetaElement>('meta[property="xfolio_api_host"]')?.content;
 
 export const host = address.host;
 export const hostname = address.hostname;
@@ -20,3 +21,6 @@ export const instanceName = (siteName === 'Misskey' || siteName == null) ? host 
 export const ui = localStorage.getItem('ui');
 export const debug = localStorage.getItem('debug') === 'true';
 export const isSafeMode = localStorage.getItem('isSafeMode') === 'true';
+
+export const xfolioApiHost = (xfolioApiHostMeta && xfolioApiHostMeta.trim() !== '') ? xfolioApiHostMeta : 'xfolio.jp';
+export const xfolioUrlOrigin = `https://${xfolioApiHost}`;

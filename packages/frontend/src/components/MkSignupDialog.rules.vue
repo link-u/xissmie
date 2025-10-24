@@ -10,13 +10,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 	</div>
 	<div class="_spacer" style="--MI_SPACER-min: 20px; --MI_SPACER-max: 28px;">
 		<div class="_gaps_m">
-
 			<div style="text-align: center;">
 				<div>{{ "「Xissmie（キスミー）は「Xfolio（クロスフォリオ）の会員専用SNSです。" }}</div>
 				<div style="font-weight: bold; margin-top: 0.5em;">{{ "クロスフォリオでアカウントを作成し、マイページからXissmieのユーザー名を登録することでご利用いただけます。" }}</div>
 			</div>
 
-			<MkButton full rounded gradate data-cy-signup link to="https://xfolio.jp/mypage/xissmie_setting" style="padding: 10px">{{ "クロスフォリオに登録する" }}</MkButton>
+			<MkButton full rounded gradate data-cy-signup :link="true" linkBehavior="browser" :to="`${xfolioUrlOrigin}/mypage/xissmie_setting`" style="padding: 10px">{{ "クロスフォリオに登録する" }}</MkButton>
 		</div>
 	</div>
 </div>
@@ -24,6 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { xfolioUrlOrigin } from '@@/js/config.js';
 import { instance } from '@/instance.js';
 import { i18n } from '@/i18n.js';
 import MkButton from '@/components/MkButton.vue';

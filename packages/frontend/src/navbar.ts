@@ -5,6 +5,7 @@
 
 import { computed, reactive } from 'vue';
 import { ui } from '@@/js/config.js';
+import { xfolioUrlOrigin } from '@@/js/config.js';
 import { clearCache } from './utility/clear-cache.js';
 import { $i } from '@/i.js';
 import { miLocalStorage } from '@/local-storage.js';
@@ -44,17 +45,17 @@ export const navbarItemDef = reactive({
 		to: '/my/follow-requests',
 	},
 	xfolio: {
-		title: "クロスフォリオ",
+		title: 'クロスフォリオ',
 		icon: 'ti ti-heart-share',
 		action: () => {
-			window.open('https://xfolio.jp', '_blank', 'noopener');
+			window.open(xfolioUrlOrigin, '_blank', 'noopener');
 		},
 	},
 	xfolioSupport: {
 		title: 'Xissmieを支援する',
 		icon: 'material-symbols:volunteer_activism',
 		action: () => {
-			window.open('https://xfolio.jp/portfolio/xissmie/fan_community', '_blank', 'noopener');
+			window.open(`${xfolioUrlOrigin}/portfolio/xissmie/fan_community`, '_blank', 'noopener');
 		},
 	},
 	explore: {

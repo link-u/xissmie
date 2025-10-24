@@ -921,7 +921,7 @@ export class ClientServerService {
 				return;
 			}
 
-			reply.redirect(`https://xfolio.jp/portfolio/${emoji.storeAuthorId}/shop/${emoji.id}`);
+			reply.redirect(`https://${this.config.xfolioApiHost}/portfolio/${emoji.storeAuthorId}/shop/${emoji.id}`);
 		});
 
 		fastify.get<{ Params: { decoration: string; } }>('/xissmie/store/avatar-decorations/:decoration', async (request, reply) => {
@@ -934,7 +934,7 @@ export class ClientServerService {
 				return;
 			}
 
-			reply.redirect(`https://xfolio.jp/portfolio/${decoration.storeAuthorId}/shop/${decoration.id}`);
+			reply.redirect(`https://${this.config.xfolioApiHost}/portfolio/${decoration.storeAuthorId}/shop/${decoration.id}`);
 		});
 
 		const override = (source: string, target: string, depth = 0) =>

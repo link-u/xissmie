@@ -227,3 +227,7 @@ id: "aidx"
 
 # Upload or download file size limits (bytes)
 #maxFileSize: 262144000
+
+# Xfolio integration
+# xfolio.jp を使う場合はそのまま、別のホストにしたい場合は変更してください
+#xfolioApiHost: xfolio.jp
