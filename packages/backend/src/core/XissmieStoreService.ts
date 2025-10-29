@@ -12,6 +12,7 @@ import { bindThis } from '@/decorators.js';
 import { CacheService } from '@/core/CacheService.js';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
 import type { Config } from '@/config.js';
+import { DriveService } from '@/core/DriveService.js';
 
 @Injectable()
 export class XissmieStoreService {
@@ -34,6 +35,7 @@ export class XissmieStoreService {
 		private idService: IdService,
 		private cacheService: CacheService,
 		private httpRequestService: HttpRequestService,
+		private driveService: DriveService,
 	) {
 	}
 
@@ -57,6 +59,7 @@ export class XissmieStoreService {
 			imageUrl: string;
 			authorId: string;
 			authorName: string;
+			productId: string;
 			updatedAt: number;
 		}[];
 
@@ -76,16 +79,52 @@ export class XissmieStoreService {
 		//	updatedAt: 0,
 		//}];
 
-		await this.avatarDecorationsRepository.upsert(data.map((x) => ({
-			id: x.id,
-			name: `${x.name}`,
-			description: '',
-			url: x.imageUrl,
-			updatedAt: new Date(x.updatedAt),
-			isInStore: true,
-			storeAuthorId: x.authorId,
-			storeAuthorName: x.authorName,
-		})), ['id']);
+		// 既存データの更新日時を取得して無駄な再保存を回避
+		const existing = await this.avatarDecorationsRepository.findBy({ id: In(data.map(d => d.id)) });
+		const existingMap = new Map(existing.map(e => [e.id, e]));
+
+		const rows = [] as {
+			id: string;
+			name: string;
+			description: string;
+			url: string;
+			updatedAt: Date;
+			isInStore: boolean;
+			storeProductId: string | null;
+			storeAuthorId: string;
+			storeAuthorName: string;
+		}[];
+
+		for (const x of data) {
+			const incomingUpdatedAt = new Date(x.updatedAt);
+			const ex = existingMap.get(x.id);
+			let stableUrl: string | null = ex?.url ?? null;
+
+			if (!(ex && ex.updatedAt && ex.updatedAt >= incomingUpdatedAt && ex.url)) {
+				// 画像をDriveに取り込み（オブジェクトストレージ設定ならそちら、無ければ内部保存）
+				const file = await this.driveService.uploadFromUrl({
+					url: x.imageUrl,
+					user: null,
+					isLink: false,
+					comment: `decoration:${x.id}`,
+				});
+				stableUrl = file.webpublicUrl ?? file.url;
+			}
+
+			rows.push({
+				id: x.id,
+				name: `${x.name}`,
+				description: '',
+				url: stableUrl ?? x.imageUrl,
+				updatedAt: incomingUpdatedAt,
+				isInStore: true,
+				storeProductId: x.productId ?? null,
+				storeAuthorId: x.authorId,
+				storeAuthorName: x.authorName,
+			});
+		}
+
+		await this.avatarDecorationsRepository.upsert(rows, ['id']);
 	}
 
 	@bindThis
@@ -108,6 +147,7 @@ export class XissmieStoreService {
 			imageUrl: string;
 			authorId: string;
 			authorName: string;
+			productId: string;
 			updatedAt: number;
 		}[];
 
@@ -127,16 +167,51 @@ export class XissmieStoreService {
 		//	updatedAt: 0,
 		//}];
 
-		await this.emojisRepository.upsert(data.map((x) => ({
-			id: x.id,
-			name: `${x.name}-store-${x.id}`,
-			originalUrl: x.imageUrl,
-			publicUrl: x.imageUrl,
-			updatedAt: new Date(x.updatedAt),
-			isInStore: true,
-			storeAuthorId: x.authorId,
-			storeAuthorName: x.authorName,
-		})), ['id']);
+		// 既存データの更新日時を取得して無駄な再保存を回避
+		const existing = await this.emojisRepository.findBy({ id: In(data.map(d => d.id)) });
+		const existingMap = new Map(existing.map(e => [e.id, e]));
+
+		const rows = [] as {
+			id: string;
+			name: string;
+			originalUrl: string;
+			publicUrl: string;
+			updatedAt: Date;
+			isInStore: boolean;
+			storeProductId: string | null;
+			storeAuthorId: string;
+			storeAuthorName: string;
+		}[];
+
+		for (const x of data) {
+			const incomingUpdatedAt = new Date(x.updatedAt);
+			const ex = existingMap.get(x.id);
+			let publicUrl: string | null = ex?.publicUrl ?? '';
+
+			if (!(ex && ex.updatedAt && ex.updatedAt >= incomingUpdatedAt && ex.publicUrl)) {
+				const file = await this.driveService.uploadFromUrl({
+					url: x.imageUrl,
+					user: null,
+					isLink: false,
+					comment: `emoji:${x.id}`,
+				});
+				publicUrl = file.webpublicUrl ?? file.url;
+			}
+
+			rows.push({
+				id: x.id,
+				name: `${x.name}-store-${x.id}`,
+				originalUrl: x.imageUrl,
+				publicUrl: publicUrl || x.imageUrl,
+				updatedAt: incomingUpdatedAt,
+				isInStore: true,
+				storeProductId: x.productId ?? null,
+				storeAuthorId: x.authorId,
+				storeAuthorName: x.authorName,
+			});
+		}
+
+		await this.emojisRepository.upsert(rows, ['id']);
 	}
 
 	/* unused

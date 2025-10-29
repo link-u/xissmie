@@ -87,6 +87,11 @@ export class MiEmoji {
 	@Column('varchar', {
 		length: 128, nullable: true,
 	})
+	public storeProductId: string | null;
+
+	@Column('varchar', {
+		length: 128, nullable: true,
+	})
 	public storeAuthorId: string | null;
 
 	@Column('varchar', {
