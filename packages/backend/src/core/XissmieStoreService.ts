@@ -113,7 +113,7 @@ export class XissmieStoreService {
 
 			rows.push({
 				id: x.id,
-				name: `${x.name}`,
+				name: `${x.name}_d_${x.authorId}`,
 				description: '',
 				url: stableUrl ?? x.imageUrl,
 				updatedAt: incomingUpdatedAt,
@@ -200,7 +200,7 @@ export class XissmieStoreService {
 
 			rows.push({
 				id: x.id,
-				name: `${x.name}-store-${x.id}`,
+				name: `${x.name}_e_${x.authorId}`,
 				originalUrl: x.imageUrl,
 				publicUrl: publicUrl || x.imageUrl,
 				updatedAt: incomingUpdatedAt,

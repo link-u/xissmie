@@ -13,7 +13,7 @@ import { extractCustomEmojisFromMfm } from '@/misc/extract-custom-emojis-from-mf
 import { extractHashtags } from '@/misc/extract-hashtags.js';
 import type { IMentionedRemoteUsers } from '@/models/Note.js';
 import { MiNote } from '@/models/Note.js';
-import type { ChannelFollowingsRepository, ChannelsRepository, FollowingsRepository, InstancesRepository, MiFollowing, MiMeta, MutingsRepository, NotesRepository, NoteThreadMutingsRepository, UserListMembershipsRepository, UserOwnedEmojisRepository, UserProfilesRepository, UsersRepository } from '@/models/_.js';
+import type { ChannelFollowingsRepository, ChannelsRepository, EmojisRepository, FollowingsRepository, InstancesRepository, MiFollowing, MiMeta, MutingsRepository, NotesRepository, NoteThreadMutingsRepository, UserListMembershipsRepository, UserOwnedEmojisRepository, UserProfilesRepository, UsersRepository } from '@/models/_.js';
 import type { MiDriveFile } from '@/models/DriveFile.js';
 import type { MiApp } from '@/models/App.js';
 import { concat } from '@/misc/prelude/array.js';
@@ -195,6 +195,9 @@ export class NoteCreateService implements OnApplicationShutdown {
 		@Inject(DI.userOwnedEmojisRepository)
 		private userOwnedEmojisRepository: UserOwnedEmojisRepository,
 
+		@Inject(DI.emojisRepository)
+		private emojisRepository: EmojisRepository,
+
 		private userEntityService: UserEntityService,
 		private noteEntityService: NoteEntityService,
 		private idService: IdService,
@@ -366,13 +369,18 @@ export class NoteCreateService implements OnApplicationShutdown {
 			mentionedUsers = data.apMentions ?? await this.extractMentionedUsers(user, combinedTokens);
 		}
 
-		const storeEmojis = [...new Set(emojis.filter(e => e.includes('-store-')).map(e => e.replaceAll(':', '')))];
-		if (storeEmojis.length > 0) {
-			const owned = await this.userOwnedEmojisRepository.findBy({
-				userId: user.id,
-				emojiName: In(storeEmojis),
-			});
-			if (storeEmojis.some(e => !owned.find(o => o.emojiName === e))) {
+		const storeEmojiNames = [...new Set(
+			emojis
+				.map(e => e.replaceAll(':', ''))
+				.filter(n => n.includes('_e_') || n.includes('-store-'))
+		)];
+		if (storeEmojiNames.length > 0) {
+			// 絵文字名からIDへ解決し、所有チェックはIDベースで行う
+			const storeEmojiEntities = await this.emojisRepository.findBy({ name: In(storeEmojiNames) });
+			const requiredEmojiIds = new Set(storeEmojiEntities.map(e => e.id));
+			const owned = await this.userOwnedEmojisRepository.findBy({ userId: user.id });
+			const ownedIds = new Set(owned.map(o => o.emojiId));
+			if ([...requiredEmojiIds].some(id => !ownedIds.has(id))) {
 				throw new IdentifiableError('0fcbe7ef-8d42-41b2-8204-aafd9f16293d', 'You do not own that emoji.');
 			}
 		}

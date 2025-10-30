@@ -463,11 +463,12 @@ function computeButtonTitle(ev: MouseEvent): void {
 	elm.title = getEmojiName(emoji);
 }
 
+
 function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, ev?: MouseEvent) {
-	if (typeof emoji === 'string' && emoji.includes('-store-') && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
+	if (typeof emoji === 'string' && (emoji.includes('_e_') || emoji.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
 		xissmieEmojiPurchaseRequired(emoji);
 		return;
-	} else if (typeof emoji !== 'string' && emoji.name.includes('-store-') && !purchasedEmojis.value.some(x => x.name === emoji.name.replaceAll(':', ''))) {
+	} else if (typeof emoji !== 'string' && (emoji.name.includes('_e_') || emoji.name.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.name.replaceAll(':', ''))) {
 		xissmieEmojiPurchaseRequired(emoji.name);
 		return;
 	}
