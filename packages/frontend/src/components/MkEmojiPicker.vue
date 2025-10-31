@@ -88,26 +88,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</div>
 		<div class="group">
 			<section>
-				<header class="_acrylic">★creator★</header>
-				<div class="body">
-					<button
-						v-for="emoji in storeEmojis"
-						:key="getKey(emoji)"
-						:data-emoji="getKey(emoji)"
-						class="_button item"
-						:disabled="!canReact(emoji)"
-						tabindex="0"
-						@pointerenter="computeButtonTitle"
-						@click="chosen(emoji, $event)"
-					>
-						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
-					</button>
-				</div>
-				<MkButton primary small rounded style="margin: auto;" @click="loadMoreStoreEmojis">もっと見る</MkButton>
-			</section>
-		</div>
-		<div class="group">
-			<section>
 				<header class="_acrylic">購入済み</header>
 				<div class="body">
 					<button
@@ -124,6 +104,26 @@ SPDX-License-Identifier: AGPL-3.0-only
 					</button>
 				</div>
 				<MkButton primary small rounded style="margin: auto;" @click="refreshPurchasedEmojis"><i class="ti ti-refresh"></i> 更新</MkButton>
+			</section>
+		</div>
+		<div class="group">
+			<section>
+				<header class="_acrylic">★creator★</header>
+				<div class="body">
+					<button
+						v-for="emoji in storeEmojis"
+						:key="getKey(emoji)"
+						:data-emoji="getKey(emoji)"
+						class="_button item"
+						:disabled="!canReact(emoji)"
+						tabindex="0"
+						@pointerenter="computeButtonTitle"
+						@click="chosen(emoji, $event)"
+					>
+						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
+					</button>
+				</div>
+				<MkButton primary small rounded style="margin: auto;" @click="loadMoreStoreEmojis">もっと見る</MkButton>
 			</section>
 		</div>
 		<div v-once class="group">
@@ -463,7 +463,6 @@ function computeButtonTitle(ev: MouseEvent): void {
 	elm.title = getEmojiName(emoji);
 }
 
-
 function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, ev?: MouseEvent) {
 	if (typeof emoji === 'string' && (emoji.includes('_e_') || emoji.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
 		xissmieEmojiPurchaseRequired(emoji);
@@ -559,6 +558,8 @@ onMounted(() => {
 	focus();
 
 	misskeyApi('xissmie/store-emojis', {
+		limit: 12,
+		excludePurchased: true,
 	}).then(x => {
 		storeEmojis.value = x;
 	});
@@ -567,6 +568,7 @@ onMounted(() => {
 function loadMoreStoreEmojis() {
 	misskeyApi('xissmie/store-emojis', {
 		untilId: storeEmojis.value[storeEmojis.value.length - 1]!.id,
+		excludePurchased: true,
 	}).then(x => {
 		storeEmojis.value = storeEmojis.value.concat(x);
 	});

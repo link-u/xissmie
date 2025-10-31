@@ -53,6 +53,17 @@ function menu(ev) {
 		},
 	});
 
+	if (props.emoji.name.includes('-store-')) {
+		menuItems.push({
+			text: 'ストアで表示',
+			icon: 'ti ti-basket',
+			action: () => {
+				const normalized = props.emoji.name.replaceAll(':', '').replaceAll('@.', '');
+				window.open(`/xissmie/store/emojis/${normalized}`, '_blank', 'noopener');
+			},
+		});
+	}
+
 	if ($i?.isModerator ?? $i?.isAdmin) {
 		menuItems.push({
 			text: i18n.ts.edit,
