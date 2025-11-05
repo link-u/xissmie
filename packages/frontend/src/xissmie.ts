@@ -13,8 +13,7 @@ export async function xissmieEmojiPurchaseRequired(emoji: string) {
 	});
 	if (canceled) return;
 
-	const normalized = emoji.replaceAll(':', '').replaceAll('@.', '');
-	window.open(`/xissmie/store/emojis/${normalized}`, '_blank', 'noopener');
+	window.open(`/xissmie/store/emojis/${emoji.replaceAll(':', '')}`, '_blank', 'noopener');
 }
 
 export async function xissmieAvatarDecorationPurchaseRequired(decoration: { id: string; }) {

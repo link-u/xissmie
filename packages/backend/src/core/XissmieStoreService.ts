@@ -61,6 +61,8 @@ export class XissmieStoreService {
 			authorName: string;
 			productId: string;
 			updatedAt: number;
+			// 検索用キーワード（配列）
+			keywords?: string[];
 		}[];
 
 		//const data = [{
@@ -149,6 +151,7 @@ export class XissmieStoreService {
 			authorName: string;
 			productId: string;
 			updatedAt: number;
+			keywords?: string[];
 		}[];
 
 		//const data = [{
@@ -181,6 +184,7 @@ export class XissmieStoreService {
 			storeProductId: string | null;
 			storeAuthorId: string;
 			storeAuthorName: string;
+			aliases?: string[];
 		}[];
 
 		for (const x of data) {
@@ -198,6 +202,15 @@ export class XissmieStoreService {
 				publicUrl = file.webpublicUrl ?? file.url;
 			}
 
+			// 検索用キーワード（配列）をエイリアスとして取り込む
+			const keywordsInput: string[] = Array.isArray(x.keywords) ? x.keywords : [];
+			const keywords = keywordsInput.map(k => k.trim().toLowerCase()).filter(k => k.length > 0);
+			const aliasSet = new Set<string>((ex?.aliases ?? []).map(a => a.toLowerCase()));
+			// 元名も検索できるように追加（サフィックスなしで検索可能に）
+			aliasSet.add(x.name.toLowerCase());
+			for (const k of keywords) aliasSet.add(k);
+			const aliases = Array.from(aliasSet);
+
 			rows.push({
 				id: x.id,
 				name: `${x.name}_e_${x.authorId}`,
@@ -208,6 +221,7 @@ export class XissmieStoreService {
 				storeProductId: x.productId ?? null,
 				storeAuthorId: x.authorId,
 				storeAuthorName: x.authorName,
+				aliases,
 			});
 		}
 
