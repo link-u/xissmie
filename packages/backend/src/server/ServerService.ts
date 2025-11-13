@@ -153,9 +153,8 @@ export class ServerService implements OnApplicationShutdown {
 		fastify.get<{ Params: { path: string }; Querystring: { static?: any; badge?: any; }; }>('/emoji/:path(.*)', async (request, reply) => {
 			const path = request.params.path;
 
-			reply.header('Cache-Control', 'public, max-age=86400');
-
 			if (!path.match(/^[a-zA-Z0-9\-_@\.]+?\.webp$/)) {
+				reply.header('Cache-Control', 'no-store');
 				reply.code(404);
 				return;
 			}
@@ -183,6 +182,7 @@ export class ServerService implements OnApplicationShutdown {
 				if ('fallback' in request.query) {
 					return await reply.redirect('/static-assets/emoji-unknown.png');
 				} else {
+					reply.header('Cache-Control', 'no-store');
 					reply.code(404);
 					return;
 				}
@@ -201,6 +201,9 @@ export class ServerService implements OnApplicationShutdown {
 				url.searchParams.set('emoji', '1');
 				if ('static' in request.query) url.searchParams.set('static', '1');
 			}
+
+			// 成功時のみ長めのTTLを付与する
+			reply.header('Cache-Control', 'public, max-age=86400');
 
 			return await reply.redirect(
 				url.toString(),
