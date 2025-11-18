@@ -29,6 +29,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		:targetNote="targetNote"
 		:asDrawer="type === 'drawer'"
 		:max-height="maxHeight"
+		:allowChooseUnownedStoreEmoji="allowChooseUnownedStoreEmoji"
 		@chosen="chosen"
 		@esc="modal?.close()"
 	/>
@@ -50,12 +51,14 @@ const props = withDefaults(defineProps<{
 	asReactionPicker?: boolean;
 	targetNote?: Misskey.entities.Note | null;
 	choseAndClose?: boolean;
+	allowChooseUnownedStoreEmoji?: boolean;
 }>(), {
 	manualShowing: null,
 	showPinned: true,
 	pinnedEmojis: undefined,
 	asReactionPicker: false,
 	choseAndClose: true,
+	allowChooseUnownedStoreEmoji: false,
 });
 
 const emit = defineEmits<{

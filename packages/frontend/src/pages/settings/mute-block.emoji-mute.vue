@@ -61,7 +61,7 @@ function getHTMLElement(ev: MouseEvent): HTMLElement {
 }
 
 function add(ev: MouseEvent) {
-	os.pickEmoji(getHTMLElement(ev), { showPinned: false }).then((emoji) => {
+	os.pickEmoji(getHTMLElement(ev), { showPinned: false, allowChooseUnownedStoreEmoji: true }).then((emoji) => {
 		if (emoji) {
 			muteEmoji(emoji);
 		}

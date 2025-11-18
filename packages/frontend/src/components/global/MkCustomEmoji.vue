@@ -50,6 +50,8 @@ import { $i } from '@/i.js';
 import { prefer } from '@/preferences.js';
 import { DI } from '@/di.js';
 import { makeEmojiMuteKey, mute as muteEmoji, unmute as unmuteEmoji, checkMuted as checkEmojiMuted } from '@/utility/emoji-mute';
+import { store } from '@/store.js';
+import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
 
 const props = defineProps<{
 	name: string;
@@ -77,7 +79,7 @@ const rawUrl = computed(() => {
 		return props.url;
 	}
 	if (isLocal.value) {
-		if (customEmojiName.value.includes('_e_')) {
+		if (customEmojiName.value.includes('-store-')) {
 			return `/emoji/${customEmojiName.value}.webp`;
 		}
 		return customEmojisMap.get(customEmojiName.value)?.url ?? null;
@@ -132,6 +134,20 @@ function onClick(ev: MouseEvent) {
 					react(`:${props.name}:`);
 				},
 			});
+
+			// 未保有のストア絵文字なら「Xfolioで購入する」を追加
+			const nameForCheck = customEmojiName.value;
+			const isStoreLike = nameForCheck.includes('_e_') || nameForCheck.includes('-store-');
+			const isPurchased = (store.s.xissmiePurchasedEmojisCache ?? []).some(e => e.name === nameForCheck);
+			if (isStoreLike && !isPurchased) {
+				menuItems.push({
+					text: 'Xfolioで購入する',
+					icon: 'ti ti-shopping-cart',
+					action: () => {
+						xissmieEmojiPurchaseRequired(`:${props.name}:`);
+					},
+				});
+			}
 		}
 
 		if (isLocal.value) {

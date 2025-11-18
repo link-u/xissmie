@@ -196,8 +196,10 @@ const props = withDefaults(defineProps<{
 	asWindow?: boolean;
 	asReactionPicker?: boolean; // 今は使われてないが将来的に使いそう
 	targetNote?: Misskey.entities.Note | null;
+	allowChooseUnownedStoreEmoji?: boolean;
 }>(), {
 	showPinned: true,
+	allowChooseUnownedStoreEmoji: false,
 });
 
 const emit = defineEmits<{
@@ -464,12 +466,14 @@ function computeButtonTitle(ev: MouseEvent): void {
 }
 
 function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, ev?: MouseEvent) {
-	if (typeof emoji === 'string' && (emoji.includes('_e_') || emoji.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
-		xissmieEmojiPurchaseRequired(emoji);
-		return;
-	} else if (typeof emoji !== 'string' && (emoji.name.includes('_e_') || emoji.name.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.name.replaceAll(':', ''))) {
-		xissmieEmojiPurchaseRequired(emoji.name);
-		return;
+	if (!props.allowChooseUnownedStoreEmoji) {
+		if (typeof emoji === 'string' && (emoji.includes('_e_') || emoji.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
+			xissmieEmojiPurchaseRequired(emoji);
+			return;
+		} else if (typeof emoji !== 'string' && (emoji.name.includes('_e_') || emoji.name.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.name.replaceAll(':', ''))) {
+			xissmieEmojiPurchaseRequired(emoji.name);
+			return;
+		}
 	}
 
 	const el = ev && (ev.currentTarget ?? ev.target) as HTMLElement | null | undefined;
