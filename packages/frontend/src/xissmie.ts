@@ -17,6 +17,11 @@ export async function xissmieEmojiPurchaseRequired(emoji: string) {
 	window.open(`/xissmie/store/emojis/${normalized}`, '_blank', 'noopener');
 }
 
+export function xissmieOpenEmojiPurchasePage(emoji: string) {
+	const normalized = emoji.replaceAll(':', '').replaceAll('@.', '');
+	window.open(`/xissmie/store/emojis/${normalized}`, '_blank', 'noopener');
+}
+
 export async function xissmieAvatarDecorationPurchaseRequired(decoration: { id: string; }) {
 	const { canceled } = await os.confirm({
 		type: 'info',

@@ -51,7 +51,7 @@ import { prefer } from '@/preferences.js';
 import { DI } from '@/di.js';
 import { makeEmojiMuteKey, mute as muteEmoji, unmute as unmuteEmoji, checkMuted as checkEmojiMuted } from '@/utility/emoji-mute';
 import { store } from '@/store.js';
-import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
+import { xissmieOpenEmojiPurchasePage } from '@/xissmie.js';
 
 const props = defineProps<{
 	name: string;
@@ -144,7 +144,7 @@ function onClick(ev: MouseEvent) {
 					text: 'Xfolioで購入する',
 					icon: 'ti ti-shopping-cart',
 					action: () => {
-						xissmieEmojiPurchaseRequired(`:${props.name}:`);
+						xissmieOpenEmojiPurchasePage(`:${props.name}:`);
 					},
 				});
 			}
