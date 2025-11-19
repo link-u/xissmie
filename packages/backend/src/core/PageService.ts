@@ -20,6 +20,9 @@ import { IdService } from '@/core/IdService.js';
 import type { MiUser } from '@/models/User.js';
 import { IdentifiableError } from '@/misc/identifiable-error.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
+import type { EmojisRepository, UserOwnedEmojisRepository } from '@/models/_.js';
+import * as mfm from 'mfm-js';
+import { extractCustomEmojisFromMfm } from '@/misc/extract-custom-emojis-from-mfm.js';
 
 export interface PageBody {
 	title: string;
@@ -49,6 +52,12 @@ export class PageService {
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
 
+		@Inject(DI.emojisRepository)
+		private emojisRepository: EmojisRepository,
+
+		@Inject(DI.userOwnedEmojisRepository)
+		private userOwnedEmojisRepository: UserOwnedEmojisRepository,
+
 		private roleService: RoleService,
 		private moderationLogService: ModerationLogService,
 		private idService: IdService,
@@ -60,6 +69,8 @@ export class PageService {
 		me: MiUser,
 		body: PageBody,
 	): Promise<MiPage> {
+		await this.assertStoreEmojiOwnership(me.id, body);
+
 		await this.pagesRepository.findBy({
 			userId: me.id,
 			name: body.name,
@@ -126,6 +137,14 @@ export class PageService {
 					}
 				});
 			}
+
+			// 所有チェックは更新後の実効値に対して行う
+			const effectiveForValidation = {
+				title: body.title ?? page.title,
+				summary: body.summary === undefined ? page.summary : body.summary,
+				content: body.content ?? page.content,
+			} as Partial<PageBody>;
+			await this.assertStoreEmojiOwnership(me.id, effectiveForValidation);
 
 			await transaction.update(MiPage, page.id, {
 				updatedAt: new Date(),
@@ -219,5 +238,50 @@ export class PageService {
 		};
 		recursiveCollect(content);
 		return [...referencingNotes];
+	}
+
+	private async assertStoreEmojiOwnership(userId: MiUser['id'], body: Partial<PageBody>): Promise<void> {
+		const emojiNames = new Set<string>();
+
+		// title/summary（titleは通常MFMではないが安全側でチェック）
+		if (typeof (body as any).title === 'string' && (body as any).title.trim() !== '') {
+			for (const e of extractCustomEmojisFromMfm(mfm.parseSimple((body as any).title))) emojiNames.add(e.replaceAll(':', ''));
+		}
+		if (typeof body.summary === 'string' && body.summary.trim() !== '') {
+			for (const e of extractCustomEmojisFromMfm(mfm.parse(body.summary))) emojiNames.add(e.replaceAll(':', ''));
+		}
+
+		// content の text ブロック
+		if (Array.isArray(body.content)) {
+			const recursiveCollect = (content: unknown[]) => {
+				for (const contentElement of content) {
+					if (typeof contentElement === 'object' && contentElement !== null && 'type' in contentElement) {
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						const el: any = contentElement;
+						if (el.type === 'text' && typeof el.text === 'string' && el.text.trim() !== '') {
+							for (const e of extractCustomEmojisFromMfm(mfm.parse(el.text))) emojiNames.add(e.replaceAll(':', ''));
+						}
+						if (el.type === 'section' && Array.isArray(el.children)) {
+							recursiveCollect(el.children);
+						}
+					}
+				}
+			};
+			recursiveCollect(body.content);
+		}
+
+		const storeEmojiNames = [...emojiNames].filter(n => n.includes('_e_') || n.includes('-store-'));
+		if (storeEmojiNames.length === 0) return;
+
+		const storeEmojiEntities = await this.emojisRepository.findBy({ name: In(storeEmojiNames) });
+		if (storeEmojiEntities.length === 0) return;
+
+		const requiredEmojiIds = new Set(storeEmojiEntities.map(e => e.id));
+		const owned = await this.userOwnedEmojisRepository.findBy({ userId });
+		const ownedIds = new Set(owned.map(o => o.emojiId));
+		const hasUnowned = [...requiredEmojiIds].some(id => !ownedIds.has(id));
+		if (hasUnowned) {
+			throw new IdentifiableError('0fcbe7ef-8d42-41b2-8204-aafd9f16293d');
+		}
 	}
 }

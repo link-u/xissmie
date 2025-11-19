@@ -48,6 +48,12 @@ export const meta = {
 			code: 'NAME_ALREADY_EXISTS',
 			id: '2298a392-d4a1-44c5-9ebb-ac1aeaa5a9ab',
 		},
+		emojiNotOwned: {
+			message: 'You do not own one or more emojis used.',
+			code: 'EMOJI_NOT_OWNED',
+			id: '0fcbe7ef-8d42-41b2-8204-aafd9f16293d',
+			httpStatusCode: 403,
+		},
 	},
 } as const;
 
@@ -104,6 +110,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					if (err.id === '66aefd3c-fdb2-4a71-85ae-cc18bea85d3f') throw new ApiError(meta.errors.noSuchPage);
 					if (err.id === 'd0017699-8256-46f1-aed4-bc03bed73616') throw new ApiError(meta.errors.accessDenied);
 					if (err.id === 'd05bfe24-24b6-4ea2-a3ec-87cc9bf4daa4') throw new ApiError(meta.errors.nameAlreadyExists);
+					if (err.id === '0fcbe7ef-8d42-41b2-8204-aafd9f16293d') throw new ApiError(meta.errors.emojiNotOwned);
 				}
 				throw err;
 			}
