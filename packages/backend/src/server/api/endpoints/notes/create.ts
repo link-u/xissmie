@@ -132,7 +132,7 @@ export const meta = {
 		},
 
 		includesNotOwnedEmojis: {
-			message: 'Cannot post because it includes not owned custom emojis.',
+			message: '更新ボタンを押してください',
 			code: 'INCLUDES_NOT_OWNED_EMOJIS',
 			id: '0fcbe7ef-8d42-41b2-8204-aafd9f16293d',
 		},
