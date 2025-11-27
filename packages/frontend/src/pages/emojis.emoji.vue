@@ -23,12 +23,22 @@ import { copyToClipboard } from '@/utility/copy-to-clipboard.js';
 import { i18n } from '@/i18n.js';
 import MkCustomEmojiDetailedDialog from '@/components/MkCustomEmojiDetailedDialog.vue';
 import { $i } from '@/i.js';
+import { store } from '@/store.js';
+import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
 
 const props = defineProps<{
 	emoji: Misskey.entities.EmojiSimple;
 }>();
 
 function menu(ev) {
+	// 未購入のストア絵文字なら購入ページ遷移を促す
+	const name = props.emoji.name.replaceAll(':', '');
+	if ((name.includes('_e_') || name.includes('-store-'))
+		&& !store.s.xissmiePurchasedEmojisCache.some(x => x.name === name)) {
+		xissmieEmojiPurchaseRequired(`:${props.emoji.name}:`);
+		return;
+	}
+
 	const menuItems: MenuItem[] = [];
 	menuItems.push({
 		type: 'label',
