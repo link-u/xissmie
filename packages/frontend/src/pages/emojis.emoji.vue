@@ -24,7 +24,7 @@ import { i18n } from '@/i18n.js';
 import MkCustomEmojiDetailedDialog from '@/components/MkCustomEmojiDetailedDialog.vue';
 import { $i } from '@/i.js';
 import { store } from '@/store.js';
-import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
+import { xissmieOpenEmojiPurchasePage } from '@/xissmie.js';
 
 const props = defineProps<{
 	emoji: Misskey.entities.EmojiSimple;
@@ -35,7 +35,7 @@ function menu(ev) {
 	const name = props.emoji.name.replaceAll(':', '');
 	if ((name.includes('_e_') || name.includes('-store-'))
 		&& !store.s.xissmiePurchasedEmojisCache.some(x => x.name === name)) {
-		xissmieEmojiPurchaseRequired(`:${props.emoji.name}:`);
+		xissmieOpenEmojiPurchasePage(`:${props.emoji.name}:`);
 		return;
 	}
 
@@ -63,13 +63,12 @@ function menu(ev) {
 		},
 	});
 
-	if (props.emoji.name.includes('-store-')) {
+	if (props.emoji.name.includes('-store-') || props.emoji.name.includes('_e_')) {
 		menuItems.push({
-			text: 'ストアで表示',
-			icon: 'ti ti-basket',
+			text: 'Xfolioで購入する',
+			icon: 'ti ti-shopping-cart',
 			action: () => {
-				const normalized = props.emoji.name.replaceAll(':', '').replaceAll('@.', '');
-				window.open(`/xissmie/store/emojis/${normalized}`, '_blank', 'noopener');
+				xissmieOpenEmojiPurchasePage(`:${props.emoji.name}:`);
 			},
 		});
 	}
