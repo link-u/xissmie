@@ -31,14 +31,6 @@ const props = defineProps<{
 }>();
 
 function menu(ev) {
-	// 未購入のストア絵文字なら購入ページ遷移を促す
-	const name = props.emoji.name.replaceAll(':', '');
-	if ((name.includes('_e_') || name.includes('-store-'))
-		&& !store.s.xissmiePurchasedEmojisCache.some(x => x.name === name)) {
-		xissmieOpenEmojiPurchasePage(`:${props.emoji.name}:`);
-		return;
-	}
-
 	const menuItems: MenuItem[] = [];
 	menuItems.push({
 		type: 'label',
@@ -63,7 +55,10 @@ function menu(ev) {
 		},
 	});
 
-	if (props.emoji.name.includes('-store-') || props.emoji.name.includes('_e_')) {
+	// 未購入のストア絵文字なら「クロスフォリオで購入する」を表示
+	const name = props.emoji.name.replaceAll(':', '');
+	if ((name.includes('_e_') || name.includes('-store-'))
+		&& !store.s.xissmiePurchasedEmojisCache.some(x => x.name === name)) {
 		menuItems.push({
 			text: 'Xfolioで購入する',
 			icon: 'ti ti-shopping-cart',
