@@ -180,6 +180,10 @@ export class XissmieStoreService {
 			originalUrl: string;
 			publicUrl: string;
 			updatedAt: Date;
+			category: string | null;
+			license: string | null;
+			localOnly: boolean;
+			isSensitive: boolean;
 			isInStore: boolean;
 			storeProductId: string | null;
 			storeAuthorId: string;
@@ -217,6 +221,10 @@ export class XissmieStoreService {
 				originalUrl: x.imageUrl,
 				publicUrl: publicUrl || x.imageUrl,
 				updatedAt: incomingUpdatedAt,
+				category: '★creator★',
+				license: x.authorName,
+				localOnly: true,
+				isSensitive: false,
 				isInStore: true,
 				storeProductId: x.productId ?? null,
 				storeAuthorId: x.authorId,
