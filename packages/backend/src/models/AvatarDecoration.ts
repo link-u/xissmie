@@ -37,6 +37,11 @@ export class MiAvatarDecoration {
 	})
 	public isInStore: boolean;
 
+	@Column('boolean', {
+		default: true,
+	})
+	public isPublic: boolean;
+
 	@Column('varchar', {
 		length: 128, nullable: true,
 	})

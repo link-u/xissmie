@@ -61,6 +61,7 @@ export class XissmieStoreService {
 			authorName: string;
 			productId: string;
 			updatedAt: number;
+			isPublic: boolean;
 			// 検索用キーワード（配列）
 			keywords?: string[];
 		}[];
@@ -92,6 +93,7 @@ export class XissmieStoreService {
 			url: string;
 			updatedAt: Date;
 			isInStore: boolean;
+			isPublic: boolean;
 			storeProductId: string | null;
 			storeAuthorId: string;
 			storeAuthorName: string;
@@ -120,6 +122,7 @@ export class XissmieStoreService {
 				url: stableUrl ?? x.imageUrl,
 				updatedAt: incomingUpdatedAt,
 				isInStore: true,
+				isPublic: x.isPublic,
 				storeProductId: x.productId ?? null,
 				storeAuthorId: x.authorId,
 				storeAuthorName: x.authorName,
@@ -151,6 +154,7 @@ export class XissmieStoreService {
 			authorName: string;
 			productId: string;
 			updatedAt: number;
+			isPublic: boolean;
 			keywords?: string[];
 		}[];
 
@@ -185,6 +189,7 @@ export class XissmieStoreService {
 			localOnly: boolean;
 			isSensitive: boolean;
 			isInStore: boolean;
+			isPublic: boolean;
 			storeProductId: string | null;
 			storeAuthorId: string;
 			storeAuthorName: string;
@@ -226,6 +231,7 @@ export class XissmieStoreService {
 				localOnly: true,
 				isSensitive: false,
 				isInStore: true,
+				isPublic: x.isPublic,
 				storeProductId: x.productId ?? null,
 				storeAuthorId: x.authorId,
 				storeAuthorName: x.authorName,

@@ -5110,6 +5110,7 @@ export type components = {
             localOnly?: boolean;
             isSensitive?: boolean;
             roleIdsThatCanBeUsedThisEmojiAsReaction?: string[];
+            isPublic: boolean;
         };
         EmojiDetailed: {
             /** Format: id */
@@ -5124,6 +5125,7 @@ export type components = {
             isSensitive: boolean;
             localOnly: boolean;
             roleIdsThatCanBeUsedThisEmojiAsReaction: string[];
+            isPublic: boolean;
         };
         EmojiDetailedAdmin: {
             /** Format: id */
@@ -5147,6 +5149,7 @@ export type components = {
                 id: string;
                 name: string;
             }[];
+            isPublic: boolean;
         };
         Flash: {
             /**
@@ -36824,6 +36827,7 @@ export interface operations {
                         description: string;
                         url: string;
                         roleIdsThatCanBeUsedThisDecoration: string[];
+                        isPublic: boolean;
                     }[];
                 };
             };
