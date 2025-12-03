@@ -111,7 +111,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<header class="_acrylic">★creator★</header>
 				<div class="body">
 					<button
-						v-for="emoji in storeEmojis"
+						v-for="emoji in storeEmojis.filter(x => x.isPublic)"
 						:key="getKey(emoji)"
 						:data-emoji="getKey(emoji)"
 						class="_button item"

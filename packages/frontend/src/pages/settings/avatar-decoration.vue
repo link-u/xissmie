@@ -59,7 +59,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 			<div :class="$style.decorations">
 				<XDecoration
-					v-for="avatarDecoration in storeAvatarDecorations"
+					v-for="avatarDecoration in storeAvatarDecorations.filter(x => x.isPublic)"
 					:key="avatarDecoration.id"
 					:decoration="avatarDecoration"
 					:locked="!purchasedAvatarDecorations.some(d => d.id === avatarDecoration.id)"
