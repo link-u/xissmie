@@ -309,6 +309,22 @@ watch(q, () => {
 			}
 			if (matches.size >= max) return matches;
 
+			for (const emoji of purchasedEmojis.value) {
+				if (emoji.name.split('_e_')[0] === newQ || emoji.aliases.some(alias => alias === newQ)) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
+				}
+			}
+			if (matches.size >= max) return matches;
+
+			for (const emoji of purchasedEmojis.value) {
+				if (emoji.name.split('_e_')[0].startsWith(newQ) || emoji.aliases.some(alias => alias.startsWith(newQ))) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
+				}
+			}
+			if (matches.size >= max) return matches;
+
 			for (const emoji of emojis) {
 				if (emoji.aliases.some(alias => alias === newQ)) {
 					matches.add(emoji);

@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { store } from '@/store.js';
+
 export type EmojiDef = {
 	emoji: string;
 	name: string;
@@ -22,6 +24,7 @@ export function searchEmoji(query: string | null, emojiDb: EmojiDef[], max = 30)
 	}
 
 	const matched = new Map<string, EmojiScore>();
+
 	// 完全一致（エイリアスなし）
 	emojiDb.some(x => {
 		if (x.name === query && !x.aliasOf) {
@@ -39,6 +42,18 @@ export function searchEmoji(query: string | null, emojiDb: EmojiDef[], max = 30)
 			return matched.size === max;
 		});
 	}
+
+	// 前方一致（購入済み）
+	store.s.xissmiePurchasedEmojisCache.some(x => {
+		if (x.name.split('_e_')[0].startsWith(query) && !matched.has(x.name)) {
+			matched.set(x.name, { emoji: {
+				emoji: x.name,
+				name: x.name,
+				isCustomEmoji: true,
+			}, score: query.length + 3 });
+		}
+		return matched.size === max;
+	});
 
 	// 前方一致（エイリアスなし）
 	if (matched.size < max) {
