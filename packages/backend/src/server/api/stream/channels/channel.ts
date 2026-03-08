@@ -6,6 +6,7 @@
 import { Injectable } from '@nestjs/common';
 import type { Packed } from '@/misc/json-schema.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
+import { NoteStreamingHidingService } from '../NoteStreamingHidingService.js';
 import { bindThis } from '@/decorators.js';
 import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
 import type { JsonObject } from '@/misc/json-value.js';
@@ -19,6 +20,7 @@ class ChannelChannel extends Channel {
 
 	constructor(
 		private noteEntityService: NoteEntityService,
+		private noteStreamingHidingService: NoteStreamingHidingService,
 
 		id: string,
 		connection: Channel['connection'],
@@ -40,12 +42,22 @@ class ChannelChannel extends Channel {
 	private async onNote(note: Packed<'Note'>) {
 		if (note.channelId !== this.channelId) return;
 
+		if (note.user.requireSigninToViewContents && this.user == null) return;
+		if (note.renote && note.renote.user.requireSigninToViewContents && this.user == null) return;
+		if (note.reply && note.reply.user.requireSigninToViewContents && this.user == null) return;
+
+		if (!this.isNoteVisibleForMe(note)) return;
 		if (this.isNoteMutedOrBlocked(note)) return;
 
-		if (this.user && isRenotePacked(note) && !isQuotePacked(note)) {
-			if (note.renote && Object.keys(note.renote.reactions).length > 0) {
-				const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user.id);
-				note.renote.myReaction = myRenoteReaction;
+		const { shouldSkip } = await this.noteStreamingHidingService.processHiding(note, this.user?.id ?? null);
+		if (shouldSkip) return;
+
+		if (this.user) {
+			if (isRenotePacked(note) && !isQuotePacked(note)) {
+				if (note.renote && Object.keys(note.renote.reactions).length > 0) {
+					const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user.id);
+					note.renote.myReaction = myRenoteReaction;
+				}
 			}
 		}
 
@@ -69,6 +81,7 @@ export class ChannelChannelService implements MiChannelService<false> {
 
 	constructor(
 		private noteEntityService: NoteEntityService,
+		private noteStreamingHidingService: NoteStreamingHidingService,
 	) {
 	}
 
@@ -76,6 +89,7 @@ export class ChannelChannelService implements MiChannelService<false> {
 	public create(id: string, connection: Channel['connection']): ChannelChannel {
 		return new ChannelChannel(
 			this.noteEntityService,
+			this.noteStreamingHidingService,
 			id,
 			connection,
 		);

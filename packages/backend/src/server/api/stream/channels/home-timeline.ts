@@ -6,6 +6,7 @@
 import { Injectable } from '@nestjs/common';
 import type { Packed } from '@/misc/json-schema.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
+import { NoteStreamingHidingService } from '../NoteStreamingHidingService.js';
 import { bindThis } from '@/decorators.js';
 import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
 import type { JsonObject } from '@/misc/json-value.js';
@@ -21,6 +22,7 @@ class HomeTimelineChannel extends Channel {
 
 	constructor(
 		private noteEntityService: NoteEntityService,
+		private noteStreamingHidingService: NoteStreamingHidingService,
 
 		id: string,
 		connection: Channel['connection'],
@@ -50,11 +52,7 @@ class HomeTimelineChannel extends Channel {
 			if (!isMe && !Object.hasOwn(this.following, note.userId)) return;
 		}
 
-		if (note.visibility === 'followers') {
-			if (!isMe && !Object.hasOwn(this.following, note.userId)) return;
-		} else if (note.visibility === 'specified') {
-			if (!isMe && !note.visibleUserIds!.includes(this.user!.id)) return;
-		}
+		if (!this.isNoteVisibleForMe(note)) return;
 
 		if (note.reply) {
 			const reply = note.reply;
@@ -79,10 +77,15 @@ class HomeTimelineChannel extends Channel {
 
 		if (this.isNoteMutedOrBlocked(note)) return;
 
-		if (this.user && isRenotePacked(note) && !isQuotePacked(note)) {
-			if (note.renote && Object.keys(note.renote.reactions).length > 0) {
-				const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user.id);
-				note.renote.myReaction = myRenoteReaction;
+		const { shouldSkip } = await this.noteStreamingHidingService.processHiding(note, this.user?.id ?? null);
+		if (shouldSkip) return;
+
+		if (this.user) {
+			if (isRenotePacked(note) && !isQuotePacked(note)) {
+				if (note.renote && Object.keys(note.renote.reactions).length > 0) {
+					const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user.id);
+					note.renote.myReaction = myRenoteReaction;
+				}
 			}
 		}
 
@@ -106,6 +109,7 @@ export class HomeTimelineChannelService implements MiChannelService<true> {
 
 	constructor(
 		private noteEntityService: NoteEntityService,
+		private noteStreamingHidingService: NoteStreamingHidingService,
 	) {
 	}
 
@@ -113,6 +117,7 @@ export class HomeTimelineChannelService implements MiChannelService<true> {
 	public create(id: string, connection: Channel['connection']): HomeTimelineChannel {
 		return new HomeTimelineChannel(
 			this.noteEntityService,
+			this.noteStreamingHidingService,
 			id,
 			connection,
 		);

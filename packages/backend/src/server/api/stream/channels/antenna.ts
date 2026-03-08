@@ -5,7 +5,9 @@
 
 import { Injectable } from '@nestjs/common';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
+import { NoteStreamingHidingService } from '../NoteStreamingHidingService.js';
 import { bindThis } from '@/decorators.js';
+import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
 import type { GlobalEvents } from '@/core/GlobalEventService.js';
 import type { JsonObject } from '@/misc/json-value.js';
 import Channel, { type MiChannelService } from '../channel.js';
@@ -19,6 +21,7 @@ class AntennaChannel extends Channel {
 
 	constructor(
 		private noteEntityService: NoteEntityService,
+		private noteStreamingHidingService: NoteStreamingHidingService,
 
 		id: string,
 		connection: Channel['connection'],
@@ -41,9 +44,20 @@ class AntennaChannel extends Channel {
 		if (data.type === 'note') {
 			const note = await this.noteEntityService.pack(data.body.id, this.user, { detail: true });
 
+			if (!this.isNoteVisibleForMe(note)) return;
 			if (this.isNoteMutedOrBlocked(note)) return;
 
-			this.connection.cacheNote(note);
+			const { shouldSkip } = await this.noteStreamingHidingService.processHiding(note, this.user?.id ?? null);
+			if (shouldSkip) return;
+
+			if (this.user) {
+				if (isRenotePacked(note) && !isQuotePacked(note)) {
+					if (note.renote && Object.keys(note.renote.reactions).length > 0) {
+						const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user.id);
+						note.renote.myReaction = myRenoteReaction;
+					}
+				}
+			}
 
 			this.send('note', note);
 		} else {
@@ -66,6 +80,7 @@ export class AntennaChannelService implements MiChannelService<true> {
 
 	constructor(
 		private noteEntityService: NoteEntityService,
+		private noteStreamingHidingService: NoteStreamingHidingService,
 	) {
 	}
 
@@ -73,6 +88,7 @@ export class AntennaChannelService implements MiChannelService<true> {
 	public create(id: string, connection: Channel['connection']): AntennaChannel {
 		return new AntennaChannel(
 			this.noteEntityService,
+			this.noteStreamingHidingService,
 			id,
 			connection,
 		);
