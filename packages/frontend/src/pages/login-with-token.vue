@@ -17,34 +17,45 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { ref } from 'vue';
 import MkAnimBg from '@/components/MkAnimBg.vue';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import { definePage } from '@/page.js';
 import { $i, login } from '@/account.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import { misskeyApi } from '@/utility/misskey-api.js';
+import { serverContext, assertServerContext } from '@/server-context.js';
 
-const token = new URLSearchParams(location.search).get('token');
+const token = assertServerContext(serverContext, 'token') ? serverContext.token : null;
 
 const message = ref('ログイン中...');
 
 if ($i != null) {
 	message.value = 'Xissmieにログインしました';
+	window.location.href = '/timeline';
 } else if (token == null) {
 	message.value = 'ログイン情報が不正です';
 } else {
 	misskeyApi('login-with-token', {
 		token: token,
 	}).then((user) => {
-		login(user.token, undefined, false).then(() => {
-			message.value = 'Xfolioへのログインが完了しました！';
-			window.location.reload();
-		}).catch(() => {
-			message.value = 'アカウント情報の取得に失敗しました';
-		});
-	}).catch(() => {
-		message.value = 'ログインに失敗しました';
+		if (user && user.token && typeof user.token === 'string') {
+			login(user.token, undefined, false).then(() => {
+				message.value = 'Xfolioへのログインが完了しました！';
+				window.location.href = '/timeline';
+			}).catch(() => {
+				message.value = 'アカウント情報の取得に失敗しました';
+			});
+		} else {
+			message.value = 'ログイン情報の取得に失敗しました';
+		}
+	}).catch((err) => {
+		console.error('Login failed:', err);
+		if (err?.code === 'INVALID_LOGIN_TOKEN') {
+			message.value = 'ログイン用トークンが無効です。再度ログインしてください。';
+		} else {
+			message.value = 'ログインに失敗しました';
+		}
 	});
 }
 
-definePageMetadata(() => ({
+definePage(() => ({
 	title: 'MiAuth',
 	icon: 'ti ti-apps',
 }));

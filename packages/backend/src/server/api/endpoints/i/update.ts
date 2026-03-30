@@ -11,7 +11,7 @@ import { JSDOM } from 'jsdom';
 import { extractCustomEmojisFromMfm } from '@/misc/extract-custom-emojis-from-mfm.js';
 import { extractHashtags } from '@/misc/extract-hashtags.js';
 import * as Acct from '@/misc/acct.js';
-import type { UsersRepository, DriveFilesRepository, MiMeta, UserProfilesRepository, PagesRepository } from '@/models/_.js';
+import type { UsersRepository, DriveFilesRepository, MiMeta, UserProfilesRepository, PagesRepository, EmojisRepository, UserOwnedEmojisRepository } from '@/models/_.js';
 import type { MiLocalUser, MiUser } from '@/models/User.js';
 import { birthdaySchema, descriptionSchema, followedMessageSchema, locationSchema, nameSchema } from '@/models/User.js';
 import type { MiUserProfile } from '@/models/UserProfile.js';
@@ -34,8 +34,10 @@ import type { Config } from '@/config.js';
 import { safeForSql } from '@/misc/safe-for-sql.js';
 import { AvatarDecorationService } from '@/core/AvatarDecorationService.js';
 import { notificationRecieveConfig } from '@/models/json-schema/user.js';
+import { XissmieStoreService } from '@/core/XissmieStoreService.js';
 import { ApiLoggerService } from '../../ApiLoggerService.js';
 import { ApiError } from '../../error.js';
+import { In, IsNull } from 'typeorm';
 
 export const meta = {
 	tags: ['account'],
@@ -122,6 +124,12 @@ export const meta = {
 			id: '0b3f9f6a-2f4d-4b1f-9fb4-49d3a2fd7191',
 			httpStatusCode: 422,
 		},
+		emojiNotOwned: {
+			message: 'You do not own one or more emojis used.',
+			code: 'EMOJI_NOT_OWNED',
+			id: '0fcbe7ef-8d42-41b2-8204-aafd9f16293d',
+			httpStatusCode: 403,
+		},
 	},
 
 	res: {
@@ -190,6 +198,7 @@ export const paramDef = {
 		autoSensitive: { type: 'boolean' },
 		followingVisibility: { type: 'string', enum: ['public', 'followers', 'private'] },
 		followersVisibility: { type: 'string', enum: ['public', 'followers', 'private'] },
+		chatScope: { type: 'string', enum: ['everyone', 'followers', 'following', 'mutual', 'none'] },
 		pinnedPageId: { type: 'string', format: 'misskey:id', nullable: true },
 		mutedWords: muteWords,
 		hardMutedWords: muteWords,
@@ -211,6 +220,7 @@ export const paramDef = {
 				receiveFollowRequest: notificationRecieveConfig,
 				followRequestAccepted: notificationRecieveConfig,
 				roleAssigned: notificationRecieveConfig,
+				chatRoomInvitationReceived: notificationRecieveConfig,
 				achievementEarned: notificationRecieveConfig,
 				app: notificationRecieveConfig,
 				test: notificationRecieveConfig,
@@ -249,6 +259,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		@Inject(DI.pagesRepository)
 		private pagesRepository: PagesRepository,
 
+		@Inject(DI.emojisRepository)
+		private emojisRepository: EmojisRepository,
+
+		@Inject(DI.userOwnedEmojisRepository)
+		private userOwnedEmojisRepository: UserOwnedEmojisRepository,
+
 		private userEntityService: UserEntityService,
 		private driveFileEntityService: DriveFileEntityService,
 		private globalEventService: GlobalEventService,
@@ -262,6 +278,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private httpRequestService: HttpRequestService,
 		private avatarDecorationService: AvatarDecorationService,
 		private utilityService: UtilityService,
+		private xissmeStoreService: XissmieStoreService,
 	) {
 		super(meta, paramDef, async (ps, _user, token) => {
 			const user = await this.usersRepository.findOneByOrFail({ id: _user.id }) as MiLocalUser;
@@ -288,6 +305,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			if (ps.birthday !== undefined) profileUpdates.birthday = ps.birthday;
 			if (ps.followingVisibility !== undefined) profileUpdates.followingVisibility = ps.followingVisibility;
 			if (ps.followersVisibility !== undefined) profileUpdates.followersVisibility = ps.followersVisibility;
+			if (ps.chatScope !== undefined) updates.chatScope = ps.chatScope;
 
 			function checkMuteWordCount(mutedWords: (string[] | string)[], limit: number) {
 				// TODO: ちゃんと数える
@@ -390,9 +408,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			if (ps.avatarDecorations) {
 				policies ??= await this.roleService.getUserPolicies(user.id);
 				const decorations = await this.avatarDecorationService.getAll(true);
+				const purchasedDecorations = await this.xissmeStoreService.getPurchasedDecorations(user.id);
 				const myRoles = await this.roleService.getUserRoles(user.id);
 				const allRoles = await this.roleService.getRoles();
-				const decorationIds = decorations
+				const decorationIds = [...decorations, ...purchasedDecorations]
 					.filter(d => d.roleIdsThatCanBeUsedThisDecoration.filter(roleId => allRoles.some(r => r.id === roleId)).length === 0 || myRoles.some(r => d.roleIdsThatCanBeUsedThisDecoration.includes(r.id)))
 					.map(d => d.id);
 
@@ -502,6 +521,26 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			updates.emojis = emojis;
 			updates.tags = tags;
+
+			// Xissmie: ストア絵文字の所有チェック（プロフィール/自己紹介等でも未購入利用を禁止）
+			const storeEmojiNames = [...new Set(
+				emojis
+					.map(e => e.replaceAll(':', ''))
+					.filter(n => n.includes('_e_') || n.includes('-store-'))
+			)];
+			if (storeEmojiNames.length > 0) {
+				// 絵文字名からIDへ解決し、所有チェックはIDベースで行う
+				const storeEmojiEntities = await this.emojisRepository.findBy({ name: In(storeEmojiNames) });
+				if (storeEmojiEntities.length > 0) {
+					const requiredEmojiIds = new Set(storeEmojiEntities.map(e => e.id));
+					const owned = await this.userOwnedEmojisRepository.findBy({ userId: user.id });
+					const ownedIds = new Set(owned.map(o => o.emojiId));
+					const hasUnowned = [...requiredEmojiIds].some(id => !ownedIds.has(id));
+					if (hasUnowned) {
+						throw new ApiError(meta.errors.emojiNotOwned);
+					}
+				}
+			}
 
 			// ハッシュタグ更新
 			this.hashtagService.updateUsertags(user, tags);

@@ -32,7 +32,16 @@ async function offlineContentHTML() {
 	const i18n = await (swLang.i18n ?? swLang.fetchLocale()) as Partial<I18n<Locale>>;
 	const messages = {
 		title: i18n.ts?._offlineScreen.title ?? 'Offline - Could not connect to server',
-		header: i18n.ts?._offlineScreen.header ?? 'Could not connect to server',
+		header: '【メンテナンス中のお知らせ】<br> ' +
+			'現在、Xissmieはメンテナンスを実施しております。<br>' +
+			'ご不便をおかけして申し訳ありませんが、下記の時間帯はサービスをご利用いただけません。<br> ' +
+			'<br>' +
+			'【メンテナンス予定時間】<br>' +
+			'2025年6月25日（水） AM11:00 ～ AM12:00 <br>' +
+			'※終了時刻は前後する場合があります。<br> ' +
+			'<br>' +
+			'メンテナンス完了後、通常通りご利用いただけます。<br>' +
+			'ご理解とご協力のほど、よろしくお願いいたします。',
 		reload: i18n.ts?.reload ?? 'Reload',
 	};
 
@@ -76,6 +85,7 @@ globalThis.addEventListener('push', ev => {
 			// case 'driveFileCreated':
 			case 'notification':
 			case 'unreadAntennaNote':
+			case 'newChatMessage':
 				// 1日以上経過している場合は無視
 				if (Date.now() - data.dateTime > 1000 * 60 * 60 * 24) break;
 
@@ -154,6 +164,9 @@ globalThis.addEventListener('notificationclick', (ev: ServiceWorkerGlobalScopeEv
 				break;
 			case 'unreadAntennaNote':
 				client = await swos.openAntenna(data.body.antenna.id, loginId);
+				break;
+			case 'newChatMessage':
+				client = await swos.openChat(data.body, loginId);
 				break;
 			default:
 				switch (action) {

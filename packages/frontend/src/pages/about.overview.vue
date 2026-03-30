@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <div class="_gaps_m">
 	<div :class="$style.banner" :style="{ backgroundImage: `url(${ instance.bannerUrl })` }">
 		<div style="overflow: clip;">
-			<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" alt="" :class="$style.bannerIcon"/>
+			<img :src="instance.iconUrl ?? '/favicon.ico'" alt="" :class="$style.bannerIcon"/>
 			<div :class="$style.bannerName">
 				<b>{{ instance.name ?? host }}</b>
 			</div>
@@ -96,16 +96,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</div>
 	</FormSection>
 
-	<FormSection>
-		<template #label>Well-known resources</template>
-		<div class="_gaps_s">
-			<FormLink to="/.well-known/host-meta" external>host-meta</FormLink>
-			<FormLink to="/.well-known/host-meta.json" external>host-meta.json</FormLink>
-			<FormLink to="/.well-known/nodeinfo" external>nodeinfo</FormLink>
-			<FormLink to="/robots.txt" external>robots.txt</FormLink>
-			<FormLink to="/manifest.json" external>manifest.json</FormLink>
-		</div>
-	</FormSection>
 </div>
 </template>
 
@@ -114,11 +104,10 @@ import { host, version } from '@@/js/config.js';
 import { i18n } from '@/i18n.js';
 import { instance } from '@/instance.js';
 import number from '@/filters/number.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
+import { misskeyApi } from '@/utility/misskey-api.js';
 import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSplit from '@/components/form/split.vue';
-import FormSuspense from '@/components/form/suspense.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import MkLink from '@/components/MkLink.vue';

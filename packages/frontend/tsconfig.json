@@ -21,6 +21,8 @@
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
 		"useDefineForClassFields": true,
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],
@@ -52,6 +54,6 @@
 		"./@types/**/*.ts"
 	],
 	"exclude": [
-		".storybook/**/*"
+		"./src/**/*.stories.ts"
 	]
 }

@@ -74,7 +74,6 @@ class AntennaChannel extends Channel {
 					}
 				}
 			}
-
 			this.send('note', note);
 		} else {
 			this.send(data.type, data.body);

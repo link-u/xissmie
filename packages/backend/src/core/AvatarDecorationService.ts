@@ -13,6 +13,7 @@ import { bindThis } from '@/decorators.js';
 import { MemorySingleCache } from '@/misc/cache.js';
 import type { GlobalEvents } from '@/core/GlobalEventService.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
+import { QueryService } from '@/core/QueryService.js';
 
 @Injectable()
 export class AvatarDecorationService implements OnApplicationShutdown {
@@ -28,6 +29,7 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		private idService: IdService,
 		private moderationLogService: ModerationLogService,
 		private globalEventService: GlobalEventService,
+		private queryService: QueryService,
 	) {
 		this.cache = new MemorySingleCache<MiAvatarDecoration[]>(1000 * 60 * 30); // 30s
 
@@ -114,7 +116,28 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		if (noCache) {
 			this.cache.delete();
 		}
-		return this.cache.fetch(() => this.avatarDecorationsRepository.find());
+		return this.cache.fetch(() => this.avatarDecorationsRepository.findBy({
+			isInStore: false,
+		}));
+	}
+
+	// TODO: pagination
+	@bindThis
+	public async getFromStore(opts: {
+		limit?: number,
+		sinceId?: string,
+		untilId?: string,
+		sinceDate?: Date,
+		untilDate?: Date,
+	}): Promise<MiAvatarDecoration[]> {
+		const q = this.queryService.makePaginationQuery(this.avatarDecorationsRepository.createQueryBuilder('decoration'), opts.sinceId, opts.untilId, opts.sinceDate?.getTime(), opts.untilDate?.getTime())
+			.andWhere('decoration.isInStore = TRUE');
+
+		if (opts.limit) {
+			q.limit(opts.limit);
+		}
+
+		return q.getMany();
 	}
 
 	@bindThis

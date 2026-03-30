@@ -18,14 +18,16 @@ import * as Misskey from 'misskey-js';
 import { defineAsyncComponent } from 'vue';
 import type { MenuItem } from '@/types/menu.js';
 import * as os from '@/os.js';
-import { misskeyApiGet } from '@/scripts/misskey-api.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
+import { misskeyApiGet } from '@/utility/misskey-api.js';
+import { copyToClipboard } from '@/utility/copy-to-clipboard.js';
 import { i18n } from '@/i18n.js';
 import MkCustomEmojiDetailedDialog from '@/components/MkCustomEmojiDetailedDialog.vue';
-import { $i } from '@/account.js';
+import { $i } from '@/i.js';
+import { store } from '@/store.js';
+import { xissmieOpenEmojiPurchasePage } from '@/xissmie.js';
 
 const props = defineProps<{
-  emoji: Misskey.entities.EmojiSimple;
+	emoji: Misskey.entities.EmojiSimple;
 }>();
 
 function menu(ev) {
@@ -38,7 +40,6 @@ function menu(ev) {
 		icon: 'ti ti-copy',
 		action: () => {
 			copyToClipboard(`:${props.emoji.name}:`);
-			os.success();
 		},
 	}, {
 		text: i18n.ts.info,
@@ -54,6 +55,19 @@ function menu(ev) {
 		},
 	});
 
+	// 未購入のストア絵文字なら「クロスフォリオで購入する」を表示
+	const name = props.emoji.name.replaceAll(':', '');
+	if ((name.includes('_e_') || name.includes('-store-'))
+		&& !store.s.xissmiePurchasedEmojisCache.some(x => x.name === name)) {
+		menuItems.push({
+			text: 'Xfolioで購入する',
+			icon: 'ti ti-shopping-cart',
+			action: () => {
+				xissmieOpenEmojiPurchasePage(`:${props.emoji.name}:`);
+			},
+		});
+	}
+
 	if ($i?.isModerator ?? $i?.isAdmin) {
 		menuItems.push({
 			text: i18n.ts.edit,
@@ -68,7 +82,7 @@ function menu(ev) {
 }
 
 const edit = async (emoji) => {
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/pages/emoji-edit-dialog.vue')), {
+	const { dispose } = await os.popupAsyncWithDialog(import('@/pages/emoji-edit-dialog.vue').then(x => x.default), {
 		emoji: emoji,
 	}, {
 		closed: () => dispose(),

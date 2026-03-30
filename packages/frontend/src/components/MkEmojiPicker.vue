@@ -64,6 +64,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true"/>
 						<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true"/>
 					</button>
+					<button v-tooltip="i18n.ts.settings" class="_button config" @click="settings"><i class="ti ti-settings"></i></button>
 				</div>
 			</section>
 
@@ -83,6 +84,46 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true"/>
 					</button>
 				</div>
+			</section>
+		</div>
+		<div class="group">
+			<section>
+				<header class="_acrylic">購入済み</header>
+				<div class="body">
+					<button
+						v-for="emoji in purchasedEmojis"
+						:key="getKey(emoji)"
+						:data-emoji="getKey(emoji)"
+						class="_button item"
+						:disabled="!canReact(emoji)"
+						tabindex="0"
+						@pointerenter="computeButtonTitle"
+						@click="chosen(emoji, $event)"
+					>
+						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
+					</button>
+				</div>
+				<MkButton primary small rounded style="margin: auto;" @click="refreshPurchasedEmojis"><i class="ti ti-refresh"></i> 更新</MkButton>
+			</section>
+		</div>
+		<div class="group">
+			<section>
+				<header class="_acrylic">★creator★</header>
+				<div class="body">
+					<button
+						v-for="emoji in storeEmojis"
+						:key="getKey(emoji)"
+						:data-emoji="getKey(emoji)"
+						class="_button item"
+						:disabled="!canReact(emoji)"
+						tabindex="0"
+						@pointerenter="computeButtonTitle"
+						@click="chosen(emoji, $event)"
+					>
+						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
+					</button>
+				</div>
+				<MkButton primary small rounded style="margin: auto;" @click="loadMoreStoreEmojis">もっと見る</MkButton>
 			</section>
 		</div>
 		<div v-once class="group">
@@ -115,38 +156,50 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, computed, watch, onMounted } from 'vue';
+import { ref, useTemplateRef, computed, watch, onMounted, shallowRef } from 'vue';
 import * as Misskey from 'misskey-js';
 import {
 	emojilist,
 	emojiCharByCategory,
-	UnicodeEmojiDef,
 	unicodeEmojiCategories as categories,
 	getEmojiName,
-	CustomEmojiFolderTree,
 	getUnicodeEmoji,
+} from '@@/js/emojilist.js';
+import type {
+	UnicodeEmojiDef,
+	CustomEmojiFolderTree,
 } from '@@/js/emojilist.js';
 import XSection from '@/components/MkEmojiPicker.section.vue';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
 import * as os from '@/os.js';
-import { isTouchUsing } from '@/scripts/touch.js';
-import { deviceKind } from '@/scripts/device-kind.js';
+import { isTouchUsing } from '@/utility/touch.js';
+import { deviceKind } from '@/utility/device-kind.js';
 import { i18n } from '@/i18n.js';
-import { defaultStore } from '@/store.js';
+import { store } from '@/store.js';
 import { customEmojiCategories, customEmojis, customEmojisMap } from '@/custom-emojis.js';
-import { $i } from '@/account.js';
-import { checkReactionPermissions } from '@/scripts/check-reaction-permissions.js';
+import { $i } from '@/i.js';
+import { checkReactionPermissions } from '@/utility/check-reaction-permissions.js';
+import { prefer } from '@/preferences.js';
+import { useRouter } from '@/router.js';
+import { haptic } from '@/utility/haptic.js';
+import { misskeyApi } from '@/utility/misskey-api.js';
+import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
+import MkButton from '@/components/MkButton.vue';
+
+const router = useRouter();
 
 const props = withDefaults(defineProps<{
 	showPinned?: boolean;
-  pinnedEmojis?: string[];
+	pinnedEmojis?: string[];
 	maxHeight?: number;
 	asDrawer?: boolean;
 	asWindow?: boolean;
 	asReactionPicker?: boolean; // 今は使われてないが将来的に使いそう
-	targetNote?: Misskey.entities.Note;
+	targetNote?: Misskey.entities.Note | null;
+	allowChooseUnownedStoreEmoji?: boolean;
 }>(), {
 	showPinned: true,
+	allowChooseUnownedStoreEmoji: false,
 });
 
 const emit = defineEmits<{
@@ -154,15 +207,16 @@ const emit = defineEmits<{
 	(ev: 'esc'): void;
 }>();
 
-const searchEl = shallowRef<HTMLInputElement>();
-const emojisEl = shallowRef<HTMLDivElement>();
+const searchEl = useTemplateRef('searchEl');
+const emojisEl = useTemplateRef('emojisEl');
 
 const {
 	emojiPickerScale,
 	emojiPickerWidth,
 	emojiPickerHeight,
-	recentlyUsedEmojis,
-} = defaultStore.reactiveState;
+} = prefer.r;
+
+const recentlyUsedEmojis = store.r.recentlyUsedEmojis;
 
 const recentlyUsedEmojisDef = computed(() => {
 	return recentlyUsedEmojis.value.map(getDef);
@@ -179,6 +233,8 @@ const q = ref<string>('');
 const searchResultCustom = ref<Misskey.entities.EmojiSimple[]>([]);
 const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
 const tab = ref<'index' | 'custom' | 'unicode' | 'tags'>('index');
+const purchasedEmojis = shallowRef<Misskey.entities.XissmiePurchasedEmojisResponse>(store.s.xissmiePurchasedEmojisCache);
+const storeEmojis = shallowRef<Misskey.entities.XissmieStoreEmojisResponse>([]);
 
 const customEmojiFolderRoot: CustomEmojiFolderTree = { value: '', category: '', children: [] };
 
@@ -315,7 +371,7 @@ watch(q, () => {
 			}
 			if (matches.size >= max) return matches;
 
-			for (const index of Object.values(defaultStore.state.additionalUnicodeEmojiIndexes)) {
+			for (const index of Object.values(store.s.additionalUnicodeEmojiIndexes)) {
 				for (const emoji of emojis) {
 					if (keywords.every(keyword => index[emoji.char].some(k => k.includes(keyword)))) {
 						matches.add(emoji);
@@ -332,7 +388,7 @@ watch(q, () => {
 			}
 			if (matches.size >= max) return matches;
 
-			for (const index of Object.values(defaultStore.state.additionalUnicodeEmojiIndexes)) {
+			for (const index of Object.values(store.s.additionalUnicodeEmojiIndexes)) {
 				for (const emoji of emojis) {
 					if (index[emoji.char].some(k => k.startsWith(newQ))) {
 						matches.add(emoji);
@@ -349,7 +405,7 @@ watch(q, () => {
 			}
 			if (matches.size >= max) return matches;
 
-			for (const index of Object.values(defaultStore.state.additionalUnicodeEmojiIndexes)) {
+			for (const index of Object.values(store.s.additionalUnicodeEmojiIndexes)) {
 				for (const emoji of emojis) {
 					if (index[emoji.char].some(k => k.includes(newQ))) {
 						matches.add(emoji);
@@ -410,8 +466,18 @@ function computeButtonTitle(ev: MouseEvent): void {
 }
 
 function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, ev?: MouseEvent) {
+	if (!props.allowChooseUnownedStoreEmoji) {
+		if (typeof emoji === 'string' && (emoji.includes('_e_') || emoji.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
+			xissmieEmojiPurchaseRequired(emoji);
+			return;
+		} else if (typeof emoji !== 'string' && (emoji.name.includes('_e_') || emoji.name.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.name.replaceAll(':', ''))) {
+			xissmieEmojiPurchaseRequired(emoji.name);
+			return;
+		}
+	}
+
 	const el = ev && (ev.currentTarget ?? ev.target) as HTMLElement | null | undefined;
-	if (el) {
+	if (el && prefer.s.animation) {
 		const rect = el.getBoundingClientRect();
 		const x = rect.left + (el.offsetWidth / 2);
 		const y = rect.top + (el.offsetHeight / 2);
@@ -423,12 +489,14 @@ function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, 
 	const key = getKey(emoji);
 	emit('chosen', key);
 
+	haptic();
+
 	// 最近使った絵文字更新
 	if (!pinned.value?.includes(key)) {
-		let recents = defaultStore.state.recentlyUsedEmojis;
+		let recents = store.s.recentlyUsedEmojis;
 		recents = recents.filter((emoji) => emoji !== key);
 		recents.unshift(key);
-		defaultStore.set('recentlyUsedEmojis', recents.splice(0, 32));
+		store.set('recentlyUsedEmojis', recents.splice(0, 32));
 	}
 }
 
@@ -485,9 +553,38 @@ function done(query?: string): boolean | void {
 	}
 }
 
+function settings() {
+	emit('esc');
+	router.push('/settings/emoji-palette');
+}
+
 onMounted(() => {
 	focus();
+
+	misskeyApi('xissmie/store-emojis', {
+		limit: 12,
+		excludePurchased: true,
+	}).then(x => {
+		storeEmojis.value = x;
+	});
 });
+
+function loadMoreStoreEmojis() {
+	misskeyApi('xissmie/store-emojis', {
+		untilId: storeEmojis.value[storeEmojis.value.length - 1]!.id,
+		excludePurchased: true,
+	}).then(x => {
+		storeEmojis.value = storeEmojis.value.concat(x);
+	});
+}
+
+function refreshPurchasedEmojis() {
+	misskeyApi('xissmie/purchased-emojis', {
+	}).then(purchased => {
+		purchasedEmojis.value = purchased;
+		store.set('xissmiePurchasedEmojisCache', purchased);
+	});
+}
 
 defineExpose({
 	focus,
@@ -572,6 +669,14 @@ defineExpose({
 					grid-template-columns: var(--columns);
 					font-size: 30px;
 
+					> .config {
+						aspect-ratio: 1 / 1;
+						width: auto;
+						height: auto;
+						min-width: 0;
+						font-size: 14px;
+					}
+
 					> .item {
 						aspect-ratio: 1 / 1;
 						width: auto;
@@ -580,7 +685,7 @@ defineExpose({
 
 						&:disabled {
 							cursor: not-allowed;
-							background: linear-gradient(-45deg, transparent 0% 48%, var(--MI_THEME-X6) 48% 52%, transparent 52% 100%);
+							background: linear-gradient(-45deg, transparent 0% 48%, light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.15)) 48% 52%, transparent 52% 100%);
 							opacity: 1;
 
 							> .emoji {
@@ -615,7 +720,7 @@ defineExpose({
 
 						&:disabled {
 							cursor: not-allowed;
-							background: linear-gradient(-45deg, transparent 0% 48%, var(--MI_THEME-X6) 48% 52%, transparent 52% 100%);
+							background: linear-gradient(-45deg, transparent 0% 48%, light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.15)) 48% 52%, transparent 52% 100%);
 							opacity: 1;
 
 							> .emoji {
@@ -671,12 +776,7 @@ defineExpose({
 		height: 100%;
 		overflow-y: auto;
 		overflow-x: hidden;
-
 		scrollbar-width: none;
-
-		&::-webkit-scrollbar {
-			display: none;
-		}
 
 		> .group {
 			&:not(.index) {
@@ -716,6 +816,15 @@ defineExpose({
 				position: relative;
 				padding: $pad;
 
+				> .config {
+					position: relative;
+					padding: 0 3px;
+					width: var(--eachSize);
+					height: var(--eachSize);
+					contain: strict;
+					opacity: 0.5;
+				}
+
 				> .item {
 					position: relative;
 					padding: 0 3px;
@@ -736,7 +845,7 @@ defineExpose({
 
 					&:disabled {
 						cursor: not-allowed;
-						background: linear-gradient(-45deg, transparent 0% 48%, var(--MI_THEME-X6) 48% 52%, transparent 52% 100%);
+						background: linear-gradient(-45deg, transparent 0% 48%, light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.15)) 48% 52%, transparent 52% 100%);
 						opacity: 1;
 
 						> .emoji {

@@ -5,12 +5,13 @@
 
 import ms from 'ms';
 import { Inject, Injectable } from '@nestjs/common';
-import type { DriveFilesRepository, PagesRepository } from '@/models/_.js';
-import { IdService } from '@/core/IdService.js';
-import { MiPage } from '@/models/Page.js';
+import type { DriveFilesRepository, MiDriveFile, PagesRepository } from '@/models/_.js';
+import { pageNameSchema } from '@/models/Page.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { PageEntityService } from '@/core/entities/PageEntityService.js';
 import { DI } from '@/di-symbols.js';
+import { PageService } from '@/core/PageService.js';
+import { IdentifiableError } from '@/misc/identifiable-error.js';
 import { ApiError } from '../../error.js';
 
 export const meta = {
@@ -44,6 +45,12 @@ export const meta = {
 			code: 'NAME_ALREADY_EXISTS',
 			id: '4650348e-301c-499a-83c9-6aa988c66bc1',
 		},
+		emojiNotOwned: {
+			message: 'You do not own one or more emojis used.',
+			code: 'EMOJI_NOT_OWNED',
+			id: '0fcbe7ef-8d42-41b2-8204-aafd9f16293d',
+			httpStatusCode: 403,
+		},
 	},
 } as const;
 
@@ -51,7 +58,7 @@ export const paramDef = {
 	type: 'object',
 	properties: {
 		title: { type: 'string' },
-		name: { type: 'string', minLength: 1 },
+		name: { ...pageNameSchema, minLength: 1 },
 		summary: { type: 'string', nullable: true },
 		content: { type: 'array', items: {
 			type: 'object', additionalProperties: true,
@@ -77,11 +84,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
 
+		private pageService: PageService,
 		private pageEntityService: PageEntityService,
-		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			let eyeCatchingImage = null;
+			let eyeCatchingImage: MiDriveFile | null = null;
 			if (ps.eyeCatchingImageId != null) {
 				eyeCatchingImage = await this.driveFilesRepository.findOneBy({
 					id: ps.eyeCatchingImageId,
@@ -102,24 +109,22 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				}
 			});
 
-			const page = await this.pagesRepository.insertOne(new MiPage({
-				id: this.idService.gen(),
-				updatedAt: new Date(),
-				title: ps.title,
-				name: ps.name,
-				summary: ps.summary,
-				content: ps.content,
-				variables: ps.variables,
-				script: ps.script,
-				eyeCatchingImageId: eyeCatchingImage ? eyeCatchingImage.id : null,
-				userId: me.id,
-				visibility: 'public',
-				alignCenter: ps.alignCenter,
-				hideTitleWhenPinned: ps.hideTitleWhenPinned,
-				font: ps.font,
-			}));
+			try {
+				const page = await this.pageService.create(me, {
+					...ps,
+					eyeCatchingImage,
+					summary: ps.summary ?? null,
+				});
 
-			return await this.pageEntityService.pack(page);
+				return await this.pageEntityService.pack(page);
+			} catch (err) {
+				if (err instanceof IdentifiableError && err.id === '1a79e38e-3d83-4423-845b-a9d83ff93b61') {
+					throw new ApiError(meta.errors.nameAlreadyExists);
+				} else if (err instanceof IdentifiableError && err.id === '0fcbe7ef-8d42-41b2-8204-aafd9f16293d') {
+					throw new ApiError(meta.errors.emojiNotOwned);
+				}
+				throw err;
+			}
 		});
 	}
 }

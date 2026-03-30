@@ -4,15 +4,16 @@
  */
 
 import { computed, reactive } from 'vue';
-import { clearCache } from './scripts/clear-cache.js';
-import { $i } from '@/account.js';
+import { ui } from '@@/js/config.js';
+import { xfolioUrlOrigin } from '@@/js/config.js';
+import { clearCache } from './utility/clear-cache.js';
+import { $i } from '@/i.js';
 import { miLocalStorage } from '@/local-storage.js';
-import { openInstanceMenu } from '@/ui/_common_/common.js';
-import { lookup } from '@/scripts/lookup.js';
+import { openInstanceMenu, openToolsMenu } from '@/ui/_common_/common.js';
+import { lookup } from '@/utility/lookup.js';
 import * as os from '@/os.js';
 import { i18n } from '@/i18n.js';
-import { ui } from '@@/js/config.js';
-import { unisonReload } from '@/scripts/unison-reload.js';
+import { unisonReload } from '@/utility/unison-reload.js';
 
 export const navbarItemDef = reactive({
 	notifications: {
@@ -44,9 +45,18 @@ export const navbarItemDef = reactive({
 		to: '/my/follow-requests',
 	},
 	xfolio: {
-		title: "クロスフォリオ",
+		title: 'クロスフォリオ',
 		icon: 'ti ti-heart-share',
-		to: 'https://xfolio.jp',
+		action: () => {
+			window.open(xfolioUrlOrigin, '_blank', 'noopener');
+		},
+	},
+	xfolioSupport: {
+		title: 'Xissmieを支援する',
+		icon: 'material-symbols:volunteer_activism',
+		action: () => {
+			window.open(`${xfolioUrlOrigin}/portfolio/xissmie/fan_community`, '_blank', 'noopener');
+		},
 	},
 	explore: {
 		title: i18n.ts.explore,
@@ -102,6 +112,13 @@ export const navbarItemDef = reactive({
 		icon: 'ti ti-device-tv',
 		to: '/channels',
 	},
+	chat: {
+		title: i18n.ts.chat,
+		icon: 'ti ti-messages',
+		to: '/chat',
+		show: computed(() => $i != null && $i.policies.chatAvailability !== 'unavailable'),
+		indicated: computed(() => $i != null && $i.hasUnreadChatMessages),
+	},
 	achievements: {
 		title: i18n.ts.achievements,
 		icon: 'ti ti-medal',
@@ -131,13 +148,6 @@ export const navbarItemDef = reactive({
 					miLocalStorage.setItem('ui', 'deck');
 					unisonReload();
 				},
-			}, {
-				text: i18n.ts.classic,
-				active: ui === 'classic',
-				action: () => {
-					miLocalStorage.setItem('ui', 'classic');
-					unisonReload();
-				},
 			}], ev.currentTarget ?? ev.target);
 		},
 	},
@@ -152,7 +162,7 @@ export const navbarItemDef = reactive({
 		title: i18n.ts.reload,
 		icon: 'ti ti-refresh',
 		action: (ev) => {
-			location.reload();
+			window.location.reload();
 		},
 	},
 	profile: {

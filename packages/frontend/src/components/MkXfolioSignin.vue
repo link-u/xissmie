@@ -31,7 +31,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { onBeforeUnmount, ref } from 'vue';
 import * as Misskey from 'misskey-js';
 
-import type { OpenOnRemoteOptions } from '@/scripts/please-login.js';
+import type { OpenOnRemoteOptions } from '@/utility/please-login.js';
 
 import XInput from '@/components/MkXfolioSignin.input.vue';
 

@@ -130,6 +130,12 @@ export const meta = {
 			code: 'CONTAINS_TOO_MANY_MENTIONS',
 			id: '4de0363a-3046-481b-9b0f-feff3e211025',
 		},
+
+		includesNotOwnedEmojis: {
+			message: '更新ボタンを押してください',
+			code: 'INCLUDES_NOT_OWNED_EMOJIS',
+			id: '0fcbe7ef-8d42-41b2-8204-aafd9f16293d',
+		},
 	},
 } as const;
 
@@ -269,7 +275,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			let renote: MiNote | null = null;
 			if (ps.renoteId != null) {
 				// Fetch renote to note
-				renote = await this.notesRepository.findOneBy({ id: ps.renoteId });
+				renote = await this.notesRepository.findOne({
+					where: { id: ps.renoteId },
+					relations: ['user', 'renote', 'reply'],
+				});
 
 				if (renote == null) {
 					throw new ApiError(meta.errors.noSuchRenoteTarget);
@@ -315,7 +324,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			let reply: MiNote | null = null;
 			if (ps.replyId != null) {
 				// Fetch reply
-				reply = await this.notesRepository.findOneBy({ id: ps.replyId });
+				reply = await this.notesRepository.findOne({
+					where: { id: ps.replyId },
+					relations: ['user'],
+				});
 
 				if (reply == null) {
 					throw new ApiError(meta.errors.noSuchReplyTarget);
@@ -394,6 +406,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 						throw new ApiError(meta.errors.containsProhibitedWords);
 					} else if (e.id === '9f466dab-c856-48cd-9e65-ff90ff750580') {
 						throw new ApiError(meta.errors.containsTooManyMentions);
+					} else if (e.id === '0fcbe7ef-8d42-41b2-8204-aafd9f16293d') {
+						throw new ApiError(meta.errors.includesNotOwnedEmojis);
 					}
 				}
 				throw e;
