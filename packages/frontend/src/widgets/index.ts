@@ -42,7 +42,7 @@ export default function(app: App) {
 export const federationWidgets = [
 	'federation',
 	'instanceCloud',
-];
+] as const;
 
 export const widgets = [
 	'profile',
@@ -61,11 +61,19 @@ export const widgets = [
 	'unixClock',
 	'postForm',
 	'slideshow',
+	'serverMetric',
+	'onlineUsers',
+	'jobQueue',
 	'button',
 	'aiscript',
 	'aiscriptApp',
 	'aichan',
 	'userList',
 	'clicker',
+	'birthdayFollowings',
 	'chat',
-];
+
+	...federationWidgets,
+] as const;
+
+export type WidgetName = typeof widgets[number];
