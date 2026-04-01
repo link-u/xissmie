@@ -25,17 +25,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				>
 				</MkRadios>
 
-				<div v-if="instance.federation !== 'none' && searchScope === 'server'" :class="$style.subOptionRoot">
-					<MkInput
-						v-model="hostInput"
-						:placeholder="i18n.ts._search.serverHostPlaceholder"
-						@enter.prevent="search"
-					>
-						<template #label>{{ i18n.ts._search.pleaseEnterServerHost }}</template>
-						<template #prefix><i class="ti ti-server"></i></template>
-					</MkInput>
-				</div>
-
 				<div v-if="searchScope === 'user'" :class="$style.subOptionRoot">
 					<div :class="$style.userSelectLabel">{{ i18n.ts._search.pleaseSelectUser }}</div>
 					<div class="_gaps">
@@ -112,6 +101,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { computed, markRaw, ref, shallowRef, toRef } from 'vue';
 import { host as localHost } from '@@/js/config.js';
 import type * as Misskey from 'misskey-js';
+import type { MkRadiosOption } from '@/components/MkRadios.vue';
 import { $i } from '@/i.js';
 import { i18n } from '@/i18n.js';
 import { instance } from '@/instance.js';
@@ -126,7 +116,6 @@ import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 import { Paginator } from '@/utility/paginator.js';
-import type { MkRadiosOption } from '@/components/MkRadios.vue';
 
 const props = withDefaults(defineProps<{
 	query?: string;
@@ -146,7 +135,6 @@ const key = ref(0);
 const paginator = shallowRef<Paginator<'notes/search'> | null>(null);
 
 const searchQuery = ref(toRef(props, 'query').value);
-const hostInput = ref(toRef(props, 'host').value);
 
 const user = shallowRef<Misskey.entities.UserDetailed | null>(null);
 
@@ -176,30 +164,15 @@ if (fetchedUser != null) {
 }
 //#endregion
 
-const searchScope = ref<'all' | 'local' | 'server' | 'user'>((() => {
+const searchScope = ref<'local' | 'user'>((() => {
 	if (user.value != null) return 'user';
-	if (noteSearchableScope === 'local') return 'local';
-	if (hostInput.value) return 'server';
-	return 'all';
+	return 'local';
 })());
 
-const searchScopeDef = computed<MkRadiosOption[]>(() => {
-	const options: MkRadiosOption[] = [];
-
-	if (instance.federation !== 'none' && noteSearchableScope === 'global') {
-		options.push({ value: 'all', label: i18n.ts._search.searchScopeAll });
-	}
-
-	options.push({ value: 'local', label: instance.federation === 'none' ? i18n.ts._search.searchScopeAll : i18n.ts._search.searchScopeLocal });
-
-	if (instance.federation !== 'none' && noteSearchableScope === 'global') {
-		options.push({ value: 'server', label: i18n.ts._search.searchScopeServer });
-	}
-
-	options.push({ value: 'user', label: i18n.ts._search.searchScopeUser });
-
-	return options;
-});
+const searchScopeDef = computed<MkRadiosOption[]>(() => [
+	{ value: 'local', label: i18n.ts._search.searchScopeAll },
+	{ value: 'user', label: i18n.ts._search.searchScopeUser },
+]);
 
 type SearchParams = {
 	readonly query: string;
@@ -225,29 +198,9 @@ const searchParams = computed<SearchParams | null>(() => {
 		};
 	}
 
-	if (instance.federation !== 'none' && searchScope.value === 'server') {
-		let trimmedHost = hostInput.value?.trim();
-		if (!trimmedHost) return null;
-		if (trimmedHost.startsWith('https://') || trimmedHost.startsWith('http://')) {
-			try {
-				trimmedHost = new URL(trimmedHost).host;
-			} catch (err) { /* empty */ }
-		}
-		return {
-			query: trimmedQuery,
-			host: fixHostIfLocal(trimmedHost),
-		};
-	}
-
-	if (instance.federation === 'none' || searchScope.value === 'local') {
-		return {
-			query: trimmedQuery,
-			host: '.',
-		};
-	}
-
 	return {
 		query: trimmedQuery,
+		host: '.',
 	};
 });
 

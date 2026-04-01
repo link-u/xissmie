@@ -9,17 +9,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search" @enter.prevent="search">
 			<template #prefix><i class="ti ti-search"></i></template>
 		</MkInput>
-		<MkRadios
-			v-if="instance.federation !== 'none'"
-			v-model="searchOrigin"
-			:options="[
-				{ value: 'combined', label: i18n.ts.all },
-				{ value: 'local', label: i18n.ts.local },
-				{ value: 'remote', label: i18n.ts.remote },
-			]"
-			@update:modelValue="search()"
-		>
-		</MkRadios>
 		<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
 	</div>
 
@@ -35,10 +24,8 @@ import { markRaw, ref, shallowRef, toRef } from 'vue';
 import type { Endpoints } from 'misskey-js';
 import MkUserList from '@/components/MkUserList.vue';
 import MkInput from '@/components/MkInput.vue';
-import MkRadios from '@/components/MkRadios.vue';
 import MkButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n.js';
-import { instance } from '@/instance.js';
 import * as os from '@/os.js';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import { misskeyApi } from '@/utility/misskey-api.js';
@@ -50,7 +37,7 @@ const props = withDefaults(defineProps<{
 	origin?: Endpoints['users/search']['req']['origin'],
 }>(), {
 	query: '',
-	origin: 'combined',
+	origin: 'local',
 });
 
 const router = useRouter();
@@ -59,7 +46,6 @@ const key = ref(0);
 const paginator = shallowRef<Paginator<'users/search'> | null>(null);
 
 const searchQuery = ref(toRef(props, 'query').value);
-const searchOrigin = ref(toRef(props, 'origin').value);
 
 async function search() {
 	const query = searchQuery.value.toString().trim();
@@ -135,7 +121,7 @@ async function search() {
 		offsetMode: true,
 		params: {
 			query: query,
-			origin: instance.federation === 'none' ? 'local' : searchOrigin.value,
+			origin: 'local',
 		},
 	}));
 

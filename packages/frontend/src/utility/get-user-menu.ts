@@ -4,7 +4,7 @@
  */
 
 import { toUnicode } from 'punycode.js';
-import { defineAsyncComponent, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import * as Misskey from 'misskey-js';
 import { host, url } from '@@/js/config.js';
 import type { Router } from '@/router.js';
@@ -15,7 +15,7 @@ import * as os from '@/os.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { $i, iAmModerator } from '@/i.js';
 import { notesSearchAvailable, canSearchNonLocalNotes } from '@/utility/check-permissions.js';
-import { antennasCache, rolesCache, userListsCache } from '@/cache.js';
+import { rolesCache, userListsCache } from '@/cache.js';
 import { mainRouter } from '@/router.js';
 import { genEmbedCode } from '@/utility/get-embed-code.js';
 import { prefer } from '@/preferences.js';
@@ -215,31 +215,21 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: Router 
 		});
 	}
 
-	if ($i && meId === user.id) {
-		menuItems.push({
-			icon: 'ti ti-qrcode',
-			text: i18n.ts.qr,
-			action: () => {
-				router.push('/qr');
-			},
-		});
-	}
-
 	if (notesSearchAvailable && (user.host == null || canSearchNonLocalNotes)) {
 		menuItems.push({
 			icon: 'ti ti-search',
 			text: i18n.ts.searchThisUsersNotes,
 			action: () => {
 				const query = {
-						username: user.username,
-					} as { username: string, host?: string };
+					username: user.username,
+				} as { username: string, host?: string };
 
 				if (user.host !== null) {
 					query.host = user.host;
 				}
 
 				router.push('/search', {
-					query
+					query,
 				});
 			},
 		});
@@ -282,32 +272,6 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: Router 
 						ref: isListed,
 					};
 				});
-			},
-		}, {
-			type: 'parent',
-			icon: 'ti ti-antenna',
-			text: i18n.ts.addToAntenna,
-			children: async () => {
-				const antennas = await antennasCache.fetch();
-				const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${toUnicode(user.host)}`;
-				return antennas.filter((a) => a.src === 'users').map(antenna => ({
-					text: antenna.name,
-					action: async () => {
-						await os.apiWithDialog('antennas/update', {
-							antennaId: antenna.id,
-							name: antenna.name,
-							keywords: antenna.keywords,
-							excludeKeywords: antenna.excludeKeywords,
-							src: antenna.src,
-							userListId: antenna.userListId,
-							users: [...antenna.users, canonical],
-							caseSensitive: antenna.caseSensitive,
-							withReplies: antenna.withReplies,
-							withFile: antenna.withFile,
-						});
-						antennasCache.delete();
-					},
-				}));
 			},
 		});
 	}

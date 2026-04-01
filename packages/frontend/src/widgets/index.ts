@@ -24,6 +24,7 @@ export default function(app: App) {
 	app.component('WidgetFederation', defineAsyncComponent(() => import('./WidgetFederation.vue')));
 	app.component('WidgetPostForm', defineAsyncComponent(() => import('./WidgetPostForm.vue')));
 	app.component('WidgetSlideshow', defineAsyncComponent(() => import('./WidgetSlideshow.vue')));
+	// 選択肢からは除外（§4.5）—既存デッキ互換のため登録のみ残す
 	app.component('WidgetServerMetric', defineAsyncComponent(() => import('./server-metric/index.vue')));
 	app.component('WidgetOnlineUsers', defineAsyncComponent(() => import('./WidgetOnlineUsers.vue')));
 	app.component('WidgetJobQueue', defineAsyncComponent(() => import('./WidgetJobQueue.vue')));
@@ -61,16 +62,12 @@ export const widgets = [
 	'unixClock',
 	'postForm',
 	'slideshow',
-	'serverMetric',
-	'onlineUsers',
-	'jobQueue',
 	'button',
 	'aiscript',
 	'aiscriptApp',
 	'aichan',
 	'userList',
 	'clicker',
-	'birthdayFollowings',
 	'chat',
 
 	...federationWidgets,

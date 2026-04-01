@@ -58,18 +58,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<template #label>{{ i18n.ts.emojiMute }}</template>
 
 					<XEmojiMute/>
-				</mkfolder>
-			</SearchMarker>
-
-			<SearchMarker
-				:label="i18n.ts.instanceMute"
-				:keywords="['note', 'server', 'instance', 'host', 'federation', 'mute', 'hide']"
-			>
-				<MkFolder v-if="instance.federation !== 'none'">
-					<template #icon><i class="ti ti-planet-off"></i></template>
-					<template #label>{{ i18n.ts.instanceMute }}</template>
-
-					<XInstanceMute/>
 				</MkFolder>
 			</SearchMarker>
 
@@ -175,7 +163,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { ref, computed, watch, markRaw } from 'vue';
 import * as Misskey from 'misskey-js';
 import XEmojiMute from './mute-block.emoji-mute.vue';
-import XInstanceMute from './mute-block.instance-mute.vue';
 import XWordMute from './mute-block.word-mute.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import { userPage } from '@/filters/user.js';
@@ -183,7 +170,6 @@ import { i18n } from '@/i18n.js';
 import { definePage } from '@/page.js';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 import * as os from '@/os.js';
-import { instance } from '@/instance.js';
 import { ensureSignin } from '@/i.js';
 import MkInfo from '@/components/MkInfo.vue';
 import MkFolder from '@/components/MkFolder.vue';
