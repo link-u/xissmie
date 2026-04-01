@@ -172,7 +172,6 @@ const $i = ensureSignin();
 
 const storagePersisted = await getStoragePersistenceStatusRef();
 
-const reportError = prefer.model('reportError');
 const enableCondensedLine = prefer.model('enableCondensedLine');
 const skipNoteRender = prefer.model('skipNoteRender');
 const devMode = prefer.model('devMode');

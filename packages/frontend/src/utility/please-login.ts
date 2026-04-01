@@ -4,7 +4,6 @@
  */
 
 import { $i } from '@/i.js';
-import { instance } from '@/instance.js';
 import { i18n } from '@/i18n.js';
 import { popupAsyncWithDialog } from '@/os.js';
 
@@ -51,17 +50,12 @@ export async function pleaseLogin(opts: {
 } = {}): Promise<boolean> {
 	if ($i != null) return true;
 
-	let _openOnRemote: OpenOnRemoteOptions | undefined = undefined;
-
-	// 連合できる場合と、（連合ができなくても）共有する場合は外部連携オプションを設定
-	if (opts.openOnRemote != null && (instance.federation !== 'none' || opts.openOnRemote.type === 'share')) {
-		_openOnRemote = opts.openOnRemote;
-	}
+	// Xissmie: 閉じた会員向けのため「リモートの Misskey で開く / 共有」は出さない（docs/xissmie-spec.md §3.3）
 
 	const { dispose } = await popupAsyncWithDialog(import('@/components/MkSigninDialog.vue').then(x => x.default), {
 		autoSet: true,
-		message: opts.message ?? (_openOnRemote ? i18n.ts.signinOrContinueOnRemote : i18n.ts.signinRequired),
-		openOnRemote: _openOnRemote,
+		message: opts.message ?? i18n.ts.signinRequired,
+		openOnRemote: undefined,
 	}, {
 		cancelled: () => {
 			if (opts.path) {
