@@ -150,6 +150,7 @@ export const basicTimelineTypes = ['home', 'local', 'social'] as const;
 | **統計** | `MkInstanceStats.vue` | 連合チャート・ヒートマップを非表示（モデレータは例外的に表示） |
 | **プライバシー設定** | `settings/privacy.vue` | 連合に関する確認ダイアログを省略 |
 | **ログイン誘導** | `please-login.ts` | リモートで開くオプションを非表示 |
+| **投稿フォームの連合切替** | `MkPostForm.vue` | ロケット（`localOnly`）トグルを非表示。`localOnly` は常に `true` 相当 |
 
 ### 3.4 ActivityPub リンクの抑制
 
