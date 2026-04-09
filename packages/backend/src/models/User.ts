@@ -279,8 +279,8 @@ export class MiUser {
 	public followersUri: string | null;
 
 	@Index({ unique: true })
-	@Column('char', {
-		length: 128, nullable: true, unique: true,
+	@Column('varchar', {
+		length: 128, nullable: true,
 		comment: 'The native access token of the User. It will be null if the origin of the user is local.',
 	})
 	public token: string | null;

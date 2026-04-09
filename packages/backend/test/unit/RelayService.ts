@@ -19,6 +19,10 @@ import { SystemAccountService } from '@/core/SystemAccountService.js';
 import { GlobalModule } from '@/GlobalModule.js';
 import { UtilityService } from '@/core/UtilityService.js';
 
+const xissmieStoreServiceMock = {
+	getPurchasedDecorations: jest.fn().mockResolvedValue([]),
+};
+
 const moduleMocker = new ModuleMocker(global);
 
 describe('RelayService', () => {
@@ -38,6 +42,10 @@ describe('RelayService', () => {
 				UserEntityService,
 				SystemAccountService,
 				UtilityService,
+				{
+					provide: 'XissmieStoreService',
+					useValue: xissmieStoreServiceMock,
+				},
 			],
 		})
 			.useMocker((token) => {
