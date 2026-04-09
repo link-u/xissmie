@@ -59,7 +59,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 			<div :class="$style.decorations">
 				<XDecoration
-					v-for="avatarDecoration in storeAvatarDecorations.filter(x => x.isPublic)"
+					v-for="avatarDecoration in publicStoreAvatarDecorations"
 					:key="avatarDecoration.id"
 					:decoration="avatarDecoration"
 					:locked="!purchasedAvatarDecorations.some(d => d.id === avatarDecoration.id)"
@@ -95,6 +95,9 @@ const loading = ref(true);
 const serverAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
 const purchasedAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
 const storeAvatarDecorations = ref<Misskey.entities.XissmieStoreAvatarDecorationsResponse>([]);
+const publicStoreAvatarDecorations = computed(() =>
+	storeAvatarDecorations.value.filter((x) => (x as { isPublic?: boolean }).isPublic),
+);
 const allDecorations = computed(() => [...serverAvatarDecorations.value, ...purchasedAvatarDecorations.value]);
 
 Promise.all([misskeyApi('get-avatar-decorations'), misskeyApi('xissmie/purchased-avatar-decorations')]).then(([s, p]) => {

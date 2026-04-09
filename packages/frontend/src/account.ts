@@ -44,10 +44,10 @@ export async function signout() {
 	defaultMemoryStorage.clear();
 
 	waiting();
-	document.cookie.split(';').forEach((cookie) => {
+	window.document.cookie.split(';').forEach((cookie) => {
 		const cookieName = cookie.split('=')[0].trim();
 		if (cookieName === 'token') {
-			document.cookie = `${cookieName}=; max-age=0; path=/`;
+			window.document.cookie = `${cookieName}=; max-age=0; path=/`;
 		}
 	});
 	miLocalStorage.removeItem('account');
@@ -110,8 +110,8 @@ export async function removeAccount(idOrToken: Account['id']) {
 }
 
 function fetchAccount(token: string, id?: string, forceShowDialog?: boolean): Promise<Account> {
-	document.cookie = 'token=; path=/; max-age=0';
-	document.cookie = `token=${token}; path=/queue; max-age=86400; SameSite=Strict; Secure`; // bull dashboardの認証とかで使う
+	window.document.cookie = 'token=; path=/; max-age=0';
+	window.document.cookie = `token=${token}; path=/queue; max-age=86400; SameSite=Strict; Secure`; // bull dashboardの認証とかで使う
 
 	return new Promise((done, fail) => {
 		window.fetch(`${apiUrl}/i`, {
@@ -179,19 +179,21 @@ function fetchAccount(token: string, id?: string, forceShowDialog?: boolean): Pr
 
 export function updateAccount(accountData: Account) {
 	if (!$i) return;
-	for (const key of Object.keys($i)) {
-		delete $i[key];
+	const acc = $i as Record<string, unknown>;
+	for (const key of Object.keys(acc)) {
+		delete acc[key];
 	}
 	for (const [key, value] of Object.entries(accountData)) {
-		$i[key] = value;
+		acc[key] = value;
 	}
 	miLocalStorage.setItem('account', JSON.stringify($i));
 }
 
 export function updateAccountPartial(accountData: Partial<Account>) {
 	if (!$i) return;
+	const acc = $i as Record<string, unknown>;
 	for (const [key, value] of Object.entries(accountData)) {
-		$i[key] = value;
+		acc[key] = value;
 	}
 	miLocalStorage.setItem('account', JSON.stringify($i));
 }
@@ -231,7 +233,7 @@ export async function login(token: Account['token'], redirect?: string, reload =
 		// 他のタブは再読み込みするだけ
 		reloadChannel.postMessage(null);
 		// このページはredirectで指定された先に移動
-		location.href = redirect;
+		window.location.href = redirect;
 		return;
 	}
 

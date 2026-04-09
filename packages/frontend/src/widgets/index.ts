@@ -73,4 +73,7 @@ export const widgets = [
 	...federationWidgets,
 ] as const;
 
-export type WidgetName = typeof widgets[number];
+/** デッキ互換のため登録のみ（§4.5 選択肢から除外） */
+export type LegacyDeckOnlyWidgetName = 'serverMetric' | 'onlineUsers' | 'jobQueue' | 'birthdayFollowings';
+
+export type WidgetName = typeof widgets[number] | LegacyDeckOnlyWidgetName;

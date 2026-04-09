@@ -111,7 +111,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<header class="_acrylic">★creator★</header>
 				<div class="body">
 					<button
-						v-for="emoji in storeEmojis.filter(x => x.isPublic)"
+						v-for="emoji in publicStoreEmojis"
 						:key="getKey(emoji)"
 						:data-emoji="getKey(emoji)"
 						class="_button item"
@@ -235,6 +235,9 @@ const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
 const tab = ref<'index' | 'custom' | 'unicode' | 'tags'>('index');
 const purchasedEmojis = shallowRef<Misskey.entities.XissmiePurchasedEmojisResponse>(store.s.xissmiePurchasedEmojisCache);
 const storeEmojis = shallowRef<Misskey.entities.XissmieStoreEmojisResponse>([]);
+const publicStoreEmojis = computed(() =>
+	storeEmojis.value.filter((x) => (x as Misskey.entities.EmojiSimple & { isPublic?: boolean }).isPublic),
+);
 
 const customEmojiFolderRoot: CustomEmojiFolderTree = { value: '', category: '', children: [] };
 

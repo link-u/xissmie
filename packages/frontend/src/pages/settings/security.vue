@@ -52,7 +52,6 @@ const paginator = markRaw(new Paginator('i/signin-history', {
 	limit: 5,
 }));
 
-
 const headerActions = computed(() => []);
 
 const headerTabs = computed(() => []);

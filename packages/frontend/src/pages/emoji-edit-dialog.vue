@@ -170,8 +170,9 @@ async function done() {
 			license: params.license,
 			isSensitive: params.isSensitive,
 			localOnly: params.localOnly,
+			isPublic: (props.emoji as { isPublic?: boolean }).isPublic ?? true,
 			roleIdsThatCanBeUsedThisEmojiAsReaction: params.roleIdsThatCanBeUsedThisEmojiAsReaction,
-		} satisfies Misskey.entities.EmojiDetailed;
+		} as Misskey.entities.EmojiDetailed;
 
 		await os.apiWithDialog('admin/emoji/update', {
 			id: props.emoji.id,

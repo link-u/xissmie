@@ -106,7 +106,8 @@ export function emojiDetailed(id = 'someemojiid', name = 'some_emoji'): entities
 		isSensitive: false,
 		localOnly: false,
 		roleIdsThatCanBeUsedThisEmojiAsReaction: ['roleId1', 'roleId2'],
-	};
+		isPublic: true,
+	} as entities.EmojiDetailed;
 }
 
 export function galleryPost(isSensitive = false) {
@@ -430,5 +431,6 @@ export function emoji(params?: {
 		localOnly: params?.localOnly ?? false,
 		roleIdsThatCanBeUsedThisEmojiAsReaction: params?.roleIdsThatCanBeUsedThisEmojiAsReaction ?? [],
 		updatedAt: updatedAt,
-	}
+		isPublic: true,
+	} as entities.EmojiDetailedAdmin;
 }
