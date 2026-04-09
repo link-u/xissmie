@@ -34,17 +34,22 @@ export const meta = {
 	res: {
 		type: 'object',
 		optional: false, nullable: false,
-		ref: 'MeDetailed',
-		properties: {
-			token: {
-				type: 'string',
-				optional: false, nullable: false,
+		allOf: [
+			{
+				type: 'object',
+				ref: 'MeDetailed',
 			},
-			loginToken: {
-				type: 'string',
+			{
+				type: 'object',
 				optional: false, nullable: false,
-			},
-		},
+				properties: {
+					token: {
+						type: 'string',
+						optional: false, nullable: false,
+					},
+				},
+			}
+		],
 	},
 } as const;
 
@@ -93,7 +98,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new ApiError(meta.errors.accessDenied);
 			}
 
-			const { account, secret, loginToken } = await this.signupService.signup({
+			const { account, secret } = await this.signupService.signup({
 				username: ps.username,
 				password: ps.password,
 				ignorePreservedUsernames: true,
@@ -102,10 +107,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const res = await this.userEntityService.pack(account, account, {
 				schema: 'MeDetailed',
 				includeSecrets: true,
-			}) as Packed<'MeDetailed'> & { token: string; loginToken: string };
+			}) as Packed<'MeDetailed'> & { token: string };
 
 			res.token = secret;
-			res.loginToken = loginToken.token;
 
 			return res;
 		});

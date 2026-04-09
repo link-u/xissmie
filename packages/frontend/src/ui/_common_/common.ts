@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { defineAsyncComponent } from 'vue';
 import { host } from '@@/js/config.js';
 import type { MenuItem } from '@/types/menu.js';
 import * as os from '@/os.js';
@@ -11,46 +10,7 @@ import { instance } from '@/instance.js';
 import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
 
-function toolsMenuItems(): MenuItem[] {
-	const items: MenuItem[] = [{
-		type: 'link',
-		to: '/scratchpad',
-		text: i18n.ts.scratchpad,
-		icon: 'ti ti-terminal-2',
-	}, {
-		type: 'link',
-		to: '/api-console',
-		text: 'API Console',
-		icon: 'ti ti-terminal-2',
-	}, {
-		type: 'link',
-		to: '/clicker',
-		text: '🍪👈',
-		icon: 'ti ti-cookie',
-	}];
-
-	if ($i && ($i.isAdmin || $i.policies.canManageCustomEmojis)) {
-		items.push({
-			type: 'link',
-			to: '/custom-emojis-manager',
-			text: i18n.ts.manageCustomEmojis,
-			icon: 'ti ti-icons',
-		});
-	}
-
-	if ($i && ($i.isAdmin || $i.policies.canManageAvatarDecorations)) {
-		items.push({
-			type: 'link' as const,
-			to: '/avatar-decorations',
-			text: i18n.ts.manageAvatarDecorations,
-			icon: 'ti ti-sparkles',
-		});
-	}
-
-	return items;
-}
-
-export function openInstanceMenu(ev: MouseEvent) {
+export function openInstanceMenu(ev: PointerEvent) {
 	const menuItems: MenuItem[] = [];
 
 	menuItems.push({
@@ -145,12 +105,6 @@ export function openInstanceMenu(ev: MouseEvent) {
 	});
 
 	os.popupMenu(menuItems, ev.currentTarget ?? ev.target, {
-		align: 'left',
-	});
-}
-
-export function openToolsMenu(ev: MouseEvent) {
-	os.popupMenu(toolsMenuItems(), ev.currentTarget ?? ev.target, {
 		align: 'left',
 	});
 }
