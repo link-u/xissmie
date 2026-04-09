@@ -34,6 +34,10 @@ import { NotificationService } from '@/core/NotificationService.js';
 import { RoleCondFormulaValue } from '@/models/Role.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 
+const xissmieStoreServiceMock = {
+	getPurchasedDecorations: jest.fn().mockResolvedValue([]),
+};
+
 const moduleMocker = new ModuleMocker(global);
 
 describe('RoleService', () => {
@@ -129,6 +133,10 @@ describe('RoleService', () => {
 				{
 					provide: NotificationService.name,
 					useExisting: NotificationService,
+				},
+				{
+					provide: 'XissmieStoreService',
+					useValue: xissmieStoreServiceMock,
 				},
 			],
 		})
