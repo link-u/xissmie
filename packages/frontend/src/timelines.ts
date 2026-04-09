@@ -26,8 +26,6 @@ export function basicTimelineIconClass(timeline: BasicTimelineType): string {
 			return 'ti ti-planet';
 		case 'social':
 			return 'ti ti-universe';
-		case 'global':
-			return 'ti ti-whirl';
 	}
 }
 
@@ -39,8 +37,6 @@ export function isAvailableBasicTimeline(timeline: BasicTimelineType | undefined
 			return ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
 		case 'social':
 			return $i != null && $i.policies.ltlAvailable;
-		case 'global':
-			return ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
 		default:
 			return false;
 	}

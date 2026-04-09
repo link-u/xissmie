@@ -101,8 +101,6 @@ async function setType() {
 			value: 'local', label: i18n.ts._timelines.local,
 		}, {
 			value: 'social', label: i18n.ts._timelines.social,
-		}, {
-			value: 'global', label: i18n.ts._timelines.global,
 		}],
 		default: props.column.tl,
 	});

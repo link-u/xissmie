@@ -50,10 +50,21 @@ const tlComponent = useTemplateRef('tlComponent');
 
 type TimelinePageSrc = BasicTimelineType | `list:${string}`;
 
-const srcWhenNotSignin = ref<'local' | 'global'>(isAvailableBasicTimeline('local') ? 'local' : 'global');
-const src = computed<TimelinePageSrc>({
-	get: () => ($i ? store.r.tl.value.src : srcWhenNotSignin.value),
-	set: (x) => saveSrc(x),
+const srcWhenNotSignin = ref<BasicTimelineType>(
+	isAvailableBasicTimeline('local') ? 'local' : (availableBasicTimelines()[0] ?? 'local'),
+);
+const src = computed({
+	get(): TimelinePageSrc {
+		const raw = $i ? store.r.tl.value.src : srcWhenNotSignin.value;
+		// 旧ストアに 'global' が残っている場合のみ（型には含めない）
+		if (String(raw) === 'global') {
+			return availableBasicTimelines()[0] ?? 'local';
+		}
+		return raw as TimelinePageSrc;
+	},
+	set: (x: TimelinePageSrc) => {
+		saveSrc(x);
+	},
 });
 const withRenotes = computed<boolean>({
 	get: () => store.r.tl.value.filter.withRenotes,
@@ -179,8 +190,8 @@ function saveSrc(newSrc: TimelinePageSrc): void {
 	}
 
 	store.set('tl', out);
-	if (['local', 'global'].includes(newSrc)) {
-		srcWhenNotSignin.value = newSrc as 'local' | 'global';
+	if ($i == null && isBasicTimeline(newSrc)) {
+		srcWhenNotSignin.value = newSrc;
 	}
 }
 
@@ -193,7 +204,8 @@ function saveTlFilter(key: keyof typeof store.s.tl.filter, newValue: boolean) {
 
 function switchTlIfNeeded() {
 	if (isBasicTimeline(src.value) && !isAvailableBasicTimeline(src.value)) {
-		src.value = availableBasicTimelines()[0];
+		const next = availableBasicTimelines()[0];
+		if (next != null) saveSrc(next);
 	}
 }
 
