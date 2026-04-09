@@ -62,28 +62,34 @@ describe('After setup instance', () => {
 
 	it('signup', () => {
 		cy.visitHome();
-
-		cy.intercept('POST', '/api/signup').as('signup');
-
 		cy.get('[data-cy-signup]').click();
-		cy.get('[data-cy-signup-rules-continue]').should('be.disabled');
-		cy.get('[data-cy-signup-rules-notes-agree] [data-cy-switch-toggle]').click();
-		cy.get('[data-cy-modal-dialog-ok]').click();
-		cy.get('[data-cy-signup-rules-continue]').should('not.be.disabled');
-		cy.get('[data-cy-signup-rules-continue]').click();
+		cy.get('body').then($body => {
+			// Xissmie では登録は Xfolio 遷移のみ
+			if ($body.find('[data-cy-signup-rules-continue]').length) {
+				cy.intercept('POST', '/api/signup').as('signup');
+				cy.get('[data-cy-signup-rules-continue]').should('be.disabled');
+				cy.get('[data-cy-signup-rules-notes-agree] [data-cy-switch-toggle]').click();
+				cy.get('[data-cy-modal-dialog-ok]').click();
+				cy.get('[data-cy-signup-rules-continue]').should('not.be.disabled');
+				cy.get('[data-cy-signup-rules-continue]').click();
 
-		cy.get('[data-cy-signup-submit]').should('be.disabled');
-		cy.get('[data-cy-signup-username] input').type('alice');
-		cy.get('[data-cy-signup-submit]').should('be.disabled');
-		cy.get('[data-cy-signup-password] input').type('alice1234');
-		cy.get('[data-cy-signup-submit]').should('be.disabled');
-		cy.get('[data-cy-signup-password-retype] input').type('alice1234');
-		cy.get('[data-cy-signup-submit]').should('be.disabled');
-		cy.get('[data-cy-signup-invitation-code] input').type('test-invitation-code');
-		cy.get('[data-cy-signup-submit]').should('not.be.disabled');
-		cy.get('[data-cy-signup-submit]').click();
-
-		cy.wait('@signup');
+				cy.get('[data-cy-signup-submit]').should('be.disabled');
+				cy.get('[data-cy-signup-username] input').type('alice');
+				cy.get('[data-cy-signup-submit]').should('be.disabled');
+				cy.get('[data-cy-signup-password] input').type('alice1234');
+				cy.get('[data-cy-signup-submit]').should('be.disabled');
+				cy.get('[data-cy-signup-password-retype] input').type('alice1234');
+				cy.get('[data-cy-signup-submit]').should('be.disabled');
+				cy.get('[data-cy-signup-invitation-code] input').type('test-invitation-code');
+				cy.get('[data-cy-signup-submit]').should('not.be.disabled');
+				cy.get('[data-cy-signup-submit]').click();
+				cy.wait('@signup');
+			} else {
+				cy.get('[data-cy-signup]')
+					.should('have.attr', 'href')
+					.and('include', '/mypage/xissmie_setting');
+			}
+		});
   });
 
   it('signup with duplicated username', () => {
@@ -93,16 +99,24 @@ describe('After setup instance', () => {
 
 		// ユーザー名が重複している場合の挙動確認
 		cy.get('[data-cy-signup]').click();
-		cy.get('[data-cy-signup-rules-continue]').should('be.disabled');
-		cy.get('[data-cy-signup-rules-notes-agree] [data-cy-switch-toggle]').click();
-		cy.get('[data-cy-modal-dialog-ok]').click();
-		cy.get('[data-cy-signup-rules-continue]').should('not.be.disabled');
-		cy.get('[data-cy-signup-rules-continue]').click();
+		cy.get('body').then($body => {
+			if ($body.find('[data-cy-signup-rules-continue]').length) {
+				cy.get('[data-cy-signup-rules-continue]').should('be.disabled');
+				cy.get('[data-cy-signup-rules-notes-agree] [data-cy-switch-toggle]').click();
+				cy.get('[data-cy-modal-dialog-ok]').click();
+				cy.get('[data-cy-signup-rules-continue]').should('not.be.disabled');
+				cy.get('[data-cy-signup-rules-continue]').click();
 
-		cy.get('[data-cy-signup-username] input').type('alice');
-		cy.get('[data-cy-signup-password] input').type('alice1234');
-		cy.get('[data-cy-signup-password-retype] input').type('alice1234');
-		cy.get('[data-cy-signup-submit]').should('be.disabled');
+				cy.get('[data-cy-signup-username] input').type('alice');
+				cy.get('[data-cy-signup-password] input').type('alice1234');
+				cy.get('[data-cy-signup-password-retype] input').type('alice1234');
+				cy.get('[data-cy-signup-submit]').should('be.disabled');
+			} else {
+				cy.get('[data-cy-signup]')
+					.should('have.attr', 'href')
+					.and('include', '/mypage/xissmie_setting');
+			}
+		});
   });
 });
 
@@ -135,6 +149,12 @@ describe('After user signup', () => {
 		cy.get('[data-cy-signin]').click();
 
 		cy.get('[data-cy-signin-page-input]').should('be.visible', { timeout: 1000 });
+		cy.get('body').then($body => {
+			if (!$body.find('[data-cy-signin-username] input').length) {
+				cy.get('[data-cy-signin-page-input] [data-cy-signin]').click();
+				cy.get('[data-cy-signin-page-input]').should('be.visible', { timeout: 1000 });
+			}
+		});
 		// Enterキーで続行できるかの確認も兼ねる
 		cy.get('[data-cy-signin-username] input').type('alice{enter}');
 
@@ -156,6 +176,12 @@ describe('After user signup', () => {
 		cy.get('[data-cy-signin]').click();
 
 		cy.get('[data-cy-signin-page-input]').should('be.visible', { timeout: 1000 });
+		cy.get('body').then($body => {
+			if (!$body.find('[data-cy-signin-username] input').length) {
+				cy.get('[data-cy-signin-page-input] [data-cy-signin]').click();
+				cy.get('[data-cy-signin-page-input]').should('be.visible', { timeout: 1000 });
+			}
+		});
 		cy.get('[data-cy-signin-username] input').type('alice{enter}');
 
 		// TODO: cypressにブラウザの言語指定できる機能が実装され次第英語のみテストするようにする

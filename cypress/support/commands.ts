@@ -59,6 +59,13 @@ Cypress.Commands.add('login', (username, password) => {
 
 	cy.get('[data-cy-signin]').click();
 	cy.get('[data-cy-signin-page-input]').should('be.visible', { timeout: 1000 });
+	cy.get('body').then($body => {
+		// Xissmie の Xfolio 入口では「ID/PASSでログインする」を押してから従来の入力画面が出る
+		if (!$body.find('[data-cy-signin-username] input').length) {
+			cy.get('[data-cy-signin-page-input] [data-cy-signin]').click();
+			cy.get('[data-cy-signin-page-input]').should('be.visible', { timeout: 1000 });
+		}
+	});
 	cy.get('[data-cy-signin-username] input').type(`${username}{enter}`);
 	cy.get('[data-cy-signin-page-password]').should('be.visible', { timeout: 10000 });
 	cy.get('[data-cy-signin-password] input').type(`${password}{enter}`);
