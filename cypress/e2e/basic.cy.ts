@@ -85,8 +85,11 @@ describe('After setup instance', () => {
 				cy.get('[data-cy-signup-submit]').click();
 				cy.wait('@signup');
 			} else {
+				// ダッシュボードの「登録」ボタンも data-cy-signup のため、Xfolio リンク（a）だけを対象にする
 				cy.get('[data-cy-signup]')
-					.should('have.attr', 'href')
+					.filter('[href*="/mypage/xissmie_setting"]')
+					.should('be.visible')
+					.and('have.attr', 'href')
 					.and('include', '/mypage/xissmie_setting');
 			}
 		});
@@ -113,7 +116,9 @@ describe('After setup instance', () => {
 				cy.get('[data-cy-signup-submit]').should('be.disabled');
 			} else {
 				cy.get('[data-cy-signup]')
-					.should('have.attr', 'href')
+					.filter('[href*="/mypage/xissmie_setting"]')
+					.should('be.visible')
+					.and('have.attr', 'href')
 					.and('include', '/mypage/xissmie_setting');
 			}
 		});
