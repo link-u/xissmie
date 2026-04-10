@@ -33,9 +33,10 @@ import { secureRndstr } from '@/misc/secure-rndstr.js';
 import { NotificationService } from '@/core/NotificationService.js';
 import { RoleCondFormulaValue } from '@/models/Role.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import type { MiAvatarDecoration } from '@/models/_.js';
 
 const xissmieStoreServiceMock = {
-	getPurchasedDecorations: jest.fn().mockResolvedValue([]),
+	getPurchasedDecorations: jest.fn(async (_userId: string): Promise<MiAvatarDecoration[]> => []),
 };
 
 const moduleMocker = new ModuleMocker(global);

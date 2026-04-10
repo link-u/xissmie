@@ -18,9 +18,10 @@ import { RelayService } from '@/core/RelayService.js';
 import { SystemAccountService } from '@/core/SystemAccountService.js';
 import { GlobalModule } from '@/GlobalModule.js';
 import { UtilityService } from '@/core/UtilityService.js';
+import type { MiAvatarDecoration } from '@/models/_.js';
 
 const xissmieStoreServiceMock = {
-	getPurchasedDecorations: jest.fn().mockResolvedValue([]),
+	getPurchasedDecorations: jest.fn(async (_userId: string): Promise<MiAvatarDecoration[]> => []),
 };
 
 const moduleMocker = new ModuleMocker(global);

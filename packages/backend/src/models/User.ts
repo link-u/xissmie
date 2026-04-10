@@ -278,7 +278,7 @@ export class MiUser {
 	})
 	public followersUri: string | null;
 
-	@Index({ unique: true })
+	@Index('IDX_a854e557b1b14814750c7c7b0c', { unique: true })
 	@Column('varchar', {
 		length: 128, nullable: true,
 		comment: 'The native access token of the User. It will be null if the origin of the user is local.',
