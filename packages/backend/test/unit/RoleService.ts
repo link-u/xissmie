@@ -14,6 +14,7 @@ import type { TestingModule } from '@nestjs/testing';
 import type { MockMetadata } from 'jest-mock';
 import { GlobalModule } from '@/GlobalModule.js';
 import { RoleService } from '@/core/RoleService.js';
+import type { MiAvatarDecoration } from '@/models/_.js';
 import {
 	MiMeta,
 	MiRole,
@@ -33,7 +34,6 @@ import { secureRndstr } from '@/misc/secure-rndstr.js';
 import { NotificationService } from '@/core/NotificationService.js';
 import { RoleCondFormulaValue } from '@/models/Role.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import type { MiAvatarDecoration } from '@/models/_.js';
 
 const xissmieStoreServiceMock = {
 	getPurchasedDecorations: jest.fn(async (_userId: string): Promise<MiAvatarDecoration[]> => []),
