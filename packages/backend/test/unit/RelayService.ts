@@ -10,6 +10,7 @@ import { Test } from '@nestjs/testing';
 import { ModuleMocker } from 'jest-mock';
 import type { TestingModule } from '@nestjs/testing';
 import type { MockMetadata } from 'jest-mock';
+import type { MiAvatarDecoration } from '@/models/_.js';
 import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import { IdService } from '@/core/IdService.js';
@@ -20,7 +21,7 @@ import { GlobalModule } from '@/GlobalModule.js';
 import { UtilityService } from '@/core/UtilityService.js';
 
 const xissmieStoreServiceMock = {
-	getPurchasedDecorations: jest.fn().mockResolvedValue([]),
+	getPurchasedDecorations: jest.fn(async (_userId: string): Promise<MiAvatarDecoration[]> => []),
 };
 
 const moduleMocker = new ModuleMocker(global);

@@ -14,6 +14,7 @@ import type { TestingModule } from '@nestjs/testing';
 import type { MockMetadata } from 'jest-mock';
 import { GlobalModule } from '@/GlobalModule.js';
 import { RoleService } from '@/core/RoleService.js';
+import type { MiAvatarDecoration } from '@/models/_.js';
 import {
 	MiMeta,
 	MiRole,
@@ -35,7 +36,7 @@ import { RoleCondFormulaValue } from '@/models/Role.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 
 const xissmieStoreServiceMock = {
-	getPurchasedDecorations: jest.fn().mockResolvedValue([]),
+	getPurchasedDecorations: jest.fn(async (_userId: string): Promise<MiAvatarDecoration[]> => []),
 };
 
 const moduleMocker = new ModuleMocker(global);
