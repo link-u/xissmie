@@ -3093,7 +3093,7 @@ _reversi:
   useAvatarAsStone: "Turn stones into user avatars"
 _offlineScreen:
   title: "Offline - cannot connect to the server"
-  header: "Unable to connect to the server"
+  header: "Unable to connect to the server. It may be under maintenance or temporarily unavailable."
 _urlPreviewSetting:
   title: "URL preview settings"
   enable: "Enable URL preview"

@@ -3182,7 +3182,7 @@ _reversi:
 
 _offlineScreen:
   title: "オフライン - サーバーに接続できません"
-  header: "サーバーに接続できません"
+  header: "サーバーに接続できません。メンテナンス中、または一時的に利用できない可能性があります。"
 
 _urlPreviewSetting:
   title: "URLプレビューの設定"
