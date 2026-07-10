@@ -22,7 +22,9 @@ async function respondToNavigation(request: Request): Promise<Response> {
 	try {
 		const response = await fetch(request, { signal: controller.signal });
 
-		if (response?.status && response.status < 500) return response;
+		// 4xx と計画メンテの 503（nginx maintenance.html）はそのまま返す。
+		// 502/504 などその他の 5xx やネットワーク失敗時のみオフライン HTML にフォールバックする。
+		if (response?.status && (response.status < 500 || response.status === 503)) return response;
 		if (response?.type === 'opaqueredirect') return response;
 	} catch (error) {
 		if (_DEV_) {
@@ -43,6 +45,8 @@ async function respondToNavigation(request: Request): Promise<Response> {
 }
 
 async function offlineContentHTML() {
+	// 計画メンテの本線は nginx の 503 + maintenance.html。
+	// ここはサーバ到達不可時（ネットワーク断など）の保険表示のみ。
 	let i18n: Partial<I18n<Locale>>;
 	try {
 		i18n = await (swLang.i18n ?? await swLang.fetchLocale()) as Partial<I18n<Locale>>;
