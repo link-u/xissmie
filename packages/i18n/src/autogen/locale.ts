@@ -11957,7 +11957,7 @@ export interface Locale extends ILocale {
          */
         "title": string;
         /**
-         * サーバーに接続できません
+         * サーバーに接続できません。メンテナンス中、または一時的に利用できない可能性があります。
          */
         "header": string;
     };
