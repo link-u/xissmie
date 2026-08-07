@@ -352,7 +352,7 @@ export class XissmieStoreService {
 			where: {
 				userId,
 			},
-			relations: ['avatarDecoration'],
+			relations: { avatarDecoration: true },
 		});
 
 		return ownedDecorations.map(x => x.avatarDecoration).filter((x): x is NonNullable<typeof x> => x != null);

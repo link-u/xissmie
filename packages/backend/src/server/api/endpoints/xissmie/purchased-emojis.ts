@@ -50,7 +50,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				where: {
 					userId: me.id,
 				},
-				relations: ['emoji'],
+				relations: { emoji: true },
 			});
 
 			const emojis = ownedEmojis.map(e => e.emoji).filter((e): e is NonNullable<typeof e> => e != null);
