@@ -78,7 +78,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				where: {
 					userId: me.id,
 				},
-				relations: ['avatarDecoration'],
+				relations: { avatarDecoration: true },
 			});
 
 			return ownedDecorations.map(x => ({

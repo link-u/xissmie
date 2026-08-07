@@ -12,13 +12,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<MkDraggable
 					v-model="items"
 					direction="vertical"
+					manualDragStart
 				>
-					<template #default="{ item }">
+					<template #default="{ item, dragStart }">
 						<div
 							v-if="item.type === '-' || navbarItemDef[item.type]"
 							:class="$style.item"
 						>
-							<button class="_button" :class="$style.itemHandle"><i class="ti ti-menu"></i></button>
+							<button class="_button" :class="$style.itemHandle" tabindex="-1" :draggable="true" @dragstart.stop="dragStart"><i class="ti ti-menu"></i></button>
 							<template v-if="navbarItemDef[item.type]?.icon?.startsWith('material-symbols:')">
 								<MkIcon :icon="navbarItemDef[item.type].icon" :class="$style.itemIcon"/>
 							</template>
@@ -63,12 +64,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { computed, ref } from 'vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkButton from '@/components/MkButton.vue';
+import MkIcon from '@/components/MkIcon.vue';
 import FormSlot from '@/components/form/slot.vue';
 import MkContainer from '@/components/MkContainer.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import MkPreferenceContainer from '@/components/MkPreferenceContainer.vue';
 import MkDraggable from '@/components/MkDraggable.vue';
-import MkIcon from '@/components/MkIcon.vue';
 import * as os from '@/os.js';
 import { navbarItemDef } from '@/navbar.js';
 import { store } from '@/store.js';
