@@ -197,6 +197,9 @@ export const ROUTE_DEF = [{
 		component: page(() => import('@/pages/_empty_.vue')),
 	}],
 }, {
+	path: '/reset-password/:token?',
+	component: page(() => import('@/pages/reset-password.vue')),
+}, {
 	path: '/signup-complete/:code',
 	component: page(() => import('@/pages/signup-complete.vue')),
 }, {
@@ -548,6 +551,18 @@ export const ROUTE_DEF = [{
 	component: page(() => import('@/pages/my-clips/index.vue')),
 	loginRequired: true,
 }, {
+	path: '/my/antennas/create',
+	component: page(() => import('@/pages/my-antennas/create.vue')),
+	loginRequired: true,
+}, {
+	path: '/my/antennas/:antennaId',
+	component: page(() => import('@/pages/my-antennas/edit.vue')),
+	loginRequired: true,
+}, {
+	path: '/my/antennas',
+	component: page(() => import('@/pages/my-antennas/index.vue')),
+	loginRequired: true,
+}, {
 	path: '/timeline/list/:listId',
 	component: page(() => import('@/pages/user-list-timeline.vue')),
 	loginRequired: true,
@@ -581,6 +596,10 @@ export const ROUTE_DEF = [{
 }, {
 	path: '/teaser',
 	component: page(() => import('@/pages/teaser.vue')),
+}, {
+	path: '/qr',
+	component: page(() => import('@/pages/qr.vue')),
+	loginRequired: true,
 }, {
 	path: '/debug',
 	component: page(() => import('@/pages/debug.vue')),

@@ -48,6 +48,10 @@ export const meta = {
 						format: 'id',
 					},
 				},
+				isPublic: {
+					type: 'boolean',
+					optional: false, nullable: false,
+				},
 			},
 		},
 	},
@@ -85,6 +89,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				description: decoration.description,
 				url: decoration.url,
 				roleIdsThatCanBeUsedThisDecoration: [],
+				isPublic: decoration.isPublic,
 			}));
 		});
 	}

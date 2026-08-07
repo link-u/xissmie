@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	:class="[$style.root, className]"
 	:style="{ fontSize: size ? `${size}px` : undefined }"
 	v-html="iconSvg"
-/>
+></div>
 </template>
 
 <script lang="ts" setup>

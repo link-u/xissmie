@@ -61,6 +61,7 @@ export class XissmieStoreService {
 			authorName: string;
 			productId: string;
 			updatedAt: number;
+			isPublic: boolean;
 			// 検索用キーワード（配列）
 			keywords?: string[];
 		}[];
@@ -92,6 +93,7 @@ export class XissmieStoreService {
 			url: string;
 			updatedAt: Date;
 			isInStore: boolean;
+			isPublic: boolean;
 			storeProductId: string | null;
 			storeAuthorId: string;
 			storeAuthorName: string;
@@ -120,6 +122,7 @@ export class XissmieStoreService {
 				url: stableUrl ?? x.imageUrl,
 				updatedAt: incomingUpdatedAt,
 				isInStore: true,
+				isPublic: x.isPublic,
 				storeProductId: x.productId ?? null,
 				storeAuthorId: x.authorId,
 				storeAuthorName: x.authorName,
@@ -151,6 +154,7 @@ export class XissmieStoreService {
 			authorName: string;
 			productId: string;
 			updatedAt: number;
+			isPublic: boolean;
 			keywords?: string[];
 		}[];
 
@@ -180,7 +184,12 @@ export class XissmieStoreService {
 			originalUrl: string;
 			publicUrl: string;
 			updatedAt: Date;
+			category: string | null;
+			license: string | null;
+			localOnly: boolean;
+			isSensitive: boolean;
 			isInStore: boolean;
+			isPublic: boolean;
 			storeProductId: string | null;
 			storeAuthorId: string;
 			storeAuthorName: string;
@@ -217,7 +226,12 @@ export class XissmieStoreService {
 				originalUrl: x.imageUrl,
 				publicUrl: publicUrl || x.imageUrl,
 				updatedAt: incomingUpdatedAt,
+				category: '★creator★',
+				license: x.authorName,
+				localOnly: true,
+				isSensitive: false,
 				isInStore: true,
+				isPublic: x.isPublic,
 				storeProductId: x.productId ?? null,
 				storeAuthorId: x.authorId,
 				storeAuthorName: x.authorName,
@@ -338,7 +352,7 @@ export class XissmieStoreService {
 			where: {
 				userId,
 			},
-			relations: ['avatarDecoration'],
+			relations: { avatarDecoration: true },
 		});
 
 		return ownedDecorations.map(x => x.avatarDecoration).filter((x): x is NonNullable<typeof x> => x != null);

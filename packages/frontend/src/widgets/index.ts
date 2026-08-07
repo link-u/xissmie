@@ -24,6 +24,7 @@ export default function(app: App) {
 	app.component('WidgetFederation', defineAsyncComponent(() => import('./WidgetFederation.vue')));
 	app.component('WidgetPostForm', defineAsyncComponent(() => import('./WidgetPostForm.vue')));
 	app.component('WidgetSlideshow', defineAsyncComponent(() => import('./WidgetSlideshow.vue')));
+	// 選択肢からは除外（§4.5）—既存デッキ互換のため登録のみ残す
 	app.component('WidgetServerMetric', defineAsyncComponent(() => import('./server-metric/index.vue')));
 	app.component('WidgetOnlineUsers', defineAsyncComponent(() => import('./WidgetOnlineUsers.vue')));
 	app.component('WidgetJobQueue', defineAsyncComponent(() => import('./WidgetJobQueue.vue')));
@@ -42,7 +43,7 @@ export default function(app: App) {
 export const federationWidgets = [
 	'federation',
 	'instanceCloud',
-];
+] as const;
 
 export const widgets = [
 	'profile',
@@ -68,4 +69,11 @@ export const widgets = [
 	'userList',
 	'clicker',
 	'chat',
-];
+
+	...federationWidgets,
+] as const;
+
+/** デッキ互換のため登録のみ（§4.5 選択肢から除外） */
+export type LegacyDeckOnlyWidgetName = 'serverMetric' | 'onlineUsers' | 'jobQueue' | 'birthdayFollowings';
+
+export type WidgetName = typeof widgets[number] | LegacyDeckOnlyWidgetName;

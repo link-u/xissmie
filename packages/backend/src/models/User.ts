@@ -99,7 +99,7 @@ export class MiUser {
 	})
 	public avatarId: MiDriveFile['id'] | null;
 
-	@OneToOne(type => MiDriveFile, {
+	@OneToOne(() => MiDriveFile, {
 		onDelete: 'SET NULL',
 	})
 	@JoinColumn()
@@ -112,7 +112,7 @@ export class MiUser {
 	})
 	public bannerId: MiDriveFile['id'] | null;
 
-	@OneToOne(type => MiDriveFile, {
+	@OneToOne(() => MiDriveFile, {
 		onDelete: 'SET NULL',
 	})
 	@JoinColumn()
@@ -278,8 +278,8 @@ export class MiUser {
 	})
 	public followersUri: string | null;
 
-	@Index({ unique: true })
-	@Column('char', {
+	@Index('IDX_a854e557b1b14814750c7c7b0c', { unique: true })
+	@Column('varchar', {
 		length: 128, nullable: true, unique: true,
 		comment: 'The native access token of the User. It will be null if the origin of the user is local.',
 	})

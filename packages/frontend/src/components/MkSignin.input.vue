@@ -4,42 +4,43 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-	<div :class="$style.wrapper" data-cy-signin-page-input>
-		<div :class="$style.root">
-			<div :class="$style.avatar">
-				<i class="ti ti-user"></i>
-			</div>
-
-			<!-- ログイン画面メッセージ -->
-			<MkInfo v-if="message">
-				{{ message }}
-			</MkInfo>
-
-			<!-- 外部サーバーへの転送 -->
-			<div v-if="openOnRemote" class="_gaps_m">
-				<div class="_gaps_s">
-					<MkButton type="button" rounded primary style="margin: 0 auto;" @click="openRemote(openOnRemote)">
-						{{ i18n.ts.continueOnRemote }} <i class="ti ti-external-link"></i>
-					</MkButton>
-					<button type="button" class="_button" :class="$style.instanceManualSelectButton" @click="specifyHostAndOpenRemote(openOnRemote)">
-						{{ i18n.ts.specifyServerHost }}
-					</button>
-				</div>
-				<div :class="$style.orHr">
-					<p :class="$style.orMsg">{{ i18n.ts.or }}</p>
-				</div>
-			</div>
-
-			<!-- username入力 -->
-			<form class="_gaps_s" @submit.prevent="emit('usernameSubmitted', username)">
-				<MkInput v-model="username" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autocomplete="username webauthn" autofocus required data-cy-signin-username>
-					<template #prefix>@</template>
-					<template #suffix>@{{ host }}</template>
-				</MkInput>
-				<MkButton type="submit" large primary rounded style="margin: 0 auto;" data-cy-signin-page-input-continue>{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
-			</form>
+<div :class="$style.wrapper" data-testid="signin-page-input">
+	<div :class="$style.root">
+		<div :class="$style.avatar">
+			<i class="ti ti-user"></i>
 		</div>
+
+		<!-- ログイン画面メッセージ -->
+		<MkInfo v-if="message">
+			{{ message }}
+		</MkInfo>
+
+		<!-- 外部サーバーへの転送 -->
+		<div v-if="openOnRemote" class="_gaps_m">
+			<div class="_gaps_s">
+				<MkButton type="button" rounded primary style="margin: 0 auto;" @click="openRemote(openOnRemote)">
+					{{ i18n.ts.continueOnRemote }} <i class="ti ti-external-link"></i>
+				</MkButton>
+				<button type="button" class="_button" :class="$style.instanceManualSelectButton" @click="specifyHostAndOpenRemote(openOnRemote)">
+					{{ i18n.ts.specifyServerHost }}
+				</button>
+			</div>
+			<div :class="$style.orHr">
+				<p :class="$style.orMsg">{{ i18n.ts.or }}</p>
+			</div>
+		</div>
+
+		<!-- username入力 -->
+		<form class="_gaps_s" @submit.prevent="emit('usernameSubmitted', username)">
+			<MkInput v-model="username" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autocomplete="username webauthn" autofocus required data-testid="signin-username">
+				<template #prefix>@</template>
+				<template #suffix>@{{ host }}</template>
+			</MkInput>
+			<MkButton type="submit" large primary rounded style="margin: 0 auto;" data-testid="signin-page-input-continue">{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
+		</form>
+		<!-- Xissmie: パスキーログインは非表示 (dea11edb2c) -->
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -68,7 +69,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
 	(ev: 'usernameSubmitted', v: string): void;
-	(ev: 'passkeyClick', v: MouseEvent): void;
+	(ev: 'passkeyClick', v: PointerEvent): void;
 }>();
 
 const host = toUnicode(configHost);

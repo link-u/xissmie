@@ -37,6 +37,11 @@ export class MiAvatarDecoration {
 	})
 	public isInStore: boolean;
 
+	@Column('boolean', {
+		default: true,
+	})
+	public isPublic: boolean;
+
 	@Column('varchar', {
 		length: 128, nullable: true,
 	})
@@ -57,4 +62,9 @@ export class MiAvatarDecoration {
 		array: true, length: 128, default: '{}',
 	})
 	public roleIdsThatCanBeUsedThisDecoration: string[];
+
+	@Column('varchar', {
+		length: 128, nullable: true,
+	})
+	public category: string | null;
 }

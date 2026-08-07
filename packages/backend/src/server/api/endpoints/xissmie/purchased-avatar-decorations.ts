@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { IsNull } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import type { UserOwnedAvatarDecorationsRepository } from '@/models/_.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
@@ -15,6 +14,7 @@ export const meta = {
 	tags: ['meta'],
 
 	requireCredential: true,
+	kind: 'read:account',
 
 	res: {
 		type: 'array',
@@ -78,7 +78,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				where: {
 					userId: me.id,
 				},
-				relations: ['avatarDecoration'],
+				relations: { avatarDecoration: true },
 			});
 
 			return ownedDecorations.map(x => ({
