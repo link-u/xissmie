@@ -4019,7 +4019,7 @@ export type paths = {
          * xissmie/purchased-avatar-decorations
          * @description No description provided.
          *
-         *     **Credential required**: *Yes*
+         *     **Credential required**: *Yes* / **Permission**: *read:account*
          */
         post: operations['xissmie___purchased-avatar-decorations'];
     };
@@ -4028,7 +4028,7 @@ export type paths = {
          * xissmie/purchased-emojis
          * @description No description provided.
          *
-         *     **Credential required**: *Yes*
+         *     **Credential required**: *Yes* / **Permission**: *read:account*
          */
         post: operations['xissmie___purchased-emojis'];
     };
