@@ -214,6 +214,18 @@ export class ClientServerService {
 	public createServer(fastify: FastifyInstance, options: FastifyPluginOptions, done: (err?: Error) => void) {
 		const configUrl = new URL(this.config.url);
 
+		// Xfolio からのワンタイムログイントークン受け取り用 (application/x-www-form-urlencoded)
+		if (!fastify.hasContentTypeParser('application/x-www-form-urlencoded')) {
+			fastify.addContentTypeParser('application/x-www-form-urlencoded', { parseAs: 'string' }, (_request, body, done) => {
+				try {
+					const raw = typeof body === 'string' ? body : body.toString('utf8');
+					done(null, Object.fromEntries(new URLSearchParams(raw)));
+				} catch (error) {
+					done(error as Error, undefined);
+				}
+			});
+		}
+
 		fastify.addHook('onRequest', (request, reply, done) => {
 			// クリックジャッキング防止のためiFrameの中に入れられないようにする
 			reply.header('X-Frame-Options', 'DENY');
@@ -903,6 +915,22 @@ export class ClientServerService {
 		fastify.get('/cli', async (request, reply) => {
 			return await HtmlTemplateService.replyHtml(reply, CliPage({
 				version: this.config.version,
+			}));
+		});
+
+		// Xfolio → Xissmie ワンタイムログイン
+		// POST body の token を clientCtx に載せて SPA (/login-with-token) を返す
+		fastify.post<{ Body: { token?: string; } }>('/login-with-token', async (request, reply) => {
+			reply.header('Cache-Control', 'no-store');
+			return await HtmlTemplateService.replyHtml(reply, BasePage({
+				img: this.meta.bannerUrl ?? undefined,
+				title: this.meta.name ?? 'Misskey',
+				desc: this.meta.description ?? undefined,
+				noindex: true,
+				...(await this.htmlTemplateService.getCommonData()),
+				clientCtxJson: htmlSafeJsonStringify({
+					token: request.body.token ?? null,
+				}),
 			}));
 		});
 
