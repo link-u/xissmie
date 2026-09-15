@@ -3,14 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { setTimeout } from 'node:timers/promises';
-import { Inject, Injectable } from '@nestjs/common';
-import { DataSource, IsNull, LessThan, QueryFailedError, Not } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { MiMeta } from '@/models/_.js';
+import { Injectable } from '@nestjs/common';
 import type Logger from '@/logger.js';
 import { bindThis } from '@/decorators.js';
-import { IdService } from '@/core/IdService.js';
 import { XissmieStoreService } from '@/core/XissmieStoreService.js';
 import { QueueLoggerService } from '../QueueLoggerService.js';
 import type * as Bull from 'bullmq';
@@ -20,13 +15,6 @@ export class XissmieSyncStoreContentsProcessorService {
 	private logger: Logger;
 
 	constructor(
-		@Inject(DI.meta)
-		private meta: MiMeta,
-
-		@Inject(DI.db)
-		private db: DataSource,
-
-		private idService: IdService,
 		private queueLoggerService: QueueLoggerService,
 		private xissmieStoreService: XissmieStoreService,
 	) {
@@ -35,9 +23,28 @@ export class XissmieSyncStoreContentsProcessorService {
 
 	@bindThis
 	public async process(job: Bull.Job<Record<string, unknown>>): Promise<void> {
-		await Promise.all([
-			this.xissmieStoreService.fetchStoreEmojis(),
-			this.xissmieStoreService.fetchStoreDecorations(),
-		]);
+		let emojiError: unknown = null;
+		let decorationError: unknown = null;
+
+		try {
+			const emojiResult = await this.xissmieStoreService.fetchStoreEmojis();
+			this.logger.info(`emojis: total=${emojiResult.total} success=${emojiResult.success} failed=${emojiResult.failed}`);
+		} catch (err) {
+			emojiError = err;
+			const reason = err instanceof Error ? err.message : String(err);
+			this.logger.error(`fetchStoreEmojis failed: ${reason}`, { e: err });
+		}
+
+		try {
+			await this.xissmieStoreService.fetchStoreDecorations();
+		} catch (err) {
+			decorationError = err;
+			const reason = err instanceof Error ? err.message : String(err);
+			this.logger.error(`fetchStoreDecorations failed: ${reason}`, { e: err });
+		}
+
+		if (emojiError != null && decorationError != null) {
+			throw emojiError instanceof Error ? emojiError : new Error(String(emojiError));
+		}
 	}
 }

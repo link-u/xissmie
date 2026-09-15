@@ -13,9 +13,19 @@ import { CacheService } from '@/core/CacheService.js';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
 import type { Config } from '@/config.js';
 import { DriveService } from '@/core/DriveService.js';
+import { LoggerService } from '@/core/LoggerService.js';
+import type Logger from '@/logger.js';
+
+export type XissmieStoreEmojiSyncResult = {
+	total: number;
+	success: number;
+	failed: number;
+};
 
 @Injectable()
 export class XissmieStoreService {
+	private logger: Logger;
+
 	constructor(
 		@Inject(DI.userOwnedAvatarDecorationsRepository)
 		private userOwnedAvatarDecorationsRepository: UserOwnedAvatarDecorationsRepository,
@@ -36,7 +46,9 @@ export class XissmieStoreService {
 		private cacheService: CacheService,
 		private httpRequestService: HttpRequestService,
 		private driveService: DriveService,
+		private loggerService: LoggerService,
 	) {
+		this.logger = this.loggerService.getLogger('xissmie-sync-store-contents');
 	}
 
 	@bindThis
@@ -133,7 +145,7 @@ export class XissmieStoreService {
 	}
 
 	@bindThis
-	public async fetchStoreEmojis(): Promise<void> {
+	public async fetchStoreEmojis(): Promise<XissmieStoreEmojiSyncResult> {
 		const params = new URLSearchParams({
 			token: this.config.xfolioApiToken,
 		});
@@ -175,7 +187,9 @@ export class XissmieStoreService {
 		//}];
 
 		// 既存データの更新日時を取得して無駄な再保存を回避
-		const existing = await this.emojisRepository.findBy({ id: In(data.map(d => d.id)) });
+		const existing = data.length > 0
+			? await this.emojisRepository.findBy({ id: In(data.map(d => d.id)) })
+			: [];
 		const existingMap = new Map(existing.map(e => [e.id, e]));
 
 		const rows = [] as {
@@ -196,19 +210,47 @@ export class XissmieStoreService {
 			aliases?: string[];
 		}[];
 
+		let success = 0;
+		let failed = 0;
+
 		for (const x of data) {
 			const incomingUpdatedAt = new Date(x.updatedAt);
 			const ex = existingMap.get(x.id);
-			let publicUrl: string | null = ex?.publicUrl ?? '';
+			const emojiName = `${x.name}_e_${x.authorId}`;
+			let publicUrl: string | null = null;
 
-			if (!(ex && ex.updatedAt && ex.updatedAt >= incomingUpdatedAt && ex.publicUrl)) {
-				const file = await this.driveService.uploadFromUrl({
-					url: x.imageUrl,
-					user: null,
-					isLink: false,
-					comment: `emoji:${x.id}`,
+			const needsUpload = !(ex && ex.updatedAt && ex.updatedAt >= incomingUpdatedAt && ex.publicUrl);
+
+			if (!needsUpload) {
+				publicUrl = ex!.publicUrl;
+			} else {
+				try {
+					const file = await this.driveService.uploadFromUrl({
+						url: x.imageUrl,
+						user: null,
+						isLink: false,
+						comment: `emoji:${x.id}`,
+					});
+					publicUrl = file.webpublicUrl ?? file.url;
+				} catch (err) {
+					const reason = err instanceof Error ? err.message : String(err);
+					this.logger.error(`emoji upload failed: id=${x.id} name=${emojiName} reason=${reason}`, {
+						emojiId: x.id,
+						emojiName,
+						e: err,
+					});
+					failed++;
+					continue;
+				}
+			}
+
+			if (!publicUrl) {
+				this.logger.error(`emoji upload failed: id=${x.id} name=${emojiName} reason=empty publicUrl`, {
+					emojiId: x.id,
+					emojiName,
 				});
-				publicUrl = file.webpublicUrl ?? file.url;
+				failed++;
+				continue;
 			}
 
 			// 検索用キーワード（配列）をエイリアスとして取り込む
@@ -222,9 +264,9 @@ export class XissmieStoreService {
 
 			rows.push({
 				id: x.id,
-				name: `${x.name}_e_${x.authorId}`,
+				name: emojiName,
 				originalUrl: x.imageUrl,
-				publicUrl: publicUrl || x.imageUrl,
+				publicUrl,
 				updatedAt: incomingUpdatedAt,
 				category: '★creator★',
 				license: x.authorName,
@@ -237,9 +279,20 @@ export class XissmieStoreService {
 				storeAuthorName: x.authorName,
 				aliases,
 			});
+			success++;
 		}
 
-		await this.emojisRepository.upsert(rows, ['id']);
+		if (rows.length > 0) {
+			await this.emojisRepository.upsert(rows, ['id']);
+		}
+
+		const result: XissmieStoreEmojiSyncResult = {
+			total: data.length,
+			success,
+			failed,
+		};
+		this.logger.info(`emojis sync done: total=${result.total} success=${result.success} failed=${result.failed}`);
+		return result;
 	}
 
 	/* unused
