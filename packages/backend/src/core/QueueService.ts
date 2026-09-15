@@ -86,6 +86,10 @@ const REPEATABLE_SYSTEM_JOB_DEF = [{
 }, {
 	name: 'xissmieSyncStoreContents',
 	pattern: '0 * * * *',
+}, {
+	name: 'xissmieCheckStoreEmojiIntegrity',
+	// 毎日 3:30。毎時0分のストア同期と重ねない
+	pattern: '30 3 * * *',
 }];
 
 function parseRedisInfo(infoText: string): Record<string, string> {

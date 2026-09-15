@@ -28,7 +28,9 @@ export class XissmieSyncStoreContentsProcessorService {
 
 		try {
 			const emojiResult = await this.xissmieStoreService.fetchStoreEmojis();
-			this.logger.info(`emojis: total=${emojiResult.total} success=${emojiResult.success} failed=${emojiResult.failed}`);
+			this.logger.info(
+				`emojis: total=${emojiResult.total} success=${emojiResult.success} failed=${emojiResult.failed} skippedExcluded=${emojiResult.skippedExcluded} deferred=${emojiResult.deferred} circuitOpened=${emojiResult.circuitOpened}`,
+			);
 		} catch (err) {
 			emojiError = err;
 			const reason = err instanceof Error ? err.message : String(err);
