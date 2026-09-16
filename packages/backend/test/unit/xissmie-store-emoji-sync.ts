@@ -38,7 +38,7 @@ describe('xissmie-store-emoji-sync helpers', () => {
 
 	test('backoffDelayMs applies base with jitter bounds', () => {
 		expect(backoffDelayMs(0, () => 0.5)).toBe(2000);
-		expect(backoffDelayMs(1, () => 0.5)).toBe(8000);
+		expect(backoffDelayMs(1, () => 0.5)).toBe(2000);
 		const low = backoffDelayMs(0, () => 0);
 		const high = backoffDelayMs(0, () => 1);
 		expect(low).toBe(1600);

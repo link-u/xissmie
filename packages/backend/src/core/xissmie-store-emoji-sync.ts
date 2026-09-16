@@ -9,10 +9,10 @@ import type { MiMeta } from '@/models/Meta.js';
 export const MAX_RUNS = 2;
 
 /** 1実行内の試行回数（初回含め）。 */
-export const IN_RUN_MAX_ATTEMPTS = 3;
+export const IN_RUN_MAX_ATTEMPTS = 2;
 
-/** 試行間バックオフ（ms）。指数: 2s → 8s。 */
-export const BACKOFF_BASE_MS = [2000, 8000] as const;
+/** 試行間バックオフ（ms）。1回目失敗後: 2s（±20%ジッタ）。 */
+export const BACKOFF_BASE_MS = [2000] as const;
 
 /** バックオフのジッタ比率（±）。 */
 export const BACKOFF_JITTER_RATIO = 0.2;

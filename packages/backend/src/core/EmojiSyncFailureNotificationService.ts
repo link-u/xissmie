@@ -22,7 +22,7 @@ export type EmojiRetryLimitReachedItem = {
 
 /**
  * ストア絵文字の運用向けメール通知。
- * 送信するのは「2実行×各3試行まで失敗して除外したとき」のみ。
+ * 送信するのは「2実行×各2試行まで失敗して除外したとき」のみ。
  */
 @Injectable()
 export class EmojiSyncFailureNotificationService {
@@ -49,7 +49,7 @@ export class EmojiSyncFailureNotificationService {
 		const more = items.length - shown.length;
 		const lines = [
 			'ストア絵文字の再アップロードが上限に達したため対象から除外しました。',
-			'1実行あたり最大3試行・実行またぎ最大2実行まで失敗しています。',
+			'1実行あたり最大2試行・実行またぎ最大2実行まで失敗しています。',
 			'以降の同期ジョブでは再試行しません（Xfolio 側 updatedAt 更新時のみ復帰）。',
 			`除外件数: ${items.length}`,
 			'',
