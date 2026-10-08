@@ -80,9 +80,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<template #label><SearchLabel>{{ i18n.ts.experimentalFeatures }}</SearchLabel></template>
 
 					<div class="_gaps_m">
-						<MkSwitch v-model="enableCondensedLine">
-							<template #label>Enable condensed line</template>
-						</MkSwitch>
 						<MkSwitch v-model="skipNoteRender">
 							<template #label>Enable note render skipping</template>
 						</MkSwitch>
@@ -166,7 +163,7 @@ const $i = ensureSignin();
 
 const storagePersisted = await getStoragePersistenceStatusRef();
 
-const enableCondensedLine = prefer.model('enableCondensedLine');
+const reportError = prefer.model('reportError');
 const skipNoteRender = prefer.model('skipNoteRender');
 const devMode = prefer.model('devMode');
 const stackingRouterView = prefer.model('experimental.stackingRouterView');
