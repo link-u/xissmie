@@ -184,10 +184,11 @@ export class XissmieStoreService {
 			originalUrl: string;
 			publicUrl: string;
 			updatedAt: Date;
-			category: string | null;
-			license: string | null;
-			localOnly: boolean;
-			isSensitive: boolean;
+			// 本番未確認のため一旦無効 (c2d22c6)
+			// category: string | null;
+			// license: string | null;
+			// localOnly: boolean;
+			// isSensitive: boolean;
 			isInStore: boolean;
 			isPublic: boolean;
 			storeProductId: string | null;
@@ -226,10 +227,11 @@ export class XissmieStoreService {
 				originalUrl: x.imageUrl,
 				publicUrl: publicUrl || x.imageUrl,
 				updatedAt: incomingUpdatedAt,
-				category: '★creator★',
-				license: x.authorName,
-				localOnly: true,
-				isSensitive: false,
+				// 本番未確認のため一旦無効 (c2d22c6)
+				// category: '★creator★',
+				// license: x.authorName,
+				// localOnly: true,
+				// isSensitive: false,
 				isInStore: true,
 				isPublic: x.isPublic,
 				storeProductId: x.productId ?? null,
