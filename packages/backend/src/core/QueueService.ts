@@ -6,9 +6,9 @@
 import { randomUUID } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
 import { MetricsTime, type JobType } from 'bullmq';
-import { parse as parseRedisInfo } from 'redis-info';
 import type { IActivity } from '@/core/activitypub/type.js';
 import type { MiDriveFile } from '@/models/DriveFile.js';
+import type { MiAnnouncement } from '@/models/Announcement.js';
 import type { MiWebhook, WebhookEventTypes } from '@/models/Webhook.js';
 import type { MiSystemWebhook, SystemWebhookEventType } from '@/models/SystemWebhook.js';
 import type { Config } from '@/config.js';
@@ -21,6 +21,7 @@ import type { Packed } from '@/misc/json-schema.js';
 import { type UserWebhookPayload } from './UserWebhookService.js';
 import type {
 	DbJobData,
+	ArchiveAnnouncementJobData,
 	DeliverJobData,
 	RelationshipJobData,
 	SystemWebhookDeliverJobData,
@@ -31,6 +32,7 @@ import type {
 	DbQueue,
 	DeliverQueue,
 	EndedPollNotificationQueue,
+	PostScheduledNoteQueue,
 	InboxQueue,
 	ObjectStorageQueue,
 	RelationshipQueue,
@@ -44,6 +46,7 @@ import type * as Bull from 'bullmq';
 export const QUEUE_TYPES = [
 	'system',
 	'endedPollNotification',
+	'postScheduledNote',
 	'deliver',
 	'inbox',
 	'db',
@@ -87,6 +90,19 @@ const REPEATABLE_SYSTEM_JOB_DEF = [{
 	pattern: '0 * * * *',
 }];
 
+function parseRedisInfo(infoText: string): Record<string, string> {
+	const fields = infoText
+		.split('\n')
+		.filter(line => line.length > 0 && !line.startsWith('#'))
+		.map(line => line.trim().split(':'));
+
+	const result: Record<string, string> = {};
+	for (const [key, value] of fields) {
+		result[key] = value;
+	}
+	return result;
+}
+
 @Injectable()
 export class QueueService {
 	constructor(
@@ -95,6 +111,7 @@ export class QueueService {
 
 		@Inject('queue:system') public systemQueue: SystemQueue,
 		@Inject('queue:endedPollNotification') public endedPollNotificationQueue: EndedPollNotificationQueue,
+		@Inject('queue:postScheduledNote') public postScheduledNoteQueue: PostScheduledNoteQueue,
 		@Inject('queue:deliver') public deliverQueue: DeliverQueue,
 		@Inject('queue:inbox') public inboxQueue: InboxQueue,
 		@Inject('queue:db') public dbQueue: DbQueue,
@@ -233,6 +250,44 @@ export class QueueService {
 				count: 100,
 			},
 		});
+	}
+
+	private announcementArchiveJobId(announcementId: MiAnnouncement['id'], autoArchiveAt: Date): string {
+		return `archiveAnnouncement-${announcementId}-${autoArchiveAt.getTime()}`;
+	}
+
+	@bindThis
+	public async scheduleAnnouncementArchive(announcementId: MiAnnouncement['id'], autoArchiveAt: Date): Promise<void> {
+		const jobId = this.announcementArchiveJobId(announcementId, autoArchiveAt);
+		const existingJob = await this.systemQueue.getJob(jobId);
+		if (existingJob != null) {
+			const state = await existingJob.getState();
+			if (state !== 'completed' && state !== 'failed') return;
+			await this.systemQueue.remove(jobId);
+		}
+
+		const data: ArchiveAnnouncementJobData = {
+			announcementId,
+			autoArchiveAt: autoArchiveAt.getTime(),
+		};
+
+		await this.systemQueue.add('archiveAnnouncement', data, {
+			jobId,
+			delay: Math.max(0, autoArchiveAt.getTime() - Date.now()),
+			removeOnComplete: {
+				age: 3600 * 24 * 7, // keep up to 7 days
+				count: 30,
+			},
+			removeOnFail: {
+				age: 3600 * 24 * 7, // keep up to 7 days
+				count: 100,
+			},
+		});
+	}
+
+	@bindThis
+	public async clearAnnouncementArchive(announcementId: MiAnnouncement['id'], autoArchiveAt: Date): Promise<void> {
+		await this.systemQueue.remove(this.announcementArchiveJobId(announcementId, autoArchiveAt));
 	}
 
 	@bindThis
@@ -720,6 +775,7 @@ export class QueueService {
 		switch (type) {
 			case 'system': return this.systemQueue;
 			case 'endedPollNotification': return this.endedPollNotificationQueue;
+			case 'postScheduledNote': return this.postScheduledNoteQueue;
 			case 'deliver': return this.deliverQueue;
 			case 'inbox': return this.inboxQueue;
 			case 'db': return this.dbQueue;
@@ -757,6 +813,18 @@ export class QueueService {
 	}
 
 	@bindThis
+	public async queuePause(queueType: typeof QUEUE_TYPES[number]) {
+		const queue = this.getQueue(queueType);
+		await queue.pause();
+	}
+
+	@bindThis
+	public async queueResume(queueType: typeof QUEUE_TYPES[number]) {
+		const queue = this.getQueue(queueType);
+		await queue.resume();
+	}
+
+	@bindThis
 	public async queueRetryJob(queueType: typeof QUEUE_TYPES[number], jobId: string) {
 		const queue = this.getQueue(queueType);
 		const job = await queue.getJob(jobId);
@@ -779,7 +847,18 @@ export class QueueService {
 	}
 
 	@bindThis
-	private packJobData(job: Bull.Job): Packed<'QueueJob'> {
+	private redactJobData<T>(queueType: typeof QUEUE_TYPES[number], data: T): T {
+		// Webhookのsecret
+		if (queueType === 'userWebhookDeliver' || queueType === 'systemWebhookDeliver') {
+			if (typeof data === 'object' && data != null && 'secret' in data) {
+				return { ...data, secret: '(redacted)' } as T;
+			}
+		}
+		return data;
+	}
+
+	@bindThis
+	private packJobData(queueType: typeof QUEUE_TYPES[number], job: Bull.Job): Packed<'QueueJob'> {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		const stacktrace = job.stacktrace ? job.stacktrace.filter(Boolean) : [];
 		stacktrace.reverse();
@@ -787,7 +866,7 @@ export class QueueService {
 		return {
 			id: job.id!,
 			name: job.name,
-			data: job.data,
+			data: this.redactJobData(queueType, job.data),
 			opts: job.opts,
 			timestamp: job.timestamp,
 			processedOn: job.processedOn,
@@ -808,7 +887,7 @@ export class QueueService {
 		const queue = this.getQueue(queueType);
 		const job = await queue.getJob(jobId);
 		if (job != null) {
-			return this.packJobData(job);
+			return this.packJobData(queueType, job);
 		} else {
 			throw new Error(`Job not found: ${jobId}`);
 		}
@@ -825,24 +904,21 @@ export class QueueService {
 	public async queueGetJobs(queueType: typeof QUEUE_TYPES[number], jobTypes: JobType[], search?: string) {
 		const RETURN_LIMIT = 100;
 		const queue = this.getQueue(queueType);
-		let jobs: Bull.Job[];
 
 		if (search) {
-			jobs = await queue.getJobs(jobTypes, 0, 1000);
+			const jobs = (await queue.getJobs(jobTypes, 0, 1000)).map(job => this.packJobData(queueType, job));
 
-			jobs = jobs.filter(job => {
+			// 秘匿値を検索対象に含めると部分一致で値を推測できてしまうため、redact 済みのデータに対して検索する
+			return jobs.filter(job => {
 				const jobString = JSON.stringify(job).toLowerCase();
 				return search.toLowerCase().split(' ').every(term => {
 					return jobString.includes(term);
 				});
-			});
-
-			jobs = jobs.slice(0, RETURN_LIMIT);
+			}).slice(0, RETURN_LIMIT);
 		} else {
-			jobs = await queue.getJobs(jobTypes, 0, RETURN_LIMIT);
+			const jobs = await queue.getJobs(jobTypes, 0, RETURN_LIMIT);
+			return jobs.map(job => this.packJobData(queueType, job));
 		}
-
-		return jobs.map(job => this.packJobData(job));
 	}
 
 	@bindThis
@@ -876,7 +952,7 @@ export class QueueService {
 		const isPaused = await queue.isPaused();
 		const metrics_completed = await queue.getMetrics('completed', 0, MetricsTime.ONE_WEEK);
 		const metrics_failed = await queue.getMetrics('failed', 0, MetricsTime.ONE_WEEK);
-		const db = parseRedisInfo(await (await queue.client).info());
+		const db = parseRedisInfo(await (await queue.getBackend().client).info());
 
 		return {
 			name: queueType,
@@ -889,7 +965,7 @@ export class QueueService {
 			},
 			db: {
 				version: db.redis_version,
-				mode: db.redis_mode,
+				mode: db.redis_mode as 'cluster' | 'standalone' | 'sentinel',
 				runId: db.run_id,
 				processId: db.process_id,
 				port: parseInt(db.tcp_port),

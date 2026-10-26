@@ -31,6 +31,7 @@ import { computed, watch, provide, useTemplateRef, ref, onMounted, onActivated }
 import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
 import type { MenuItem } from '@/types/menu.js';
 import type { BasicTimelineType } from '@/timelines.js';
+import type { PageHeaderItem } from '@/types/page-header.js';
 import MkStreamingNotesTimeline from '@/components/MkStreamingNotesTimeline.vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import * as os from '@/os.js';
@@ -49,10 +50,21 @@ const tlComponent = useTemplateRef('tlComponent');
 
 type TimelinePageSrc = BasicTimelineType | `list:${string}`;
 
-const srcWhenNotSignin = ref<'local' | 'global'>(isAvailableBasicTimeline('local') ? 'local' : 'global');
-const src = computed<TimelinePageSrc>({
-	get: () => ($i ? store.r.tl.value.src : srcWhenNotSignin.value),
-	set: (x) => saveSrc(x),
+const srcWhenNotSignin = ref<BasicTimelineType>(
+	isAvailableBasicTimeline('local') ? 'local' : (availableBasicTimelines()[0] ?? 'local'),
+);
+const src = computed({
+	get(): TimelinePageSrc {
+		const raw = $i ? store.r.tl.value.src : srcWhenNotSignin.value;
+		// 旧ストアに 'global' が残っている場合のみ（型には含めない）
+		if (String(raw) === 'global') {
+			return availableBasicTimelines()[0] ?? 'local';
+		}
+		return raw as TimelinePageSrc;
+	},
+	set: (x: TimelinePageSrc) => {
+		saveSrc(x);
+	},
 });
 const withRenotes = computed<boolean>({
 	get: () => store.r.tl.value.filter.withRenotes,
@@ -105,7 +117,7 @@ const withSensitive = computed<boolean>({
 
 const showFixedPostForm = prefer.model('showFixedPostForm');
 
-async function chooseList(ev: MouseEvent): Promise<void> {
+async function chooseList(ev: PointerEvent): Promise<void> {
 	const lists = await userListsCache.fetch();
 	const items: (MenuItem | undefined)[] = [
 		...lists.map(list => ({
@@ -124,7 +136,7 @@ async function chooseList(ev: MouseEvent): Promise<void> {
 	os.popupMenu(items.filter(i => i != null), ev.currentTarget ?? ev.target);
 }
 
-async function chooseAntenna(ev: MouseEvent): Promise<void> {
+async function chooseAntenna(ev: PointerEvent): Promise<void> {
 	const antennas = await antennasCache.fetch();
 	const items: (MenuItem | undefined)[] = [
 		...antennas.map(antenna => ({
@@ -144,7 +156,7 @@ async function chooseAntenna(ev: MouseEvent): Promise<void> {
 	os.popupMenu(items.filter(i => i != null), ev.currentTarget ?? ev.target);
 }
 
-async function chooseChannel(ev: MouseEvent): Promise<void> {
+async function chooseChannel(ev: PointerEvent): Promise<void> {
 	const channels = await favoritedChannelsCache.fetch();
 	const items: (MenuItem | undefined)[] = [
 		...channels.map(channel => {
@@ -163,7 +175,7 @@ async function chooseChannel(ev: MouseEvent): Promise<void> {
 			type: 'link',
 			icon: 'ti ti-plus',
 			text: i18n.ts.createNew,
-			to: '/channels',
+			to: '/channels/new',
 		},
 	];
 	os.popupMenu(items.filter(i => i != null), ev.currentTarget ?? ev.target);
@@ -178,8 +190,8 @@ function saveSrc(newSrc: TimelinePageSrc): void {
 	}
 
 	store.set('tl', out);
-	if (['local', 'global'].includes(newSrc)) {
-		srcWhenNotSignin.value = newSrc as 'local' | 'global';
+	if ($i == null && isBasicTimeline(newSrc)) {
+		srcWhenNotSignin.value = newSrc;
 	}
 }
 
@@ -192,7 +204,8 @@ function saveTlFilter(key: keyof typeof store.s.tl.filter, newValue: boolean) {
 
 function switchTlIfNeeded() {
 	if (isBasicTimeline(src.value) && !isAvailableBasicTimeline(src.value)) {
-		src.value = availableBasicTimelines()[0];
+		const next = availableBasicTimelines()[0];
+		if (next != null) saveSrc(next);
 	}
 }
 
@@ -203,8 +216,8 @@ onActivated(() => {
 	switchTlIfNeeded();
 });
 
-const headerActions = computed(() => {
-	const items = [{
+const headerActions = computed<PageHeaderItem[]>(() => {
+	const items: PageHeaderItem[] = [{
 		icon: 'ti ti-dots',
 		text: i18n.ts.options,
 		handler: (ev) => {
@@ -254,7 +267,7 @@ const headerActions = computed(() => {
 		items.unshift({
 			icon: 'ti ti-refresh',
 			text: i18n.ts.reload,
-			handler: (ev: Event) => {
+			handler: () => {
 				tlComponent.value?.reloadTimeline();
 			},
 		});

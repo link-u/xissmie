@@ -44,6 +44,10 @@ export const packedEmojiSimpleSchema = {
 				format: 'id',
 			},
 		},
+		isPublic: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
 	},
 } as const;
 
@@ -101,6 +105,10 @@ export const packedEmojiDetailedSchema = {
 				optional: false, nullable: false,
 				format: 'id',
 			},
+		},
+		isPublic: {
+			type: 'boolean',
+			optional: false, nullable: false,
 		},
 	},
 } as const;
@@ -184,6 +192,10 @@ export const packedEmojiDetailedAdminSchema = {
 					},
 				},
 			},
+		},
+		isPublic: {
+			type: 'boolean',
+			optional: false, nullable: false,
 		},
 	},
 } as const;

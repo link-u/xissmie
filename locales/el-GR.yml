@@ -288,6 +288,10 @@ replies: "Απάντηση"
 renotes: "Κοινοποίηση σημειώματος"
 postForm: "Φόρμα δημοσίευσης"
 information: "Πληροφορίες"
+widgets: "Μαραφέτια"
+_imageEditing:
+  _vars:
+    filename: "Όνομα αρχείου"
 _chat:
   members: "Μέλη"
   home: "Κεντρικό"
@@ -395,6 +399,7 @@ _deck:
     tl: "Χρονολόγιο"
     antenna: "Αντένες"
     list: "Λίστα"
+    clip: "Κλιπ"
     mentions: "Επισημάνσεις"
     direct: "Απευθείας σημειώματα"
 _webhookSettings:

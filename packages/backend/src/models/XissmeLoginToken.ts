@@ -11,7 +11,7 @@ import { MiUser } from './User.js';
 @Index(['userId', 'token'], { unique: true })
 export class MiXissmeLoginToken {
 	@PrimaryGeneratedColumn()
-	public id: string;
+	public id: number;
 
 	@Index()
 	@Column({

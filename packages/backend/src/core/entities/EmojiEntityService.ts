@@ -36,12 +36,13 @@ export class EmojiEntityService {
 			localOnly: emoji.localOnly ? true : undefined,
 			isSensitive: emoji.isSensitive ? true : undefined,
 			roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length > 0 ? emoji.roleIdsThatCanBeUsedThisEmojiAsReaction : undefined,
+			isPublic: emoji.isPublic,
 		};
 	}
 
 	@bindThis
 	public packSimpleMany(
-		emojis: any[],
+		emojis: (MiEmoji['id'] | MiEmoji)[],
 	) {
 		return Promise.all(emojis.map(x => this.packSimple(x)));
 	}
@@ -64,12 +65,13 @@ export class EmojiEntityService {
 			isSensitive: emoji.isSensitive,
 			localOnly: emoji.localOnly,
 			roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.roleIdsThatCanBeUsedThisEmojiAsReaction,
+			isPublic: emoji.isPublic,
 		};
 	}
 
 	@bindThis
 	public packDetailedMany(
-		emojis: any[],
+		emojis: (MiEmoji['id'] | MiEmoji)[],
 	): Promise<Packed<'EmojiDetailed'>[]> {
 		return Promise.all(emojis.map(x => this.packDetailed(x)));
 	}
@@ -122,6 +124,7 @@ export class EmojiEntityService {
 			localOnly: emoji.localOnly,
 			isSensitive: emoji.isSensitive,
 			roleIdsThatCanBeUsedThisEmojiAsReaction: roles.map(it => ({ id: it.id, name: it.name })),
+			isPublic: emoji.isPublic,
 		};
 	}
 

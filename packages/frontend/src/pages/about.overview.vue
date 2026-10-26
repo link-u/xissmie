@@ -5,7 +5,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <template>
 <div class="_gaps_m">
-	<div :class="$style.banner" :style="{ backgroundImage: `url(${ instance.bannerUrl })` }">
+	<div :class="$style.banner" :style="{ backgroundImage: instance.bannerUrl ? `url(${ instance.bannerUrl })` : undefined }">
 		<div style="overflow: clip;">
 			<img :src="instance.iconUrl ?? '/favicon.ico'" alt="" :class="$style.bannerIcon"/>
 			<div :class="$style.bannerName">
@@ -95,7 +95,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</div>
 		</div>
 	</FormSection>
-
 </div>
 </template>
 
@@ -103,16 +102,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { host, version } from '@@/js/config.js';
 import { i18n } from '@/i18n.js';
 import { instance } from '@/instance.js';
-import number from '@/filters/number.js';
-import { misskeyApi } from '@/utility/misskey-api.js';
 import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSplit from '@/components/form/split.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import MkKeyValue from '@/components/MkKeyValue.vue';
 import MkLink from '@/components/MkLink.vue';
+import MkInfo from '@/components/MkInfo.vue';
 
-const initStats = () => misskeyApi('stats', {});
 </script>
 
 <style lang="scss" module>
