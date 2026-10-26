@@ -49,6 +49,7 @@ import { CleanProcessorService } from './processors/CleanProcessorService.js';
 import { AggregateRetentionProcessorService } from './processors/AggregateRetentionProcessorService.js';
 import { CleanRemoteNotesProcessorService } from './processors/CleanRemoteNotesProcessorService.js';
 import { XissmieSyncStoreContentsProcessorService } from './processors/XissmieSyncStoreContentsProcessorService.js';
+import { XissmieCheckStoreEmojiIntegrityProcessorService } from './processors/XissmieCheckStoreEmojiIntegrityProcessorService.js';
 import { QueueLoggerService } from './QueueLoggerService.js';
 import { QUEUE, baseWorkerOptions } from './const.js';
 
@@ -135,6 +136,7 @@ export class QueueProcessorService implements OnApplicationShutdown {
 		private cleanProcessorService: CleanProcessorService,
 		private cleanRemoteNotesProcessorService: CleanRemoteNotesProcessorService,
 		private xissmieSyncStoreContentsProcessorService: XissmieSyncStoreContentsProcessorService,
+		private xissmieCheckStoreEmojiIntegrityProcessorService: XissmieCheckStoreEmojiIntegrityProcessorService,
 	) {
 		this.logger = this.queueLoggerService.logger;
 
@@ -180,6 +182,7 @@ export class QueueProcessorService implements OnApplicationShutdown {
 					case 'clean': return this.cleanProcessorService.process();
 					case 'cleanRemoteNotes': return this.cleanRemoteNotesProcessorService.process(job);
 					case 'xissmieSyncStoreContents': return this.xissmieSyncStoreContentsProcessorService.process(job);
+					case 'xissmieCheckStoreEmojiIntegrity': return this.xissmieCheckStoreEmojiIntegrityProcessorService.process(job);
 					default: throw new Error(`unrecognized job type ${job.name} for system`);
 				}
 			};

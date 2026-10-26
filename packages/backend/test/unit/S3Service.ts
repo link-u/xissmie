@@ -10,6 +10,7 @@ import { Test } from '@nestjs/testing';
 import {
 	CompleteMultipartUploadCommand,
 	CreateMultipartUploadCommand,
+	HeadObjectCommand,
 	PutObjectCommand,
 	S3Client,
 	UploadPartCommand,
@@ -84,6 +85,17 @@ describe('S3Service', () => {
 				Key: 'fake',
 				Body: 'x'.repeat(8 * 1024 * 1024 + 1), // デフォルトpartSizeにしている 8 * 1024 * 1024 を越えるサイズ
 			})).rejects.toThrow(Error);
+		});
+	});
+
+	describe('head', () => {
+		test('heads an object', async () => {
+			s3Mock.on(HeadObjectCommand).resolves({ ContentLength: 1 });
+
+			await s3Service.head({ objectStorageRegion: 'us-east-1' } as MiMeta, {
+				Bucket: 'fake',
+				Key: 'fake',
+			});
 		});
 	});
 });

@@ -29,6 +29,7 @@ import { DeleteAccountService } from './DeleteAccountService.js';
 import { DownloadService } from './DownloadService.js';
 import { DriveService } from './DriveService.js';
 import { EmailService } from './EmailService.js';
+import { EmojiSyncFailureNotificationService } from './EmojiSyncFailureNotificationService.js';
 import { FederatedInstanceService } from './FederatedInstanceService.js';
 import { FetchInstanceMetadataService } from './FetchInstanceMetadataService.js';
 import { GlobalEventService } from './GlobalEventService.js';
@@ -176,6 +177,7 @@ const $DeleteAccountService: Provider = { provide: 'DeleteAccountService', useEx
 const $DownloadService: Provider = { provide: 'DownloadService', useExisting: DownloadService };
 const $DriveService: Provider = { provide: 'DriveService', useExisting: DriveService };
 const $EmailService: Provider = { provide: 'EmailService', useExisting: EmailService };
+const $EmojiSyncFailureNotificationService: Provider = { provide: 'EmojiSyncFailureNotificationService', useExisting: EmojiSyncFailureNotificationService };
 const $FederatedInstanceService: Provider = { provide: 'FederatedInstanceService', useExisting: FederatedInstanceService };
 const $FetchInstanceMetadataService: Provider = { provide: 'FetchInstanceMetadataService', useExisting: FetchInstanceMetadataService };
 const $GlobalEventService: Provider = { provide: 'GlobalEventService', useExisting: GlobalEventService };
@@ -330,6 +332,7 @@ const $XissmieStoreService: Provider = { provide: 'XissmieStoreService', useExis
 		DownloadService,
 		DriveService,
 		EmailService,
+		EmojiSyncFailureNotificationService,
 		FederatedInstanceService,
 		FetchInstanceMetadataService,
 		GlobalEventService,
@@ -482,6 +485,7 @@ const $XissmieStoreService: Provider = { provide: 'XissmieStoreService', useExis
 		$DownloadService,
 		$DriveService,
 		$EmailService,
+		$EmojiSyncFailureNotificationService,
 		$FederatedInstanceService,
 		$FetchInstanceMetadataService,
 		$GlobalEventService,
@@ -634,6 +638,7 @@ const $XissmieStoreService: Provider = { provide: 'XissmieStoreService', useExis
 		DownloadService,
 		DriveService,
 		EmailService,
+		EmojiSyncFailureNotificationService,
 		FederatedInstanceService,
 		FetchInstanceMetadataService,
 		GlobalEventService,
@@ -785,6 +790,7 @@ const $XissmieStoreService: Provider = { provide: 'XissmieStoreService', useExis
 		$DownloadService,
 		$DriveService,
 		$EmailService,
+		$EmojiSyncFailureNotificationService,
 		$FederatedInstanceService,
 		$FetchInstanceMetadataService,
 		$GlobalEventService,

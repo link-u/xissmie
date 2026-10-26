@@ -7,13 +7,21 @@ import { URL } from 'node:url';
 import * as http from 'node:http';
 import * as https from 'node:https';
 import { Injectable } from '@nestjs/common';
-import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, HeadObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { NodeHttpHandler, NodeHttpHandlerOptions } from '@smithy/node-http-handler';
 import type { MiMeta } from '@/models/Meta.js';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
 import { bindThis } from '@/decorators.js';
-import type { DeleteObjectCommandInput, PutObjectCommandInput } from '@aws-sdk/client-s3';
+import type { DeleteObjectCommandInput, HeadObjectCommandInput, PutObjectCommandInput } from '@aws-sdk/client-s3';
+
+export function isS3ObjectNotFoundError(err: unknown): boolean {
+	if (err == null || typeof err !== 'object') return false;
+	const e = err as { name?: string; Code?: string; $metadata?: { httpStatusCode?: number } };
+	if (e.name === 'NotFound' || e.name === 'NoSuchKey') return true;
+	if (e.Code === 'NotFound' || e.Code === 'NoSuchKey') return true;
+	return e.$metadata?.httpStatusCode === 404;
+}
 
 @Injectable()
 export class S3Service {
@@ -67,5 +75,11 @@ export class S3Service {
 	public delete(meta: MiMeta, input: DeleteObjectCommandInput) {
 		const client = this.getS3Client(meta);
 		return client.send(new DeleteObjectCommand(input));
+	}
+
+	@bindThis
+	public head(meta: MiMeta, input: HeadObjectCommandInput) {
+		const client = this.getS3Client(meta);
+		return client.send(new HeadObjectCommand(input));
 	}
 }

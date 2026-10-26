@@ -45,6 +45,7 @@ import { AggregateRetentionProcessorService } from './processors/AggregateRetent
 import { ExportFavoritesProcessorService } from './processors/ExportFavoritesProcessorService.js';
 import { RelationshipProcessorService } from './processors/RelationshipProcessorService.js';
 import { XissmieSyncStoreContentsProcessorService } from './processors/XissmieSyncStoreContentsProcessorService.js';
+import { XissmieCheckStoreEmojiIntegrityProcessorService } from './processors/XissmieCheckStoreEmojiIntegrityProcessorService.js';
 
 @Module({
 	imports: [
@@ -91,6 +92,7 @@ import { XissmieSyncStoreContentsProcessorService } from './processors/XissmieSy
 		CheckModeratorsActivityProcessorService,
 		CleanRemoteNotesProcessorService,
 		XissmieSyncStoreContentsProcessorService,
+		XissmieCheckStoreEmojiIntegrityProcessorService,
 		QueueProcessorService,
 	],
 	exports: [
