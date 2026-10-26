@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
 <SearchMarker path="/settings/avatar-decoration" :label="i18n.ts.avatarDecorations" :keywords="['avatar', 'icon', 'decoration']" icon="ti ti-sparkles">
 	<div>
-		<div v-if="!loading" class="_gaps">
+		<div v-if="!loading && !loadingError" class="_gaps">
 			<MkInfo>{{ i18n.tsx._profile.avatarDecorationMax({ max: $i.policies.avatarDecorationLimit }) }} ({{ i18n.tsx.remainingN({ n: $i.policies.avatarDecorationLimit - $i.avatarDecorations.length }) }})</MkInfo>
 
 			<MkAvatar :class="$style.avatar" :user="$i" forceShowDecoration/>
@@ -51,7 +51,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					@click="openDecoration(avatarDecoration)"
 				/>
 			</div>
-			<MkButton primary rounded @click="refreshPurchasedDecorations"><i class="ti ti-refresh"></i> 更新</MkButton>
+			<MkButton primary rounded :wait="purchasedDecorationsLoading" @click="refreshPurchasedDecorations"><i class="ti ti-refresh"></i> 更新</MkButton>
 
 			<hr>
 
@@ -66,17 +66,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 					@click="openDecoration(avatarDecoration)"
 				/>
 			</div>
-			<MkButton primary rounded @click="loadMoreStoreDecorations">もっと見る</MkButton>
+			<MkButton primary rounded :wait="storeDecorationsLoading" :disabled="!hasMoreStoreDecorations" @click="loadMoreStoreDecorations">もっと見る</MkButton>
 		</div>
-		<div v-else>
+		<div v-else-if="loading">
 			<MkLoading/>
+		</div>
+		<div v-else class="_gaps">
+			<MkInfo warn>{{ i18n.ts.somethingHappened }}</MkInfo>
+			<MkButton @click="loadDecorations">{{ i18n.ts.retry }}</MkButton>
 		</div>
 	</div>
 </SearchMarker>
 </template>
 
 <script lang="ts" setup>
-import { ref, defineAsyncComponent, computed } from 'vue';
+import { ref, computed } from 'vue';
 import * as Misskey from 'misskey-js';
 import XDecoration from './avatar-decoration.decoration.vue';
 import XDialog from './avatar-decoration.dialog.vue';
@@ -88,10 +92,16 @@ import { ensureSignin } from '@/i.js';
 import MkInfo from '@/components/MkInfo.vue';
 import { definePage } from '@/page.js';
 import { xissmieAvatarDecorationPurchaseRequired } from '@/xissmie.js';
+import { fetchMoreStoreItems } from '@/utility/xissmie-store.js';
 
 const $i = ensureSignin();
 
 const loading = ref(true);
+const loadingError = ref(false);
+const purchasedDecorationsLoading = ref(false);
+const storeDecorationsLoading = ref(false);
+const hasMoreStoreDecorations = ref(false);
+const STORE_DECORATIONS_PAGE_SIZE = 30;
 const serverAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
 const purchasedAvatarDecorations = ref<Misskey.entities.GetAvatarDecorationsResponse>([]);
 const storeAvatarDecorations = ref<Misskey.entities.XissmieStoreAvatarDecorationsResponse>([]);
@@ -100,28 +110,55 @@ const publicStoreAvatarDecorations = computed(() =>
 );
 const allDecorations = computed(() => [...serverAvatarDecorations.value, ...purchasedAvatarDecorations.value]);
 
-Promise.all([misskeyApi('get-avatar-decorations'), misskeyApi('xissmie/purchased-avatar-decorations')]).then(([s, p]) => {
-	serverAvatarDecorations.value = s;
-	purchasedAvatarDecorations.value = p;
-	loading.value = false;
-});
+void loadDecorations();
 
-misskeyApi('xissmie/store-avatar-decorations').then((storeDecorations) => {
-	storeAvatarDecorations.value = storeDecorations;
-});
-
-function refreshPurchasedDecorations() {
-	misskeyApi('xissmie/purchased-avatar-decorations').then(p => {
-		purchasedAvatarDecorations.value = p;
-	});
+async function loadDecorations() {
+	loading.value = true;
+	loadingError.value = false;
+	try {
+		const [server, purchased, catalog] = await Promise.all([
+			misskeyApi('get-avatar-decorations'),
+			misskeyApi('xissmie/purchased-avatar-decorations'),
+			misskeyApi('xissmie/store-avatar-decorations', { limit: STORE_DECORATIONS_PAGE_SIZE }),
+		]);
+		serverAvatarDecorations.value = server;
+		purchasedAvatarDecorations.value = purchased;
+		storeAvatarDecorations.value = catalog;
+		hasMoreStoreDecorations.value = catalog.length >= STORE_DECORATIONS_PAGE_SIZE;
+	} catch {
+		loadingError.value = true;
+	} finally {
+		loading.value = false;
+	}
 }
 
-function loadMoreStoreDecorations() {
-	misskeyApi('xissmie/store-avatar-decorations', {
-		untilId: storeAvatarDecorations.value[storeAvatarDecorations.value.length - 1]!.id,
-	}).then(x => {
-		storeAvatarDecorations.value = storeAvatarDecorations.value.concat(x);
-	});
+async function refreshPurchasedDecorations() {
+	if (purchasedDecorationsLoading.value) return;
+	purchasedDecorationsLoading.value = true;
+	try {
+		purchasedAvatarDecorations.value = await misskeyApi('xissmie/purchased-avatar-decorations');
+	} catch {
+		void os.alert({ type: 'error', text: i18n.ts.somethingHappened });
+	} finally {
+		purchasedDecorationsLoading.value = false;
+	}
+}
+
+async function loadMoreStoreDecorations() {
+	if (storeDecorationsLoading.value || !hasMoreStoreDecorations.value) return;
+	storeDecorationsLoading.value = true;
+	try {
+		const page = await fetchMoreStoreItems(storeAvatarDecorations.value, STORE_DECORATIONS_PAGE_SIZE, untilId => misskeyApi('xissmie/store-avatar-decorations', {
+			limit: STORE_DECORATIONS_PAGE_SIZE,
+			untilId,
+		}));
+		storeAvatarDecorations.value = page.items;
+		hasMoreStoreDecorations.value = page.hasMore;
+	} catch {
+		void os.alert({ type: 'error', text: i18n.ts.somethingHappened });
+	} finally {
+		storeDecorationsLoading.value = false;
+	}
 }
 
 function openAttachedDecoration(index: number) {
