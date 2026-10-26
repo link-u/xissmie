@@ -12,7 +12,7 @@ import { ClientServerService } from '@/server/web/ClientServerService.js';
 import { HtmlTemplateService } from '@/server/web/HtmlTemplateService.js';
 import { defaultDescription } from '@/server/web/views/_.js';
 import type { Config } from '@/config.js';
-import type { MiMeta } from '@/models/_.js';
+import type { AvatarDecorationsRepository, EmojisRepository, MiMeta } from '@/models/_.js';
 import type { ClientLoggerService } from '@/server/web/ClientLoggerService.js';
 
 describe('HTML descriptions as plain text', () => {
@@ -68,6 +68,8 @@ describe('HTML descriptions as plain text', () => {
 			meta,
 			mockDeep(), mockDeep(), mockDeep(), mockDeep(), mockDeep(),
 			mockDeep(), mockDeep(), mockDeep(), mockDeep(), mockDeep(),
+			mockDeep<EmojisRepository>(),
+			mockDeep<AvatarDecorationsRepository>(),
 			mockDeep(), mockDeep(), mockDeep(), mockDeep(), mockDeep(),
 			mockDeep(), mockDeep(), mockDeep(), mockDeep(), mockDeep(), mockDeep(),
 			htmlTemplateService,
