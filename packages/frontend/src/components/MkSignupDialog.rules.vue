@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div style="font-weight: bold; margin-top: 0.5em;">{{ "クロスフォリオでアカウントを作成し、マイページからXissmieのユーザー名を登録することでご利用いただけます。" }}</div>
 			</div>
 
-			<MkButton full rounded gradate data-cy-signup :link="true" linkBehavior="browser" :to="`${xfolioUrlOrigin}/mypage/xissmie_setting`" style="padding: 10px">{{ "クロスフォリオに登録する" }}</MkButton>
+			<MkButton full rounded gradate data-cy-signup type="a" :href="`${xfolioUrlOrigin}/mypage/xissmie_setting`" style="padding: 10px">{{ "クロスフォリオに登録する" }}</MkButton>
 		</div>
 	</div>
 </div>
