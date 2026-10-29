@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.wrapper" data-cy-signin-page-input>
+<div :class="$style.wrapper" data-testid="xissmie-signin-page">
 	<div :class="$style.root">
 		<div class="_gaps_m">
 			<div style="text-align: center;">
@@ -13,10 +13,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div style="font-weight: bold; margin-top: 0.5em;">{{ "※Xissmieのユーザー名を登録していない場合は、クロスフォリオにログイン後、マイページからXissmieユーザー名を登録してください。" }}</div>
 			</div>
 
-				<MkButton full rounded gradate data-cy-signup :link="true" linkBehavior="browser" :to="`${xfolioUrlOrigin}/mypage/xissmie_setting?from_xissmie=yes`" style="padding: 10px">{{ "クロスフォリオでログインする" }}</MkButton>
+				<MkButton full rounded gradate data-testid="xissmie-signin-with-xfolio" type="routerLink" linkBehavior="browser" :to="`${xfolioUrlOrigin}/mypage/xissmie_setting?from_xissmie=yes`" style="padding: 10px">{{ "クロスフォリオでログインする" }}</MkButton>
 
-			<MkButton :class="$style.mainAction" full rounded data-cy-signin @click="signin()">{{ "ID/PASSでログインする" }}</MkButton>
-			<MkLink :url="`${xfolioUrlOrigin}/mypage/xissmie_setting`">{{ "クロスフォリオでID/PASSを調べる" }}</MkLink>
+			<MkButton :class="$style.mainAction" full rounded data-testid="xissmie-signin-with-password" @click="signin()">{{ "ID/PASSでログインする" }}</MkButton>
+			<MkLink :url="`${xfolioUrlOrigin}/mypage/xissmie_setting`" data-testid="xissmie-signin-find-credentials">{{ "クロスフォリオでID/PASSを調べる" }}</MkLink>
 		</div>
 	</div>
 </div>
