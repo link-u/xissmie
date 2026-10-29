@@ -50,7 +50,7 @@ export async function pleaseLogin(opts: {
 } = {}): Promise<boolean> {
 	if ($i != null) return true;
 
-	// Xissmie: 閉じた会員向けのため「リモートの Misskey で開く / 共有」は出さない（docs/xissmie-spec.md §3.3）
+	// Xissmie: 閉じた会員向けのため「リモートの Misskey で開く / 共有」は出さない
 
 	const { dispose } = await popupAsyncWithDialog(import('@/components/MkSigninDialog.vue').then(x => x.default), {
 		autoSet: true,
