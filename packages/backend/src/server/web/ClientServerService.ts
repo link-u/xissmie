@@ -65,6 +65,7 @@ import { BiosPage } from './views/bios.js';
 import { CliPage } from './views/cli.js';
 import { FlushPage } from './views/flush.js';
 import { ErrorPage } from './views/error.js';
+import { buildXissmieRobotsTxtPrefix } from './xissmie-robots.js';
 
 import type { FastifyError, FastifyInstance, FastifyPluginOptions, FastifyReply } from 'fastify';
 
@@ -429,7 +430,9 @@ export class ClientServerService {
 				);
 			}
 
-			let content = `User-agent: *\n`;
+			// Xissmie: AI クローラーのブロック設定を先頭に差し込む
+			let content = buildXissmieRobotsTxtPrefix();
+			content += `User-agent: *\n`;
 			content += disallowedPaths.map((path) => `Disallow: ${path}`).join('\n') + '\n';
 			content += 'Allow: /\n';
 			content += '\n# todo: sitemap\n';
