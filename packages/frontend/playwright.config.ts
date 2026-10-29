@@ -6,7 +6,8 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-	testDir: './test/e2e',
+	// Xissmie: 本家の test/e2e は Xissmie の仕様(Xfolio ログイン等)では通らないため、Xissmie 用のテストを実行する
+	testDir: './test/e2e-xissmie',
 	reporter: 'list',
 	fullyParallel: false,
 	workers: 1,
