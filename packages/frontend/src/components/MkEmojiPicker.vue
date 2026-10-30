@@ -103,7 +103,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
 					</button>
 				</div>
-				<MkButton primary small rounded style="margin: auto;" @click="refreshPurchasedEmojis"><i class="ti ti-refresh"></i> 更新</MkButton>
+				<div v-if="purchasedEmojisError" role="alert">{{ i18n.ts.somethingHappened }}</div>
+				<MkButton primary small rounded :wait="purchasedEmojisLoading" :disabled="!$i" style="margin: auto;" @click="refreshPurchasedEmojis"><i class="ti ti-refresh"></i> 更新</MkButton>
 			</section>
 		</div>
 		<div class="group">
@@ -123,7 +124,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkCustomEmoji class="emoji" :name="getKey(emoji)" :url="emoji.url" :normal="true"/>
 					</button>
 				</div>
-				<MkButton primary small rounded style="margin: auto;" @click="loadMoreStoreEmojis">もっと見る</MkButton>
+				<div v-if="storeEmojisError" role="alert">
+					{{ i18n.ts.somethingHappened }}
+					<MkButton small :wait="storeEmojisLoading" @click="loadStoreEmojis">{{ i18n.ts.retry }}</MkButton>
+				</div>
+				<MkButton primary small rounded :wait="storeEmojisLoading" :disabled="!hasMoreStoreEmojis" style="margin: auto;" @click="loadMoreStoreEmojis">もっと見る</MkButton>
 			</section>
 		</div>
 		<div v-once class="group">
@@ -185,6 +190,7 @@ import { haptic } from '@/utility/haptic.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { xissmieEmojiPurchaseRequired } from '@/xissmie.js';
 import MkButton from '@/components/MkButton.vue';
+import { fetchMoreStoreItems, getStoreEmojiOwnership } from '@/utility/xissmie-store.js';
 
 const router = useRouter();
 
@@ -234,7 +240,14 @@ const searchResultCustom = ref<Misskey.entities.EmojiSimple[]>([]);
 const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
 const tab = ref<'index' | 'custom' | 'unicode' | 'tags'>('index');
 const purchasedEmojis = shallowRef<Misskey.entities.XissmiePurchasedEmojisResponse>(store.s.xissmiePurchasedEmojisCache);
+const purchasedEmojisLoading = ref(false);
+const purchasedEmojisReady = ref(false);
+const purchasedEmojisError = ref(false);
+const STORE_EMOJIS_PAGE_SIZE = 12;
 const storeEmojis = shallowRef<Misskey.entities.XissmieStoreEmojisResponse>([]);
+const storeEmojisLoading = ref(false);
+const storeEmojisError = ref(false);
+const hasMoreStoreEmojis = ref(false);
 const publicStoreEmojis = computed(() =>
 	storeEmojis.value.filter((x) => (x as Misskey.entities.EmojiSimple & { isPublic?: boolean }).isPublic),
 );
@@ -442,6 +455,8 @@ watch(q, () => {
 });
 
 function canReact(emoji: Misskey.entities.EmojiSimple | UnicodeEmojiDef | string): boolean {
+	const name = typeof emoji === 'string' ? emoji : emoji.name;
+	if (!props.allowChooseUnownedStoreEmoji && getStoreEmojiOwnership(name, purchasedEmojis.value, purchasedEmojisReady.value) === 'unknown') return false;
 	return !props.targetNote || checkReactionPermissions($i!, props.targetNote, emoji);
 }
 
@@ -486,11 +501,12 @@ function computeButtonTitle(ev: PointerEvent): void {
 
 function chosen(emoji: string | Misskey.entities.EmojiSimple | UnicodeEmojiDef, ev?: PointerEvent) {
 	if (!props.allowChooseUnownedStoreEmoji) {
-		if (typeof emoji === 'string' && (emoji.includes('_e_') || emoji.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.replaceAll(':', ''))) {
-			xissmieEmojiPurchaseRequired(emoji);
-			return;
-		} else if (typeof emoji !== 'string' && (emoji.name.includes('_e_') || emoji.name.includes('-store-')) && !purchasedEmojis.value.some(x => x.name === emoji.name.replaceAll(':', ''))) {
-			xissmieEmojiPurchaseRequired(emoji.name);
+		const name = typeof emoji === 'string' ? emoji : emoji.name;
+		const ownership = getStoreEmojiOwnership(name, purchasedEmojis.value, purchasedEmojisReady.value);
+		// An empty or stale device cache is not proof that the emoji is unowned.
+		if (ownership === 'unknown') return;
+		if (ownership === 'unowned') {
+			xissmieEmojiPurchaseRequired(name);
 			return;
 		}
 	}
@@ -579,30 +595,61 @@ function settings() {
 
 onMounted(() => {
 	focus();
-
-	misskeyApi('xissmie/store-emojis', {
-		limit: 12,
-		excludePurchased: true,
-	}).then(x => {
-		storeEmojis.value = x;
-	});
+	void loadStoreEmojis();
+	if ($i) void refreshPurchasedEmojis();
 });
 
-function loadMoreStoreEmojis() {
-	misskeyApi('xissmie/store-emojis', {
-		untilId: storeEmojis.value[storeEmojis.value.length - 1]!.id,
-		excludePurchased: true,
-	}).then(x => {
-		storeEmojis.value = storeEmojis.value.concat(x);
-	});
+async function loadStoreEmojis() {
+	if (storeEmojisLoading.value) return;
+	storeEmojisLoading.value = true;
+	storeEmojisError.value = false;
+	try {
+		const emojis = await misskeyApi('xissmie/store-emojis', {
+			limit: STORE_EMOJIS_PAGE_SIZE,
+			excludePurchased: true,
+		});
+		storeEmojis.value = emojis;
+		hasMoreStoreEmojis.value = emojis.length >= STORE_EMOJIS_PAGE_SIZE;
+	} catch {
+		storeEmojisError.value = true;
+	} finally {
+		storeEmojisLoading.value = false;
+	}
 }
 
-function refreshPurchasedEmojis() {
-	misskeyApi('xissmie/purchased-emojis', {
-	}).then(purchased => {
+async function loadMoreStoreEmojis() {
+	if (storeEmojisLoading.value || !hasMoreStoreEmojis.value) return;
+	storeEmojisLoading.value = true;
+	try {
+		const page = await fetchMoreStoreItems(storeEmojis.value, STORE_EMOJIS_PAGE_SIZE, untilId => misskeyApi('xissmie/store-emojis', {
+			limit: STORE_EMOJIS_PAGE_SIZE,
+			untilId,
+			excludePurchased: true,
+		}));
+		storeEmojis.value = page.items;
+		hasMoreStoreEmojis.value = page.hasMore;
+	} catch {
+		void os.alert({ type: 'error', text: i18n.ts.somethingHappened });
+	} finally {
+		storeEmojisLoading.value = false;
+	}
+}
+
+async function refreshPurchasedEmojis() {
+	if (!$i || purchasedEmojisLoading.value) return;
+	purchasedEmojisLoading.value = true;
+	purchasedEmojisReady.value = false;
+	purchasedEmojisError.value = false;
+	try {
+		const purchased = await misskeyApi('xissmie/purchased-emojis', {});
 		purchasedEmojis.value = purchased;
 		store.set('xissmiePurchasedEmojisCache', purchased);
-	});
+		purchasedEmojisReady.value = true;
+	} catch {
+		purchasedEmojisError.value = true;
+	} finally {
+		purchasedEmojisLoading.value = false;
+	}
 }
 
 defineExpose({

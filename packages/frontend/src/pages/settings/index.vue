@@ -10,7 +10,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<div class="body">
 				<div v-if="!narrow || currentPage?.route.name == null" class="nav">
 					<div class="_gaps_s">
-						<MkInfo v-if="emailNotConfigured" warn class="info">{{ i18n.ts.emailNotConfiguredWarning }} <MkA to="/settings/email" class="_link">{{ i18n.ts.configure }}</MkA></MkInfo>
 						<MkInfo v-if="storagePersistenceSupported && !storagePersisted && store.r.showStoragePersistenceSuggestion.value" class="info">
 							<div>{{ i18n.ts._settings.settingsPersistence_description1 }}</div>
 							<div>{{ i18n.ts._settings.settingsPersistence_description2 }}</div>
@@ -41,9 +40,7 @@ import type { SuperMenuDef } from '@/components/MkSuperMenu.vue';
 import { i18n } from '@/i18n.js';
 import MkInfo from '@/components/MkInfo.vue';
 import MkSuperMenu from '@/components/MkSuperMenu.vue';
-import { $i } from '@/i.js';
 import { clearCache } from '@/utility/clear-cache.js';
-import { instance } from '@/instance.js';
 import { definePage, provideMetadataReceiver, provideReactiveMetadata } from '@/page.js';
 import * as os from '@/os.js';
 import { useRouter } from '@/router.js';
@@ -82,6 +79,7 @@ function skipAutoBackup() {
 	store.set('showPreferencesAutoCloudBackupSuggestion', false);
 }
 
+// Xissmieではメール設定メニューと未設定警告を表示しない。Misskey更新時も維持する。
 const menuDef = computed<SuperMenuDef[]>(() => [{
 	items: [{
 		icon: 'ti ti-user',
@@ -98,11 +96,6 @@ const menuDef = computed<SuperMenuDef[]>(() => [{
 		text: i18n.ts.notifications,
 		to: '/settings/notifications',
 		active: currentPage.value?.route.name === 'notifications',
-	}, {
-		icon: 'ti ti-mail',
-		text: i18n.ts.email,
-		to: '/settings/email',
-		active: currentPage.value?.route.name === 'email',
 	}, {
 		icon: 'ti ti-lock',
 		text: i18n.ts.security,
@@ -226,8 +219,6 @@ watch(router.currentRef, (to) => {
 		router.replace('/settings/profile');
 	}
 });
-
-const emailNotConfigured = computed(() => $i && instance.enableEmail && ($i.email == null || !$i.emailVerified));
 
 provideMetadataReceiver((metadataGetter) => {
 	const info = metadataGetter();
