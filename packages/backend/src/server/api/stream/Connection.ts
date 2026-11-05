@@ -4,10 +4,11 @@
  */
 
 import * as WebSocket from 'ws';
-import promiseLimit from 'promise-limit';
 import { ContextIdFactory, ModuleRef, REQUEST } from '@nestjs/core';
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
+import Logger from '@/logger.js';
+import { StreamMessageQueue } from './StreamMessageQueue.js';
 import { isJsonObject } from '@/misc/json-value.js';
 import type { JsonObject, JsonValue } from '@/misc/json-value.js';
 import { ChannelMutingService } from '@/core/ChannelMutingService.js';
@@ -45,6 +46,9 @@ import type Channel from './channel.js';
 import type { EventEmitter } from 'events';
 
 const MAX_CHANNELS_PER_CONNECTION = 32;
+const MAX_QUEUED_MESSAGES_PER_CONNECTION = 256;
+const MAX_QUEUED_BYTES_PER_CONNECTION = 4 * 1024 * 1024; // 4MiB, including the active message
+const streamQueueLogger = new Logger('stream-message-queue');
 const MAX_SUBSCRIBING_NOTES_PER_CONNECTION = 1536;
 const MAX_BUFFERED_AMOUNT_PER_CONNECTION = 1024 * 1024 * 8; // 8MiB
 
@@ -57,7 +61,15 @@ export default class Connection {
 	public user?: MiUser;
 	public token?: MiAccessToken;
 	private wsConnection: WebSocket.WebSocket;
-	private messageQueue = promiseLimit<void>(1);
+	private messageQueue = new StreamMessageQueue<WebSocket.RawData>(
+		MAX_QUEUED_MESSAGES_PER_CONNECTION,
+		MAX_QUEUED_BYTES_PER_CONNECTION,
+		data => this.onWsConnectionMessage(data),
+		() => {
+			streamQueueLogger.warn('Closing websocket: stream message handler failed');
+			this.wsConnection.terminate();
+		},
+	);
 	public subscriber: StreamEventEmitter;
 	private channels: Map<string, Channel> = new Map();
 	private subscribingNotes: Map<string, number> = new Map();
@@ -132,7 +144,18 @@ export default class Connection {
 		this.subscriber = subscriber;
 
 		this.wsConnection = wsConnection;
-		this.wsConnection.on('message', data => this.messageQueue(() => this.onWsConnectionMessage(data)));
+		this.wsConnection.on('message', data => {
+			const bytes = Array.isArray(data) ? data.reduce((sum, chunk) => sum + chunk.byteLength, 0) : data.byteLength;
+			if (!this.messageQueue.enqueue(data, bytes)) {
+				streamQueueLogger.warn('Closing websocket: stream message queue limit reached', {
+					messages: this.messageQueue.messageCount,
+					bytes: this.messageQueue.byteCount,
+					incomingBytes: bytes,
+				});
+				this.messageQueue.dispose();
+				this.wsConnection.terminate();
+			}
+		});
 
 		this.subscriber.on('broadcast', data => {
 			this.onBroadcastMessage(data);
@@ -341,6 +364,12 @@ export default class Connection {
 
 		this.channels.set(ch.id, ch);
 		const valid = await ch.init(params ?? {});
+		// A close can dispose the channel while init is awaiting; remove any
+		// listeners that init may have registered after the connection closed.
+		if (this.wsConnection.readyState !== WebSocket.WebSocket.OPEN || !this.channels.has(ch.id)) {
+			if (ch.dispose) ch.dispose();
+			return;
+		}
 		if (typeof valid === 'boolean' && !valid) {
 			// 初期化処理の結果、接続拒否されたので切断
 			this.disconnectChannel(id);
@@ -418,6 +447,7 @@ export default class Connection {
 	 */
 	@bindThis
 	public dispose() {
+		this.messageQueue.dispose();
 		if (this.fetchIntervalId) clearInterval(this.fetchIntervalId);
 
 		for (const c of this.channels.values()) {
