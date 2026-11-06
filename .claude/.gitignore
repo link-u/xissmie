@@ -1,2 +1,5 @@
 /settings.local.json
 /.credentials.json
+/memory/
+/sessions/
+/state/
