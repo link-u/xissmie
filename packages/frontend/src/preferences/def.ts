@@ -350,6 +350,9 @@ export const PREF_DEF = definePreferences({
 	autoplayEmbededPlayerOfUrlPreview: {
 		default: false,
 	},
+	expandUrlPreviewAutomatically: {
+		default: true,
+	},
 	hemisphere: {
 		default: hemisphere as 'N' | 'S',
 	},
